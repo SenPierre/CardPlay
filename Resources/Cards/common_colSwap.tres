@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3 uid="uid://dl2p2j0nbao45"]
+
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectSwap.cs" id="1_x0r1i"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardSelection/CardSelectionColumn.cs" id="2_v61to"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardData.cs" id="3_5pdgj"]
+
+[sub_resource type="Resource" id="Resource_iv70b"]
+script = ExtResource("1_x0r1i")
+
+[sub_resource type="Resource" id="Resource_rfckd"]
+script = ExtResource("2_v61to")
+
+[resource]
+script = ExtResource("3_5pdgj")
+m_ManaCost = 0
+m_Selection = SubResource("Resource_rfckd")
+m_Effect = SubResource("Resource_iv70b")
+m_Name = "Acrobatic"
+m_Description = "Reverse a column"
+m_Collectible = true

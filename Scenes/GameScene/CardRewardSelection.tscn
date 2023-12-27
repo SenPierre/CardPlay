@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://ctrhjarjpmld3"]
+
+[ext_resource type="Script" path="res://Scripts/Manager/CardRewardManager.cs" id="1_x84gr"]
+[ext_resource type="Texture2D" uid="uid://b26u82a8o0eho" path="res://Textures/Background.png" id="2_j66el"]
+
+[node name="CardSelection" type="Node2D" node_paths=PackedStringArray("m_ShownCardNode")]
+script = ExtResource("1_x84gr")
+m_ShownCardNode = NodePath("CardRewardSelection")
+
+[node name="CardRewardSelection" type="Node2D" parent="."]
+position = Vector2(960, 540)
+
+[node name="Background" type="Sprite2D" parent="."]
+modulate = Color(0.262745, 0.392157, 1, 1)
+z_index = -10
+texture_filter = 1
+position = Vector2(960, 540)
+scale = Vector2(2, 2)
+texture = ExtResource("2_j66el")

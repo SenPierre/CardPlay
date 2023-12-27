@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3 uid="uid://bi2hdx0o8vtkc"]
+
+[ext_resource type="Texture2D" uid="uid://b26u82a8o0eho" path="res://Textures/Background.png" id="1_1o1c3"]
+[ext_resource type="Script" path="res://Scripts/Manager/MapManager.cs" id="1_bta5p"]
+[ext_resource type="PackedScene" uid="uid://cgsr77mhsiuf1" path="res://Scenes/Prefabs/Map/MapNode.tscn" id="2_fvanb"]
+[ext_resource type="PackedScene" uid="uid://sp0omnbo2c4e" path="res://Scenes/Prefabs/Map/MapLink.tscn" id="3_6adhr"]
+[ext_resource type="Texture2D" uid="uid://bonfijy2nn2ab" path="res://Textures/MapBackground.png" id="3_ch73j"]
+
+[node name="MapScene" type="Node2D" node_paths=PackedStringArray("m_MapStartNode")]
+script = ExtResource("1_bta5p")
+m_MapStartNode = NodePath("StartNodePosition")
+m_NodePrefab = ExtResource("2_fvanb")
+m_LinkPrefab = ExtResource("3_6adhr")
+
+[node name="Background" type="Sprite2D" parent="."]
+modulate = Color(0.462745, 0.278431, 0.160784, 1)
+z_index = -10
+texture_filter = 1
+position = Vector2(960, 540)
+scale = Vector2(2, 2)
+texture = ExtResource("1_1o1c3")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+scale = Vector2(33.54, 18.38)
+texture = ExtResource("3_ch73j")
+
+[node name="StartNodePosition" type="Node2D" parent="."]
+position = Vector2(198, 554)

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CardDeckData" load_steps=6 format=3 uid="uid://bg6emagcpjcvc"]
+
+[ext_resource type="Resource" uid="uid://co62h5g5oe4ax" path="res://Resources/Cards/base_adjSwap.tres" id="1_62v1t"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardDeckData.cs" id="1_xcqoh"]
+[ext_resource type="Resource" uid="uid://cd5wxtqbegftt" path="res://Resources/Cards/common_SwapFarAway.tres" id="2_qsv2x"]
+[ext_resource type="Resource" uid="uid://c7jcucxmp6wyw" path="res://Resources/Cards/base_lineDestroy.tres" id="3_3kpi1"]
+[ext_resource type="Resource" uid="uid://dhe7l8malgg62" path="res://Resources/Cards/base_selectDestroy.tres" id="5_w3qn2"]
+
+[resource]
+script = ExtResource("1_xcqoh")
+m_Cards = Array[Object]([ExtResource("1_62v1t"), ExtResource("1_62v1t"), ExtResource("1_62v1t"), ExtResource("1_62v1t"), ExtResource("1_62v1t"), ExtResource("3_3kpi1"), ExtResource("3_3kpi1"), ExtResource("5_w3qn2"), ExtResource("5_w3qn2"), ExtResource("2_qsv2x")])

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=7 format=3 uid="uid://dyuew323ofhxg"]
+
+[ext_resource type="Resource" uid="uid://b6jsa4yvt56d" path="res://Resources/Cards/garbage_Exhaust.tres" id="2_gl7hj"]
+[ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentAddCard.cs" id="3_70hit"]
+[ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentNone.cs" id="4_qdl0h"]
+[ext_resource type="Script" path="res://Scripts/Enemies/EnemyData.cs" id="5_wir1g"]
+
+[sub_resource type="Resource" id="Resource_06xru"]
+script = ExtResource("3_70hit")
+m_TargetZone = 0
+m_CardToAdd = Array[Object]([ExtResource("2_gl7hj"), ExtResource("2_gl7hj")])
+m_LimitBase = 500
+
+[sub_resource type="Resource" id="Resource_nonh7"]
+script = ExtResource("4_qdl0h")
+m_LimitBase = 1500
+
+[resource]
+script = ExtResource("5_wir1g")
+m_BattleTarget = 7000
+m_LimitIncrement = 200
+m_EnemyIntents = Array[Object]([SubResource("Resource_06xru"), SubResource("Resource_nonh7")])
+m_BoardLayoutRes = "res://Resources/EnemyBoard/BoardRound.txt"

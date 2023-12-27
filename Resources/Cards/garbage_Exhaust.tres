@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3 uid="uid://b6jsa4yvt56d"]
+
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectExhaust.cs" id="1_gkmdp"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardSelection/CardSelectionNone.cs" id="2_6o85u"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardData.cs" id="3_45url"]
+
+[sub_resource type="Resource" id="Resource_iehi7"]
+script = ExtResource("1_gkmdp")
+
+[sub_resource type="Resource" id="Resource_67trs"]
+script = ExtResource("2_6o85u")
+
+[resource]
+script = ExtResource("3_45url")
+m_ManaCost = 1
+m_Selection = SubResource("Resource_67trs")
+m_Effect = SubResource("Resource_iehi7")
+m_Name = "Pebble"
+m_Description = "Exhaust"
+m_Collectible = false

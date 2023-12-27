@@ -1,0 +1,57 @@
+[gd_scene load_steps=7 format=3 uid="uid://byc4dj73ctdm8"]
+
+[ext_resource type="Script" path="res://Scripts/Elements/Element.cs" id="1_moows"]
+[ext_resource type="Texture2D" uid="uid://bc1dybxv08jp7" path="res://Textures/Elements/El4.png" id="2_a1as5"]
+[ext_resource type="Script" path="res://Scripts/Common/ParticleHandler.cs" id="3_1ebhq"]
+[ext_resource type="Texture2D" uid="uid://bqmvribxibxgd" path="res://Textures/Fx/Fx1.png" id="3_dubhp"]
+
+[sub_resource type="Curve" id="Curve_qfde1"]
+min_value = -360.0
+max_value = 360.0
+_data = [Vector2(0, 360), 0.0, 0.0, 0, 0, Vector2(0.8, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_k2b0b"]
+max_value = 2.0
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.8, 2), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="Element" type="Node2D" node_paths=PackedStringArray("m_Sprite")]
+position = Vector2(150, 103)
+scale = Vector2(0.8, 0.8)
+script = ExtResource("1_moows")
+m_Sprite = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(4, 4)
+texture = ExtResource("2_a1as5")
+
+[node name="EmitterHandler" type="Node2D" parent="."]
+script = ExtResource("3_1ebhq")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="EmitterHandler"]
+texture_filter = 1
+scale = Vector2(0.8, 0.8)
+emitting = false
+amount = 1
+texture = ExtResource("3_dubhp")
+gravity = Vector2(0, 0)
+angular_velocity_min = 1.0
+angular_velocity_max = 1.0
+angular_velocity_curve = SubResource("Curve_qfde1")
+scale_amount_curve = SubResource("Curve_k2b0b")
+
+[node name="CPUParticles2D2" type="CPUParticles2D" parent="EmitterHandler"]
+texture_filter = 1
+scale = Vector2(0.8, 0.8)
+emitting = false
+amount = 1
+texture = ExtResource("3_dubhp")
+gravity = Vector2(0, 0)
+angular_velocity_min = -1.0
+angular_velocity_max = -1.0
+angular_velocity_curve = SubResource("Curve_qfde1")
+scale_amount_curve = SubResource("Curve_k2b0b")
+
+[connection signal="ElementTransformed" from="." to="EmitterHandler" method="EmitBurst"]

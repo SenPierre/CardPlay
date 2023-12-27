@@ -1,0 +1,221 @@
+[gd_scene load_steps=18 format=3 uid="uid://byld2rgu6ytjf"]
+
+[ext_resource type="Script" path="res://Scripts/Elements/ElementBoard.cs" id="1_n1ht2"]
+[ext_resource type="Script" path="res://Scripts/Elements/BoardHelper.cs" id="2_5sujc"]
+[ext_resource type="PackedScene" uid="uid://b4mki8uc1myqu" path="res://Scenes/Prefabs/UI/ElementSelection.tscn" id="3_575xg"]
+[ext_resource type="Texture2D" uid="uid://dicy6fky5fgr4" path="res://Textures/Bar.png" id="4_oa0kq"]
+[ext_resource type="Texture2D" uid="uid://bx40tb7ctqwoi" path="res://Textures/BarFill.png" id="5_bqc06"]
+[ext_resource type="Texture2D" uid="uid://c0tlbcrpdasn4" path="res://Textures/Warning.png" id="6_gctwk"]
+[ext_resource type="Texture2D" uid="uid://bft04jl8po0hv" path="res://Textures/Heart.png" id="7_uxcxr"]
+[ext_resource type="Texture2D" uid="uid://btenh0d6cx6hb" path="res://Textures/Card/GridBackground.png" id="8_qpw4l"]
+[ext_resource type="Texture2D" uid="uid://d2sxmdqvwnst1" path="res://Textures/GridBorder.png" id="9_oic80"]
+[ext_resource type="Texture2D" uid="uid://gxxpb8xop2k1" path="res://Textures/Card/ManaGem.png" id="10_6dcct"]
+[ext_resource type="Texture2D" uid="uid://bpowu0h5ypuix" path="res://Textures/Sans titre.png" id="11_wtrpl"]
+[ext_resource type="Texture2D" uid="uid://b26u82a8o0eho" path="res://Textures/Background.png" id="12_mj4x8"]
+[ext_resource type="Script" path="res://Scripts/Manager/BattleManager.cs" id="13_rpe5q"]
+[ext_resource type="Texture2D" uid="uid://c1dtx4txnfg24" path="res://Textures/PassButton.png" id="14_uv1mv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8p4ie"]
+size = Vector2(960, 960)
+
+[sub_resource type="LabelSettings" id="LabelSettings_qscjm"]
+font_size = 40
+outline_size = 16
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_i0xhg"]
+font_size = 32
+outline_size = 16
+outline_color = Color(0, 0, 0, 1)
+
+[node name="BattleScene" type="Node2D" node_paths=PackedStringArray("m_EnemyRoot", "m_ScoreBar", "m_LimitBar", "m_Hearts", "m_GameOverRect", "m_ManaLabel", "m_CardArrow", "m_HandNode", "m_DeckNode", "m_DiscardNode")]
+texture_filter = 1
+script = ExtResource("13_rpe5q")
+m_EnemyRoot = NodePath("Enemies")
+m_ScoreBar = NodePath("ElementBoard/Bar/TextureProgressBar")
+m_LimitBar = NodePath("ElementBoard/Bar/TextureProgressBar/TextureRect")
+m_Hearts = [NodePath("ElementBoard/Hearts/TextureRect"), NodePath("ElementBoard/Hearts/TextureRect2"), NodePath("ElementBoard/Hearts/TextureRect3")]
+m_GameOverRect = NodePath("GAMEOVER")
+m_ManaLabel = NodePath("Button/Sprite2D/Label")
+m_HintColor = Color(0.745098, 0.0941176, 0.576471, 1)
+m_CardArrow = NodePath("CardArrow")
+m_HandNode = NodePath("Hand")
+m_DeckNode = NodePath("Deck")
+m_DiscardNode = NodePath("Discard")
+
+[node name="Deck" type="Node2D" parent="."]
+position = Vector2(865, 1567)
+
+[node name="Hand" type="Node2D" parent="."]
+position = Vector2(100, 520)
+
+[node name="Discard" type="Node2D" parent="."]
+position = Vector2(864, 1583)
+
+[node name="ElementBoard" type="Node2D" parent="." node_paths=PackedStringArray("m_Helper")]
+position = Vector2(491, 20)
+script = ExtResource("1_n1ht2")
+m_Helper = NodePath("BoardHelper")
+m_Size = 12
+
+[node name="Area2D" type="Area2D" parent="ElementBoard"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ElementBoard/Area2D"]
+position = Vector2(480, 480)
+shape = SubResource("RectangleShape2D_8p4ie")
+
+[node name="BoardHelper" type="Node2D" parent="ElementBoard" node_paths=PackedStringArray("m_Board")]
+script = ExtResource("2_5sujc")
+m_SelectionObjectScene = ExtResource("3_575xg")
+m_Board = NodePath("..")
+
+[node name="Bar" type="Sprite2D" parent="ElementBoard"]
+texture_filter = 1
+position = Vector2(1017, 480)
+texture = ExtResource("4_oa0kq")
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="ElementBoard/Bar"]
+anchors_preset = -1
+anchor_left = 14.575
+anchor_right = 14.575
+offset_left = -1045.25
+offset_top = -480.0
+offset_right = -995.25
+offset_bottom = 480.0
+fill_mode = 3
+texture_under = ExtResource("5_bqc06")
+texture_progress = ExtResource("5_bqc06")
+tint_under = Color(0.117647, 0.466667, 0.0823529, 0.466667)
+tint_over = Color(0.0901961, 1, 0.0588235, 1)
+tint_progress = Color(0.509804, 0.870588, 0.498039, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect" type="TextureRect" parent="ElementBoard/Bar/TextureProgressBar"]
+texture_filter = 1
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("6_gctwk")
+metadata/_edit_use_anchors_ = true
+
+[node name="Hearts" type="Control" parent="ElementBoard"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -125.0
+offset_top = 20.0
+offset_right = -85.0
+offset_bottom = 60.0
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect" type="TextureRect" parent="ElementBoard/Hearts"]
+texture_filter = 1
+layout_mode = 0
+offset_right = 50.0
+offset_bottom = 50.0
+scale = Vector2(2, 2)
+texture = ExtResource("7_uxcxr")
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect2" type="TextureRect" parent="ElementBoard/Hearts"]
+texture_filter = 1
+layout_mode = 0
+offset_top = 50.0
+offset_right = 50.0
+offset_bottom = 100.0
+scale = Vector2(2, 2)
+texture = ExtResource("7_uxcxr")
+metadata/_edit_use_anchors_ = true
+
+[node name="TextureRect3" type="TextureRect" parent="ElementBoard/Hearts"]
+texture_filter = 1
+layout_mode = 0
+offset_top = 100.0
+offset_right = 50.0
+offset_bottom = 150.0
+scale = Vector2(2, 2)
+texture = ExtResource("7_uxcxr")
+metadata/_edit_use_anchors_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="ElementBoard"]
+modulate = Color(1, 0.478431, 1, 0.384314)
+position = Vector2(480, 480)
+texture = ExtResource("8_qpw4l")
+
+[node name="Border" type="Sprite2D" parent="ElementBoard"]
+position = Vector2(480, 480)
+texture = ExtResource("9_oic80")
+
+[node name="Enemies" type="Node2D" parent="."]
+position = Vector2(1634, 274)
+
+[node name="Button" type="Button" parent="."]
+anchors_preset = -1
+anchor_left = -34.525
+anchor_top = 6.225
+anchor_right = -34.525
+anchor_bottom = 6.225
+offset_left = 188.0
+offset_top = 875.0
+offset_right = 388.0
+offset_bottom = 975.0
+icon = ExtResource("14_uv1mv")
+metadata/_edit_use_anchors_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Button"]
+scale = Vector2(2, 2)
+texture = ExtResource("10_6dcct")
+
+[node name="Label" type="Label" parent="Button/Sprite2D"]
+texture_filter = 1
+anchors_preset = -1
+anchor_left = -34.525
+anchor_top = 6.225
+anchor_right = -34.525
+anchor_bottom = 6.225
+offset_left = 844.625
+offset_top = -169.625
+offset_right = 924.625
+offset_bottom = -99.625
+scale = Vector2(0.5, 0.5)
+text = "3
+"
+label_settings = SubResource("LabelSettings_qscjm")
+horizontal_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Label" type="Label" parent="Button"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 100.0
+text = "End Turn"
+label_settings = SubResource("LabelSettings_i0xhg")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GAMEOVER" type="TextureRect" parent="."]
+visible = false
+texture_filter = 1
+offset_left = 874.0
+offset_top = 437.0
+offset_right = 1074.0
+offset_bottom = 537.0
+texture = ExtResource("11_wtrpl")
+
+[node name="EnemySprite" type="Sprite2D" parent="."]
+position = Vector2(1413, 19)
+
+[node name="Background" type="Sprite2D" parent="."]
+modulate = Color(0.32549, 0.219608, 0.694118, 1)
+z_index = -10
+texture_filter = 1
+position = Vector2(960, 540)
+scale = Vector2(2, 2)
+texture = ExtResource("12_mj4x8")
+
+[node name="CardArrow" type="Line2D" parent="."]
+position = Vector2(491, 20)
+points = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+width = 5.0
+
+[connection signal="input_event" from="ElementBoard/Area2D" to="ElementBoard" method="BoardInputEvent" flags=18]
+[connection signal="button_down" from="Button" to="." method="EndTurn"]

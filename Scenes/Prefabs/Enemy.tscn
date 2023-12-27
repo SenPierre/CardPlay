@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://ds3e62fi1k5e"]
+
+[ext_resource type="Script" path="res://Scripts/Enemies/Enemy.cs" id="1_3o1uv"]
+
+[node name="Enemy" type="Node2D" node_paths=PackedStringArray("m_ShieldSprite", "m_BuffSprite", "m_DebuffSprite")]
+script = ExtResource("1_3o1uv")
+m_ShieldSprite = NodePath("IntentRoot/Sprite2D")
+m_BuffSprite = NodePath("IntentRoot/Sprite2D2")
+m_DebuffSprite = NodePath("IntentRoot/Sprite2D2")
+
+[node name="IntentRoot" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="IntentRoot"]
+visible = false
+position = Vector2(0, -25)
+scale = Vector2(2, 2)
+
+[node name="Sprite2D2" type="Sprite2D" parent="IntentRoot"]
+visible = false
+position = Vector2(0, -25)
+scale = Vector2(2, 2)

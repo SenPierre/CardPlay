@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://sp0omnbo2c4e"]
+
+[node name="MapLink" type="Line2D"]
+points = PackedVector2Array(0, 0, 50, 0)
+width = 3.0

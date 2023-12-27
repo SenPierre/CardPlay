@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://b4mki8uc1myqu"]
+
+[ext_resource type="Texture2D" uid="uid://dtsoex0wvxh8n" path="res://Textures/Selection.png" id="1_yc1il"]
+
+[node name="ElementSelection" type="NinePatchRect"]
+z_index = 50
+offset_right = 40.0
+offset_bottom = 40.0
+pivot_offset = Vector2(59, 59)
+texture = ExtResource("1_yc1il")
+draw_center = false
+region_rect = Rect2(0, 0, 80, 80)
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 5

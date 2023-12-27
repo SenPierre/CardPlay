@@ -1,0 +1,33 @@
+[gd_scene load_steps=11 format=3 uid="uid://b6knmfltijo60"]
+
+[ext_resource type="Script" path="res://Scripts/Manager/GameManager.cs" id="1_eqyqm"]
+[ext_resource type="PackedScene" uid="uid://byld2rgu6ytjf" path="res://Scenes/GameScene/BattleScene.tscn" id="2_dmg4c"]
+[ext_resource type="Script" path="res://Scripts/Manager/TimeManager.cs" id="2_qqcu1"]
+[ext_resource type="PackedScene" uid="uid://ctrhjarjpmld3" path="res://Scenes/GameScene/CardRewardSelection.tscn" id="3_oesh1"]
+[ext_resource type="Script" path="res://Scripts/Manager/CardManager.cs" id="3_v33x5"]
+[ext_resource type="PackedScene" uid="uid://bi2hdx0o8vtkc" path="res://Scenes/GameScene/MapScene.tscn" id="4_fjgeq"]
+[ext_resource type="Script" path="res://Scripts/Manager/RandomManager.cs" id="5_d8kwp"]
+[ext_resource type="Resource" uid="uid://kovfoutff5j6" path="res://Resources/Enemies/Grandma.tres" id="5_o47du"]
+[ext_resource type="Resource" uid="uid://g225lviiar8l" path="res://Resources/EnemyPools/PoolTest.tres" id="6_ov81h"]
+[ext_resource type="Resource" uid="uid://bg6emagcpjcvc" path="res://Resources/CardDecks/starterDeck.tres" id="9_2mhlr"]
+
+[node name="GameManager" type="Node2D"]
+position = Vector2(3, 0)
+script = ExtResource("1_eqyqm")
+m_BattleScene = ExtResource("2_dmg4c")
+m_CardRewardScene = ExtResource("3_oesh1")
+m_MapScene = ExtResource("4_fjgeq")
+m_GrandmaData = ExtResource("5_o47du")
+m_EnemyPool = Array[Object]([ExtResource("6_ov81h")])
+
+[node name="TimeManager" type="Node2D" parent="."]
+script = ExtResource("2_qqcu1")
+
+[node name="CardManager" type="Node2D" parent="."]
+position = Vector2(-1, 0)
+script = ExtResource("3_v33x5")
+m_StarterDeck = ExtResource("9_2mhlr")
+
+[node name="RandomManager" type="Node2D" parent="."]
+position = Vector2(0, -3)
+script = ExtResource("5_d8kwp")

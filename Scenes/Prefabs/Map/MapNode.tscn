@@ -1,0 +1,70 @@
+[gd_scene load_steps=7 format=3 uid="uid://cgsr77mhsiuf1"]
+
+[ext_resource type="Script" path="res://Scripts/Map/MapNode.cs" id="1_rkink"]
+[ext_resource type="Texture2D" uid="uid://coebif4ecd046" path="res://Textures/MapIcon/BarIcon.png" id="2_ume5g"]
+[ext_resource type="Texture2D" uid="uid://dtsoex0wvxh8n" path="res://Textures/Selection.png" id="3_2x03h"]
+
+[sub_resource type="Animation" id="Animation_2yq4a"]
+resource_name = "No"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Available:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_jier0"]
+resource_name = "Yes"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Available:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mc3em"]
+_data = {
+"No": SubResource("Animation_2yq4a"),
+"Yes": SubResource("Animation_jier0")
+}
+
+[node name="MapNode" type="Node2D" node_paths=PackedStringArray("m_Sprite", "m_Button", "m_AnimPlayer")]
+texture_filter = 1
+script = ExtResource("1_rkink")
+m_Sprite = NodePath("Sprite2D")
+m_Button = NodePath("Button")
+m_AnimPlayer = NodePath("AnimationPlayer")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(2, 2)
+texture = ExtResource("2_ume5g")
+
+[node name="Button" type="Button" parent="."]
+offset_left = -25.0
+offset_top = -25.0
+offset_right = 25.0
+offset_bottom = 25.0
+flat = true
+
+[node name="Available" type="Sprite2D" parent="."]
+texture = ExtResource("3_2x03h")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_mc3em")
+}
+
+[connection signal="button_down" from="Button" to="." method="OnNodeSelection"]
