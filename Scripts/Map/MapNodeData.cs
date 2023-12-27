@@ -34,9 +34,9 @@ public class MapNodeData
     public Vector2 m_Position;
     public int m_Index;
 
-	// -----------------------------------------------------------------
-	// 
-	// -----------------------------------------------------------------
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
     public static MapNodeDataType GetRandomType()
     {
         int randomMax = 0;
@@ -61,9 +61,9 @@ public class MapNodeData
         return newType;
     }
 
-	// -----------------------------------------------------------------
-	// 
-	// -----------------------------------------------------------------
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
     public static Texture2D GetTypeSprite(MapNodeDataType type)
     {
         switch (type)
@@ -83,7 +83,7 @@ public class MapNodeData
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
-    public MapNodeData(MapNodeDataType type, Vector2 position, int index) 
+    public MapNodeData(MapNodeDataType type, Vector2 position, int index)
     {
         m_Type = type;
         m_NextNodeIndexs = new List<int>();

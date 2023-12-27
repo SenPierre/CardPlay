@@ -33,6 +33,8 @@ public partial class ElementBoard : Node2D
     public Vector2 m_MiddleOfTheBoard;
     public Vector2 m_MiddleOfTheBoardCoordinate;
 
+    public int m_MatchCount = 4;
+
     private float m_MatchMultiplier;
 
     // -----------------------------------------------------------------
@@ -199,8 +201,8 @@ public partial class ElementBoard : Node2D
                 Element el = m_GameBoard[x, y];
                 if (el != null)
                 {
-                    needRecheck |= _CheckLineRec(new Vector2I(x, y), Vector2I.Right, 4, el.m_Type, true) != null;
-                    needRecheck |= _CheckLineRec(new Vector2I(x, y), Vector2I.Down, 4, el.m_Type, true) != null;
+                    needRecheck |= _CheckLineRec(new Vector2I(x, y), Vector2I.Right, m_MatchCount, el.m_Type, true) != null;
+                    needRecheck |= _CheckLineRec(new Vector2I(x, y), Vector2I.Down, m_MatchCount, el.m_Type, true) != null;
                 }
             }
         }
@@ -436,14 +438,36 @@ public partial class ElementBoard : Node2D
                     {
                         needReroll = false;
                         newType = Element.GetRandomType();
+
+                        for(int iOffset = 0; iOffset < m_MatchCount && needReroll == false; iOffset++)
+                        {
+                            bool currentCheckVertical = true;
+                            bool currentCheckHorizontal = true;
+                            if (iOffset > 0)
+                            {
+                                currentCheckHorizontal = _CheckLineRec(new Vector2I(x - 1, y), Vector2I.Left, iOffset, newType, false) != null;
+                                currentCheckVertical = _CheckLineRec(new Vector2I(x, y - 1), Vector2I.Up, iOffset, newType, false) != null;
+                            }
+
+                            if (iOffset < m_MatchCount - 1)
+                            {
+                                currentCheckHorizontal = currentCheckHorizontal && 
+                                    _CheckLineRec(new Vector2I(x + 1, y), Vector2I.Right, m_MatchCount - iOffset - 1, newType, false) != null;
+                                currentCheckVertical = currentCheckVertical && 
+                                    _CheckLineRec(new Vector2I(x, y + 1), Vector2I.Down, m_MatchCount - iOffset - 1, newType, false) != null;
+                            }
+
+                            needReroll |= currentCheckHorizontal || currentCheckVertical;
+                        }
+
                         // This is absolutely shit. Need to be a little bit smarter here.
-                        needReroll = needReroll || _CheckLineRec(new Vector2I(x + 1, y), Vector2I.Right, 3, newType, false) != null;
-                        needReroll = needReroll || _CheckLineRec(new Vector2I(x, y + 1), Vector2I.Down, 3, newType, false) != null;
-                        needReroll = needReroll || _CheckLineRec(new Vector2I(x + 1, y), Vector2I.Right, 2, newType, false) != null
-                                                && _CheckLineRec(new Vector2I(x - 1, y), Vector2I.Left, 1, newType, false) != null;
-                        needReroll = needReroll || _CheckLineRec(new Vector2I(x + 1, y), Vector2I.Right, 1, newType, false) != null
-                                                && _CheckLineRec(new Vector2I(x - 1, y), Vector2I.Left, 2, newType, false) != null;
-                        needReroll = needReroll || _CheckLineRec(new Vector2I(x - 1, y), Vector2I.Left, 3, newType, false) != null;
+//                      needReroll = needReroll || _CheckLineRec(new Vector2I(x + 1, y), Vector2I.Right, 3, newType, false) != null;
+//                      needReroll = needReroll || _CheckLineRec(new Vector2I(x, y + 1), Vector2I.Down, 3, newType, false) != null;
+//                      needReroll = needReroll || _CheckLineRec(new Vector2I(x + 1, y), Vector2I.Right, 2, newType, false) != null
+//                                              && _CheckLineRec(new Vector2I(x - 1, y), Vector2I.Left, 1, newType, false) != null;
+//                      needReroll = needReroll || _CheckLineRec(new Vector2I(x + 1, y), Vector2I.Right, 1, newType, false) != null
+//                                              && _CheckLineRec(new Vector2I(x - 1, y), Vector2I.Left, 2, newType, false) != null;
+//                      needReroll = needReroll || _CheckLineRec(new Vector2I(x - 1, y), Vector2I.Left, 3, newType, false) != null;
                     } while (needReroll);
                     
                     newElement = Element.CreateElementFromType(newType);
