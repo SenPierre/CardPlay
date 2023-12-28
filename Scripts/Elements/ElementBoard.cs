@@ -431,46 +431,13 @@ public partial class ElementBoard : Node2D
             {
                 if (m_GameBoard[x, y] == null)
                 {
-                    Element newElement = null;
                     ElementType newType;
-                    bool needReroll;
                     do
                     {
-                        needReroll = false;
                         newType = Element.GetRandomType();
-
-                        for(int iOffset = 0; iOffset < m_MatchCount && needReroll == false; iOffset++)
-                        {
-                            bool currentCheckVertical = true;
-                            bool currentCheckHorizontal = true;
-                            if (iOffset > 0)
-                            {
-                                currentCheckHorizontal = _CheckLineRec(new Vector2I(x - 1, y), Vector2I.Left, iOffset, newType, false) != null;
-                                currentCheckVertical = _CheckLineRec(new Vector2I(x, y - 1), Vector2I.Up, iOffset, newType, false) != null;
-                            }
-
-                            if (iOffset < m_MatchCount - 1)
-                            {
-                                currentCheckHorizontal = currentCheckHorizontal && 
-                                    _CheckLineRec(new Vector2I(x + 1, y), Vector2I.Right, m_MatchCount - iOffset - 1, newType, false) != null;
-                                currentCheckVertical = currentCheckVertical && 
-                                    _CheckLineRec(new Vector2I(x, y + 1), Vector2I.Down, m_MatchCount - iOffset - 1, newType, false) != null;
-                            }
-
-                            needReroll |= currentCheckHorizontal || currentCheckVertical;
-                        }
-
-                        // This is absolutely shit. Need to be a little bit smarter here.
-//                      needReroll = needReroll || _CheckLineRec(new Vector2I(x + 1, y), Vector2I.Right, 3, newType, false) != null;
-//                      needReroll = needReroll || _CheckLineRec(new Vector2I(x, y + 1), Vector2I.Down, 3, newType, false) != null;
-//                      needReroll = needReroll || _CheckLineRec(new Vector2I(x + 1, y), Vector2I.Right, 2, newType, false) != null
-//                                              && _CheckLineRec(new Vector2I(x - 1, y), Vector2I.Left, 1, newType, false) != null;
-//                      needReroll = needReroll || _CheckLineRec(new Vector2I(x + 1, y), Vector2I.Right, 1, newType, false) != null
-//                                              && _CheckLineRec(new Vector2I(x - 1, y), Vector2I.Left, 2, newType, false) != null;
-//                      needReroll = needReroll || _CheckLineRec(new Vector2I(x - 1, y), Vector2I.Left, 3, newType, false) != null;
-                    } while (needReroll);
+                    } while (CheckIfElementCreateMatchAtCoordinate(new Vector2I(x,y), newType));
                     
-                    newElement = Element.CreateElementFromType(newType);
+                    Element newElement = Element.CreateElementFromType(newType);
                     AddChild(newElement);
                     // TODO : This is icky
                     newElement.Init(
@@ -481,6 +448,36 @@ public partial class ElementBoard : Node2D
                 }
             }
         }
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public bool CheckIfElementCreateMatchAtCoordinate(Vector2I coord, ElementType type)
+    {
+        bool willCreateMatch = false;
+        for(int iOffset = 0; iOffset < m_MatchCount && willCreateMatch == false; iOffset++)
+        {
+            bool currentCheckVertical = true;
+            bool currentCheckHorizontal = true;
+            if (iOffset > 0)
+            {
+                currentCheckHorizontal = _CheckLineRec(new Vector2I(coord.X - 1, coord.Y), Vector2I.Left, iOffset, type, false) != null;
+                currentCheckVertical = _CheckLineRec(new Vector2I(coord.X, coord.Y - 1), Vector2I.Up, iOffset, type, false) != null;
+            }
+
+            if (iOffset < m_MatchCount - 1)
+            {
+                currentCheckHorizontal = currentCheckHorizontal && 
+                    _CheckLineRec(new Vector2I(coord.X + 1, coord.Y), Vector2I.Right, m_MatchCount - iOffset - 1, type, false) != null;
+                currentCheckVertical = currentCheckVertical && 
+                    _CheckLineRec(new Vector2I(coord.X, coord.Y + 1), Vector2I.Down, m_MatchCount - iOffset - 1, type, false) != null;
+            }
+
+            willCreateMatch |= currentCheckHorizontal || currentCheckVertical;
+        }
+
+        return willCreateMatch;
     }
 
     // -----------------------------------------------------------------
@@ -513,6 +510,48 @@ public partial class ElementBoard : Node2D
         }
 
         return m_GameBoard[coordinate.X, coordinate.Y];
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public Element GetElement(int x, int y)
+    {
+        return GetElement(new Vector2I(x,y));
+    }
+    
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    public void ComputeChunkElement(ref List<Vector2I> listToCompute, Vector2I selectedElement)
+    {
+        listToCompute.Clear();
+        Element element = GetElement(selectedElement);
+        if (element == null)
+        {
+            return;
+        }
+
+        _ComputeChunkElementRec(ref listToCompute, selectedElement, element.m_Type);
+    }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    private void _ComputeChunkElementRec(ref List<Vector2I> listToCompute, Vector2I selectedElement, ElementType elementType)
+    {
+        Element element = GetElement(selectedElement);
+        if (element == null || element.m_Type != elementType || listToCompute.Contains(selectedElement))
+        {
+            return;
+        }
+
+        listToCompute.Add(selectedElement);
+        _ComputeChunkElementRec(ref listToCompute, selectedElement + new Vector2I(0,1), elementType);
+        _ComputeChunkElementRec(ref listToCompute, selectedElement + new Vector2I(1,0), elementType);
+        _ComputeChunkElementRec(ref listToCompute, selectedElement + new Vector2I(-1,0), elementType);
+        _ComputeChunkElementRec(ref listToCompute, selectedElement + new Vector2I(0,-1), elementType);
     }
 
     // -----------------------------------------------------------------

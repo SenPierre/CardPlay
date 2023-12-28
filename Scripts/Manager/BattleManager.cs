@@ -244,14 +244,7 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
     public void ShuffleDeck()
     { 
-        int n = m_CardDeck.Count;  
-        while (n > 1) {  
-            n--;  
-            int k = RandomManager.GetIntRange(0, n - 1);  
-            Card value = m_CardDeck[k];  
-            m_CardDeck[k] = m_CardDeck[n];  
-            m_CardDeck[n] = value;  
-        }  
+        RandomManager.RandomizeList(ref m_CardDeck);
     }
 
 	// -----------------------------------------------------------------

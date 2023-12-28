@@ -68,8 +68,8 @@ public partial class Element : Node2D
         10,     // Element2
         10,     // Element3
         10,     // Element4
-        1,      // RockElement
-        0   // Void
+        0,      // RockElement
+        0       // Void
     };
 
     [Signal]
