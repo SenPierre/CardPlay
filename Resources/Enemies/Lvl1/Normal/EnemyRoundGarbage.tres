@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="EnemyData" load_steps=7 format=3 uid="uid://dyuew323ofhxg"]
 
-[ext_resource type="Resource" uid="uid://b6jsa4yvt56d" path="res://Resources/Cards/garbage_Exhaust.tres" id="2_gl7hj"]
+[ext_resource type="Resource" uid="uid://b6jsa4yvt56d" path="res://Resources/Cards/Garbage/garbage_Exhaust.tres" id="2_gl7hj"]
 [ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentAddCard.cs" id="3_70hit"]
 [ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentNone.cs" id="4_qdl0h"]
 [ext_resource type="Script" path="res://Scripts/Enemies/EnemyData.cs" id="5_wir1g"]

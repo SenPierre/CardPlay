@@ -213,6 +213,25 @@ public partial class ElementBoard : Node2D
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
+    public Vector2I GetElementCoordinate(Element elToGet)
+    {
+        for (int x = 0; x < m_Size; x++)
+        {
+            for (int y = 0; y < m_Size; y++)
+            {
+                Element el = m_GameBoard[x, y];
+                if (el == elToGet)
+                {
+                    return new Vector2I(x, y);
+                }
+            }
+        }
+        return new Vector2I(m_Size, m_Size);
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
     private ElementsMatch _CheckLineRec(Vector2I coordinate, Vector2I directionCheck, int lineMax, ElementType type, bool markForMatch)
     {
         if (coordinate.X >= m_Size || coordinate.Y >= m_Size || coordinate.X < 0 || coordinate.Y < 0)
@@ -432,9 +451,10 @@ public partial class ElementBoard : Node2D
                 if (m_GameBoard[x, y] == null)
                 {
                     ElementType newType;
+                    ElementDataBase elementDb = GameManager.GetManager().m_ElementDatabase;
                     do
                     {
-                        newType = Element.GetRandomType();
+                        newType = elementDb.GetRandomElementData();
                     } while (CheckIfElementCreateMatchAtCoordinate(new Vector2I(x,y), newType));
                     
                     Element newElement = Element.CreateElementFromType(newType);

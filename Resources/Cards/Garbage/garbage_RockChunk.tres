@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=8 format=3 uid="uid://cyxrq6ig222fu"]
+
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectTransform.cs" id="1_r2kdf"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectExhaust.cs" id="2_t3uel"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardSelection/CardSelectionElementChunk.cs" id="3_nb2ps"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardData.cs" id="4_6c5h7"]
+
+[sub_resource type="Resource" id="Resource_7q5ph"]
+script = ExtResource("1_r2kdf")
+newElement = 4
+
+[sub_resource type="Resource" id="Resource_gu4ld"]
+script = ExtResource("2_t3uel")
+
+[sub_resource type="Resource" id="Resource_cjetf"]
+script = ExtResource("3_nb2ps")
+m_MinChunkSize = 4
+
+[resource]
+script = ExtResource("4_6c5h7")
+m_ManaCost = 0
+m_Selection = SubResource("Resource_cjetf")
+m_Effects = [SubResource("Resource_7q5ph"), SubResource("Resource_gu4ld")]
+m_Name = "Pebble"
+m_Description = "Transform a 4+ size chunk into Rocks. Exhaust."
+m_Collectible = false

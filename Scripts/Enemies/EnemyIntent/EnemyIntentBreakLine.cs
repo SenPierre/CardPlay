@@ -20,9 +20,10 @@ public partial class EnemyIntentBreakLine : BaseEnemyIntent
             Vector2I coord = list[i];
             Element el = board.GetElement(coord);
             ElementType newType;
+            ElementDataBase elementDb = GameManager.GetManager().m_ElementDatabase;
             do
             {
-                newType = Element.GetRandomType();
+                newType = elementDb.GetRandomElementData();
             } while (newType == el.m_Type || board.CheckIfElementCreateMatchAtCoordinate(coord, newType));
             el.TransformElement(newType);
         }

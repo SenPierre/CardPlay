@@ -10,7 +10,11 @@ public partial class CardEffectDestroy : BaseCardEffect
         foreach(Vector2I coord in elementList)
         {
             Element el = gameBoard.GetElement(coord);
-            el.m_ToDelete = true;
+            
+            if (el != null && el.CanBeDestroyed())
+            {
+                el.m_ToDelete = true;
+            }
         }
         gameBoard.SetStateToDestroyElement();
     }

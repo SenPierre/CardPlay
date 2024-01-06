@@ -11,7 +11,7 @@ public partial class Card : Node2D
     public int m_ManaCost;
     public bool m_MarkedForExhaust = false;
     BaseCardSelection m_Selection;
-    BaseCardEffect m_Effect;
+    BaseCardEffect[] m_Effects;
     
 	// -----------------------------------------------------------------
 	// 
@@ -21,7 +21,7 @@ public partial class Card : Node2D
         Card newCard = ResourceLoader.Load<PackedScene>("res://Scenes/Prefabs/Cards/Card.tscn").Instantiate<Card>();
         newCard.m_ManaCost = data.m_ManaCost;
         newCard.m_Selection = data.m_Selection;
-        newCard.m_Effect =  data.m_Effect;
+        newCard.m_Effects =  data.m_Effects;
 
         newCard.m_ManaLabel.Text = data.m_ManaCost.ToString();
         newCard.m_DescLabel.Text = data.m_Description;
@@ -65,7 +65,11 @@ public partial class Card : Node2D
         else if (m_Selection.m_SelectionStatus == SelectionStatus.SelectionComplete)
         {
             List<Vector2I> list = m_Selection.m_ElementList;
-            m_Effect.ApplyEffect(gameBoard, this, list);
+
+            foreach(BaseCardEffect effect in m_Effects)
+            {
+                effect.ApplyEffect(gameBoard, this, list);
+            }
             m_Selection.m_ElementList.Clear();
             BattleManager.GetManager().DropCard();
             BattleManager.GetManager().PayManaCost(m_ManaCost);
@@ -95,7 +99,7 @@ public partial class Card : Node2D
         Card newCard = ResourceLoader.Load<PackedScene>("res://Scenes/Prefabs/Cards/Card.tscn").Instantiate<Card>();
         newCard.m_ManaCost = m_ManaCost;
         newCard.m_Selection = m_Selection;
-        newCard.m_Effect =  m_Effect;
+        newCard.m_Effects =  m_Effects;
 
         newCard.m_ManaLabel.Text = m_ManaCost.ToString();
         newCard.m_DescLabel.Text = m_DescLabel.Text;

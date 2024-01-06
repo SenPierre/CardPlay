@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CardDeckData" load_steps=3 format=3 uid="uid://bm138nowc1u8u"]
 
-[ext_resource type="Resource" uid="uid://dgdvqchkhcasc" path="res://Resources/Cards/common_RotateBoard.tres" id="1_n6sj8"]
+[ext_resource type="Resource" uid="uid://dgdvqchkhcasc" path="res://Resources/Cards/Common/common_RotateBoard.tres" id="1_n6sj8"]
 [ext_resource type="Script" path="res://Scripts/Cards/CardDeckData.cs" id="5_6lvli"]
 
 [resource]

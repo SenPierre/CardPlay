@@ -12,7 +12,7 @@ public partial class CardDataBase
     // -----------------------------------------------------------------
     public void Init()
     {
-        string[] allCardsData = Directory.GetFiles("Resources/Cards");
+        string[] allCardsData = Directory.GetFiles("Resources/Cards", "*", SearchOption.AllDirectories);
         foreach(string cardDataFile in allCardsData)
         {
             CardData cardData = ResourceLoader.Load<CardData>(cardDataFile);

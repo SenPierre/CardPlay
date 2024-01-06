@@ -6,6 +6,7 @@ public partial class MapManager : Node2D
 {
     // STATIC PART ----------------------------
     static MapManager g_Manager;
+    const float c_MapIconLinkOffset = 30.0f;
 
 	// -----------------------------------------------------------------
 	// 
@@ -159,8 +160,8 @@ public partial class MapManager : Node2D
     {
         Line2D newLink = m_LinkPrefab.Instantiate<Line2D>();
         m_MapStartNode.AddChild(newLink);
-        newLink.SetPointPosition(0, nodeA.Position.MoveToward(nodeB.Position, 30.0f));
-        newLink.SetPointPosition(1, nodeB.Position.MoveToward(nodeA.Position, 30.0f));
+        newLink.SetPointPosition(0, nodeA.Position.MoveToward(nodeB.Position, c_MapIconLinkOffset));
+        newLink.SetPointPosition(1, nodeB.Position.MoveToward(nodeA.Position, c_MapIconLinkOffset));
         
     }
 }

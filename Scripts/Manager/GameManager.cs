@@ -21,6 +21,7 @@ public partial class GameManager : Node2D
     [Export] public EnemyDataPool[] m_EnemyPool;
 
     public CardDataBase m_CardDatabase = new CardDataBase();
+    public ElementDataBase m_ElementDatabase = new ElementDataBase();
     public StateMachine m_StateMachine = new StateMachine();
 
     public Node2D m_CurrentSubScene = null;
@@ -38,6 +39,7 @@ public partial class GameManager : Node2D
     public override void _EnterTree()
     {
         m_CardDatabase.Init();
+        m_ElementDatabase.Init();
         base._EnterTree();
     }
 

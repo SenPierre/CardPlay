@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ElementData" load_steps=4 format=3 uid="uid://de8scr2g1ldmh"]
+
+[ext_resource type="PackedScene" uid="uid://kckklqb3btpe" path="res://Scenes/Prefabs/Elements/BombElementBehavior.tscn" id="1_4x07r"]
+[ext_resource type="Script" path="res://Scripts/Elements/ElementData.cs" id="2_cdp04"]
+[ext_resource type="Texture2D" uid="uid://6clv8cusm0m0" path="res://Textures/Elements/Bomb.png" id="2_e4io6"]
+
+[resource]
+script = ExtResource("2_cdp04")
+m_Type = 6
+m_Sprite = ExtResource("2_e4io6")
+m_RandomWeight = 0
+m_CanMatch = false
+m_CanBeDestroyed = true
+m_ElementBehaviorNode = ExtResource("1_4x07r")

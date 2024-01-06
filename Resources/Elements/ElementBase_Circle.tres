@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ElementData" load_steps=3 format=3 uid="uid://dujl4em5vmtak"]
+
+[ext_resource type="Texture2D" uid="uid://bev6bkqi5t3x8" path="res://Textures/Elements/El2.png" id="1_vmy1a"]
+[ext_resource type="Script" path="res://Scripts/Elements/ElementData.cs" id="2_20hxk"]
+
+[resource]
+script = ExtResource("2_20hxk")
+m_Type = 1
+m_Sprite = ExtResource("1_vmy1a")
+m_RandomWeight = 10
+m_CanMatch = true
+m_CanBeDestroyed = true

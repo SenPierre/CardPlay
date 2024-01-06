@@ -2,16 +2,6 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public enum ElementType {
-    Element1,
-    Element2,
-    Element3,
-    Element4,
-    // -----------
-    RockElement,
-    Void,
-}
-
 public enum ElementMovementAnimation {
     Default,
     RotateClockwise,
@@ -51,33 +41,17 @@ public partial class Element : Node2D
 {
     static public float ElementSize = 80.0f;
     static public float ElementHalfSize = 40.0f;
- 
-    static public Godot.Collections.Array g_elementCanMatch = new Godot.Collections.Array
-    {
-        true,   // AttackElement
-        true,   // Element2
-        true,   // Element3
-        true,   // Element4
-        false,  // RockElement
-        false,  // Void
-    };
-
-    static public Godot.Collections.Array g_elementRandomWeight = new Godot.Collections.Array
-    {
-        10,     // AttackElement
-        10,     // Element2
-        10,     // Element3
-        10,     // Element4
-        0,      // RockElement
-        0       // Void
-    };
 
     [Signal]
     public delegate void ElementTransformedEventHandler();
 
     [Export] Sprite2D m_Sprite;
-    public ElementType m_Type;
+    public ElementType m_Type = ElementType.Void;
     public bool m_ToDelete;
+
+    private ElementData m_data = null;
+
+    private BaseElementBehavior m_Behavior = null;
 
     private bool m_IsMoving = false;
 
@@ -93,35 +67,6 @@ public partial class Element : Node2D
     private ElementMovementAnimation m_Animation;
 
     private Dictionary<Vector2, ElementsMatch> m_Matches = new Dictionary<Vector2, ElementsMatch>();
-
-	// -----------------------------------------------------------------
-	// 
-	// -----------------------------------------------------------------
-    public static ElementType GetRandomType()
-    {
-        int randomMax = 0;
-        foreach (ElementType type in Enum.GetValues(typeof(ElementType)))
-        {
-            randomMax += (int)g_elementRandomWeight[(int)type];
-        }
-
-        int randomGot = RandomManager.GetIntRange(0, randomMax);
-
-        ElementType newType = ElementType.RockElement;
-        foreach (ElementType type in Enum.GetValues(typeof(ElementType)))
-        {
-            newType = type;
-            randomGot -= (int)g_elementRandomWeight[(int)type];
-            if (randomGot <= 0)
-            {
-                break;
-            }
-        }
-
-        //GD.Print(randomGot + " > " + newType.ToString());
-
-        return newType;
-    }
 
 	// -----------------------------------------------------------------
 	// 
@@ -167,7 +112,6 @@ public partial class Element : Node2D
                 case ElementMovementAnimation.RotateAntiClockwise: _MoveRotate(true);break;
                 case ElementMovementAnimation.FadeOutFadeIn: _MoveFadeOutFadeIn(); break;
             }
-            
         }
 
 		base._Process(delta);
@@ -188,14 +132,24 @@ public partial class Element : Node2D
     public void SetElement(ElementType element)
     {
         m_Type = element;
-        switch(element)
+        
+        if (m_Behavior != null)
         {
-            case ElementType.Element1: m_Sprite.Texture = ResourceLoader.Load<Texture2D>("res://Textures/Elements/El1.png"); break;
-            case ElementType.Element2: m_Sprite.Texture = ResourceLoader.Load<Texture2D>("res://Textures/Elements/El2.png"); break;
-            case ElementType.Element3: m_Sprite.Texture = ResourceLoader.Load<Texture2D>("res://Textures/Elements/El3.png"); break;
-            case ElementType.Element4: m_Sprite.Texture = ResourceLoader.Load<Texture2D>("res://Textures/Elements/El4.png"); break;
-            case ElementType.RockElement: m_Sprite.Texture = ResourceLoader.Load<Texture2D>("res://Textures/Elements/Stone.png"); break;
-            case ElementType.Void: m_Sprite.Texture = ResourceLoader.Load<Texture2D>("res://Textures/Elements/Void.png"); break;
+            m_Behavior.ClearBehavior();
+            m_Behavior.QueueFree();
+        }
+
+        ElementDataBase db = GameManager.GetManager().m_ElementDatabase;
+        m_data = db.GetDataFromType(element);
+
+        m_Sprite.Texture = m_data.m_Sprite;
+
+        if (m_data.m_ElementBehaviorNode != null && m_data.m_ElementBehaviorNode != null)
+        {
+            m_Behavior = m_data.m_ElementBehaviorNode.Instantiate<BaseElementBehavior>();
+            AddChild(m_Behavior);
+            m_Behavior.Position = Vector2.Zero;
+            m_Behavior.InitBehavior(this);
         }
     }
 
@@ -252,7 +206,7 @@ public partial class Element : Node2D
 	// -----------------------------------------------------------------
     public bool CanMatch()
     {
-        return (bool)g_elementCanMatch[(int)m_Type];
+        return m_data.m_CanMatch;
     }
 
 	// -----------------------------------------------------------------
@@ -260,7 +214,7 @@ public partial class Element : Node2D
 	// -----------------------------------------------------------------
     public bool CanBeDestroyed()
     {
-        return m_Type != ElementType.Void;
+        return m_data.m_CanBeDestroyed;
     }
     
 	// -----------------------------------------------------------------

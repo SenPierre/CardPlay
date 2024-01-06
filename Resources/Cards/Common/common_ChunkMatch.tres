@@ -4,17 +4,18 @@
 [ext_resource type="Script" path="res://Scripts/Cards/CardSelection/CardSelectionElementChunk.cs" id="2_q4vy8"]
 [ext_resource type="Script" path="res://Scripts/Cards/CardData.cs" id="3_l1d3q"]
 
-[sub_resource type="Resource" id="Resource_jixtc"]
+[sub_resource type="Resource" id="Resource_sajmd"]
 script = ExtResource("1_ds107")
 
 [sub_resource type="Resource" id="Resource_bs5vg"]
 script = ExtResource("2_q4vy8")
+m_MinChunkSize = 0
 
 [resource]
 script = ExtResource("3_l1d3q")
 m_ManaCost = 1
 m_Selection = SubResource("Resource_bs5vg")
-m_Effect = SubResource("Resource_jixtc")
+m_Effects = [SubResource("Resource_sajmd")]
 m_Name = "Group Pogo"
 m_Description = "Make a match with a chunk of orthogonnaly linked elements"
 m_Collectible = true
