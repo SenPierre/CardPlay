@@ -62,6 +62,14 @@ public partial class ElementBoard : Node2D
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
+    public bool IsBoardIdle()
+    {
+        return m_StateMachine.IsCurrentState(State_WaitingForInput);
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
     public void BoardInputEvent(Node viewport, InputEvent generatedEvent, int shapeIdx)
     {
         m_Helper.ClearHint();

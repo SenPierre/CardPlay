@@ -1,21 +1,22 @@
 [gd_resource type="Resource" script_class="EnemyData" load_steps=6 format=3 uid="uid://ogijxmu6ckms"]
 
 [ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentNone.cs" id="1_nnnf7"]
-[ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentAddRandomRocks.cs" id="2_5g08f"]
+[ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentAddElementToBoard.cs" id="2_b85q1"]
 [ext_resource type="Script" path="res://Scripts/Enemies/EnemyData.cs" id="3_rmr47"]
 
 [sub_resource type="Resource" id="Resource_ex5qi"]
 script = ExtResource("1_nnnf7")
 m_LimitBase = 1200
 
-[sub_resource type="Resource" id="Resource_l6e7x"]
-script = ExtResource("2_5g08f")
-m_RockCount = 6
-m_LimitBase = 700
+[sub_resource type="Resource" id="Resource_hjgsl"]
+script = ExtResource("2_b85q1")
+m_Count = 3
+m_Type = 4
+m_LimitBase = 500
 
 [resource]
 script = ExtResource("3_rmr47")
 m_BattleTarget = 6000
 m_LimitIncrement = 200
-m_EnemyIntents = Array[Object]([SubResource("Resource_ex5qi"), SubResource("Resource_l6e7x")])
+m_EnemyIntents = Array[Object]([SubResource("Resource_ex5qi"), SubResource("Resource_hjgsl")])
 m_BoardLayoutRes = "res://Resources/EnemyBoard/BoardCross.txt"

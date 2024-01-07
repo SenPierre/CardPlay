@@ -29,6 +29,13 @@ public partial class BattleManager : Node2D
     [Export] public Node2D m_HandNode;
     [Export] public Node2D m_DeckNode;
     [Export] public Node2D m_DiscardNode;
+    
+    [Export] public Node2D m_ModifierNode;
+
+    [Export] public int m_MaxMana = 3;
+
+    [Signal]
+    public delegate void OnTurnEndEventHandler();
 
     private int m_enemyIndex = 0;
 
@@ -46,6 +53,8 @@ public partial class BattleManager : Node2D
     List<Card> m_CardDiscard = new List<Card>();
 
     public Card m_CurrentHeldCard;
+
+    List<BaseModifier> m_Modifiers = new List<BaseModifier>();
 
     int m_CurrentMana = 0;
     
@@ -395,7 +404,7 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
     public void ResetManaToMax()
     {
-        m_CurrentMana = 3;
+        m_CurrentMana = m_MaxMana;
         m_ManaLabel.Text = m_CurrentMana.ToString();
     }
 
@@ -441,6 +450,53 @@ public partial class BattleManager : Node2D
             }
         }
     }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    public void AddModifier(BaseModifierData modifierData)
+    {
+        ModifierDisplay newDisplay = ResourceLoader.Load<PackedScene>("res://Scenes/Prefabs/ModifierDisplay.tscn").Instantiate<ModifierDisplay>();
+        m_ModifierNode.AddChild(newDisplay);
+
+        BaseModifier newModifier = modifierData.CreateModifierFromData(newDisplay);
+        m_Modifiers.Add(newModifier);
+        _UpdateModifiersPosition();
+    }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    public void RemoveModifier(BaseModifier modifier)
+    {
+        m_Modifiers.Remove(modifier);
+        modifier.Clear();
+    }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    public void RemoveAllModifiers()
+    {
+        Vector2 position = Vector2.Zero;
+        while(m_Modifiers.Count > 0)
+        {
+            RemoveModifier(m_Modifiers[0]);
+        }
+    }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    private void _UpdateModifiersPosition()
+    {
+        Vector2 position = Vector2.Zero;
+        foreach(BaseModifier modifier in m_Modifiers)
+        {
+            modifier.UpdateModifierDisplayPosition(position);
+            position += Vector2.Right * 50.0f;
+        }
+    }
     
 	// -----------------------------------------------------------------
 	// 
@@ -478,6 +534,7 @@ public partial class BattleManager : Node2D
         {
             case StateFunctionCall.Enter: 
             {
+                ElementBoard.GetBoard().SetStateToMoveElement();
                 ResetManaToMax();
                 DrawCard(5);
                 break;
@@ -505,21 +562,25 @@ public partial class BattleManager : Node2D
         {
             case StateFunctionCall.Enter: 
             {
-                // N/A
+                EmitSignal(SignalName.OnTurnEnd);
                 break;
             }
             case StateFunctionCall.Update: 
             {
-                ApplyEnemyAttack();
+                if (ElementBoard.GetBoard().IsBoardIdle())
+                {
+                    ApplyEnemyAttack();
 
-                if (m_PlayerLife > 0)
-                {
-                    return State_PlayerTurn;
+                    if (m_PlayerLife > 0)
+                    {
+                        return State_PlayerTurn;
+                    }
+                    else
+                    {
+                        return State_GAMEOVER;
+                    }
                 }
-                else
-                {
-                    return State_GAMEOVER;
-                }
+                break;
             }
             case StateFunctionCall.Exit: 
             {
@@ -544,6 +605,7 @@ public partial class BattleManager : Node2D
                 DiscardAll();
                 ReshuffleDiscardInDeck(false);
                 ClearGameDeck();
+                RemoveAllModifiers();
                 GameManager.GetManager().EndBattle();
                 break;
             }

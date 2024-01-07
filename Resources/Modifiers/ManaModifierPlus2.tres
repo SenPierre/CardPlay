@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ModifierChangeMaxManaData" load_steps=3 format=3 uid="uid://e2uo8s12yacv"]
+
+[ext_resource type="Texture2D" uid="uid://uhucealg4fvx" path="res://Textures/ModifierSprite/ManaModifier.png" id="1_ol8ld"]
+[ext_resource type="Script" path="res://Scripts/Modifier/ModifierChangeMaxManaData.cs" id="2_eo7n4"]
+
+[resource]
+script = ExtResource("2_eo7n4")
+m_ManaModifier = 2
+m_TurnDuration = 1
+m_Sprite = ExtResource("1_ol8ld")
+m_BaseDescription = "For [X] turn(s), you have [Y] mana at the start of your turn"

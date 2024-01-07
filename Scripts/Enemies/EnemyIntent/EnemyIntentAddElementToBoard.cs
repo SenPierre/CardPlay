@@ -4,10 +4,11 @@ using System.Collections.Generic;
 
 
 [GlobalClass]
-public partial class EnemyIntentAddRandomRocks : BaseEnemyIntent
+public partial class EnemyIntentAddElementToBoard : BaseEnemyIntent
 {
     // TODO
-    [Export] public int m_RockCount;
+    [Export] public int m_Count;
+    [Export] public ElementType m_Type;
 
 	// -----------------------------------------------------------------
 	// 
@@ -15,7 +16,7 @@ public partial class EnemyIntentAddRandomRocks : BaseEnemyIntent
     public override void ApplyIntent(Enemy enemy)
     {
         ElementBoard gameBoard = ElementBoard.GetBoard();
-        for (int i = 0; i < m_RockCount; i++)
+        for (int i = 0; i < m_Count; i++)
         {
             Vector2I newRandom = new Vector2I();
 
@@ -26,7 +27,7 @@ public partial class EnemyIntentAddRandomRocks : BaseEnemyIntent
 
             
             Element el = gameBoard.GetElement(newRandom);
-            el.TransformElement(ElementType.RockElement);
+            el.TransformElement(m_Type);
         }
     }
 

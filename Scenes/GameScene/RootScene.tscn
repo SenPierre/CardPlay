@@ -20,9 +20,6 @@ m_MapScene = ExtResource("4_fjgeq")
 m_GrandmaData = ExtResource("5_o47du")
 m_EnemyPool = Array[Object]([ExtResource("6_ov81h")])
 
-[node name="TimeManager" type="Node2D" parent="."]
-script = ExtResource("2_qqcu1")
-
 [node name="CardManager" type="Node2D" parent="."]
 position = Vector2(-1, 0)
 script = ExtResource("3_v33x5")
@@ -31,3 +28,6 @@ m_StarterDeck = ExtResource("9_2mhlr")
 [node name="RandomManager" type="Node2D" parent="."]
 position = Vector2(0, -3)
 script = ExtResource("5_d8kwp")
+
+[node name="TimeManager" type="Node2D" parent="."]
+script = ExtResource("2_qqcu1")

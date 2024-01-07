@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ElementData" load_steps=4 format=3 uid="uid://cwhvs750b6n6d"]
+
+[ext_resource type="PackedScene" uid="uid://b1yqmm7gbv6bk" path="res://Scenes/Prefabs/Elements/MoldElementBehavior.tscn" id="1_1l135"]
+[ext_resource type="Texture2D" uid="uid://bdbywbklklbsu" path="res://Textures/Elements/Mold.png" id="2_yuou0"]
+[ext_resource type="Script" path="res://Scripts/Elements/ElementData.cs" id="3_yt8cu"]
+
+[resource]
+script = ExtResource("3_yt8cu")
+m_Type = 7
+m_Sprite = ExtResource("2_yuou0")
+m_RandomWeight = 0
+m_CanMatch = true
+m_CanBeDestroyed = true
+m_ElementBehaviorNode = ExtResource("1_1l135")

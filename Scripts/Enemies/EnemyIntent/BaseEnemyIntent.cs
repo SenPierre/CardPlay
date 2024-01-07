@@ -4,7 +4,7 @@ using System;
 [GlobalClass]
 public abstract partial class BaseEnemyIntent : Resource
 {
-   [Export] public int m_LimitBase = 500;
+   [Export] public int m_LimitBase = 0;
 
     public abstract void ApplyIntent(Enemy enemy);
     public abstract void ShowIntent(Enemy enemy, Vector2 m_Offset);

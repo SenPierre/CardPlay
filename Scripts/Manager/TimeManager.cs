@@ -24,6 +24,7 @@ public partial class TimeManager : Node2D
 	// -----------------------------------------------------------------
 	public override void _Ready()
 	{
+        GD.Print("Huh");
         g_Manager = this;
         base._Ready();
 	}

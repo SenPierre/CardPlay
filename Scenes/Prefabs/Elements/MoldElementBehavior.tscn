@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://b1yqmm7gbv6bk"]
+
+[ext_resource type="Script" path="res://Scripts/Elements/ElementBehavior/ElementBehaviorMold.cs" id="1_xdkx8"]
+
+[node name="MoldElementBehavior" type="Node2D"]
+texture_filter = 1
+script = ExtResource("1_xdkx8")

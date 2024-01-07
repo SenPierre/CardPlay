@@ -223,6 +223,11 @@ public partial class Element : Node2D
     public void RemovedFromBoard()
     {
         // Animation, VFX, this kind of thing. For now just remove it.
+        if (m_Behavior != null)
+        {
+            m_Behavior.ClearBehavior();
+            m_Behavior.QueueFree();
+        }
         QueueFree();
     }
 

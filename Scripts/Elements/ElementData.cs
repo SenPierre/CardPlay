@@ -10,6 +10,7 @@ public enum ElementType {
     Void,
     // -----------
     Bomb2,
+    Mold,
 }
 
 

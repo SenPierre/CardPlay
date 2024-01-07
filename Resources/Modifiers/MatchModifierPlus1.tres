@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ModifierChangeMatchCountData" load_steps=3 format=3 uid="uid://rdgk711e1hmj"]
+
+[ext_resource type="Texture2D" uid="uid://b6h4juojtfen3" path="res://Textures/ModifierSprite/MatchCountModifier.png" id="1_jlvey"]
+[ext_resource type="Script" path="res://Scripts/Modifier/ModifierChangeMatchCountData.cs" id="2_irmve"]
+
+[resource]
+script = ExtResource("2_irmve")
+m_MatchModifier = 1
+m_TurnDuration = 1
+m_Sprite = ExtResource("1_jlvey")
+m_BaseDescription = "For [X] turn(s), matches require [Y] element(s)."
