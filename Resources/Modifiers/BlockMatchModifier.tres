@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ModifierBlockMatchUntilEndOfTurnData" load_steps=3 format=3 uid="uid://boob6m6oc0rpq"]
+
+[ext_resource type="Script" path="res://Scripts/Modifier/ModifierBlockMatchUntilEndOfTurnData.cs" id="1_cv7re"]
+[ext_resource type="Texture2D" uid="uid://c2kyt63mo0gip" path="res://Textures/ModifierSprite/BlockMatchModifier.png" id="1_yxy7e"]
+
+[resource]
+script = ExtResource("1_cv7re")
+m_TurnDuration = 1
+m_Sprite = ExtResource("1_yxy7e")
+m_BaseDescription = "For [X] turn(s), matches are blocked until the end of your turn."

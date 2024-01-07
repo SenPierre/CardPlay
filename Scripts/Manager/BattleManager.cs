@@ -563,6 +563,7 @@ public partial class BattleManager : Node2D
             case StateFunctionCall.Enter: 
             {
                 EmitSignal(SignalName.OnTurnEnd);
+                ElementBoard.GetBoard().ForceCheckBoardForMatch();
                 break;
             }
             case StateFunctionCall.Update: 

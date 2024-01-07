@@ -37,6 +37,8 @@ public partial class ElementBoard : Node2D
 
     private float m_MatchMultiplier;
 
+    private int m_BlockingCheckUntilEndOfTurn;
+
     // -----------------------------------------------------------------
     // Called when the node enters the scene tree for the first time.
     // -----------------------------------------------------------------
@@ -198,7 +200,42 @@ public partial class ElementBoard : Node2D
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
-    public bool CheckBoardState()
+    public bool CanCheckBoard()
+    {
+        return m_BlockingCheckUntilEndOfTurn == 0 || BattleManager.GetManager().IsEnemyTurn();
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public void RequestBlockingCheckUntilEndOfTurn()
+    {
+        m_BlockingCheckUntilEndOfTurn++;
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public void RequestUnblockingCheckUntilEndOfTurn()
+    {
+        m_BlockingCheckUntilEndOfTurn--;
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public void ForceCheckBoardForMatch()
+    {
+        if (_CheckBoardState())
+        {
+            SetStateToDestroyElement();
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    private bool _CheckBoardState()
     {
         bool needRecheck = false;
 
@@ -656,7 +693,7 @@ public partial class ElementBoard : Node2D
                     if (m_MovingElementLerp > 1.0f)
                     {
                         m_MovingElementLerp = 1.0f;
-                        if (CheckBoardState())
+                        if (CanCheckBoard() && _CheckBoardState())
                         {
                             return State_DestroyElements;
                         }
