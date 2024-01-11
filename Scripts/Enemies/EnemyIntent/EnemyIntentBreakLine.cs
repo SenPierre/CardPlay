@@ -49,7 +49,7 @@ public partial class EnemyIntentBreakLine : BaseEnemyIntent
             for (int y = 0; y < board.m_Size; y++)
             {
                 Vector2I coord = new Vector2I(x,y);
-                if (board.CheckCoordinate(coord))
+                if (board.CheckCoordinateForTransform(coord))
                 {
                     ElementType typeToCheck = board.GetElement(coord).m_Type;
                     if ((x > 0 && x < board.m_Size - 1 && typeToCheck == board.GetElement(x + 1, y).m_Type && typeToCheck == board.GetElement(x - 1, y).m_Type)

@@ -40,7 +40,7 @@ public partial class ElementBehaviorMold : BaseElementBehavior
         {
             Vector2I chosenNewMold = directionList[0] + currentMoldPos;
             directionList.RemoveAt(0);
-            if (board.CheckCoordinate(chosenNewMold))
+            if (board.CheckCoordinateForTransform(chosenNewMold))
             {
                 Element el = board.GetElement(chosenNewMold);
                 if (el.CanBeDestroyed() 

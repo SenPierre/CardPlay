@@ -7,13 +7,14 @@
 [sub_resource type="Resource" id="Resource_ubdg3"]
 script = ExtResource("1_guwuk")
 
-[sub_resource type="Resource" id="Resource_clj2y"]
+[sub_resource type="Resource" id="Resource_ockh3"]
 script = ExtResource("2_huj3e")
+m_SelectionKind = 0
 
 [resource]
 script = ExtResource("1_cbjga")
 m_ManaCost = 1
-m_Selection = SubResource("Resource_clj2y")
+m_Selection = SubResource("Resource_ockh3")
 m_Effects = [SubResource("Resource_ubdg3")]
 m_Name = "Swap"
 m_Description = "Swap 2 adjacent elements"

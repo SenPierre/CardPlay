@@ -108,7 +108,7 @@ public partial class ElementBoard : Node2D
     {
         foreach (Vector2I coord in elementList)
         {
-            if (CheckCoordinate(coord) == false)
+            if (CheckCoordinateForMovement(coord) == false)
             {
                 return;
             }
@@ -195,6 +195,38 @@ public partial class ElementBoard : Node2D
             && coord.Y >= 0 && coord.Y < m_Size
             && m_GameBoard[coord.X, coord.Y] != null
             && m_GameBoard[coord.X, coord.Y].m_Type != ElementType.Void;
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public bool CheckCoordinateForTransform(Vector2I coord)
+    {
+        return CheckCoordinate(coord) && m_GameBoard[coord.X, coord.Y].CanBeTransformed();
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public bool CheckCoordinateForMovement(Vector2I coord)
+    {
+        return CheckCoordinate(coord) && m_GameBoard[coord.X, coord.Y].CanBeMoved();
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public bool CheckCoordinateForDestroy(Vector2I coord)
+    {
+        return CheckCoordinate(coord) && m_GameBoard[coord.X, coord.Y].CanBeDestroyed();
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public bool CheckCoordinateForMatch(Vector2I coord)
+    {
+        return CheckCoordinate(coord) && m_GameBoard[coord.X, coord.Y].CanMatch();
     }
 
     // -----------------------------------------------------------------
@@ -390,9 +422,9 @@ public partial class ElementBoard : Node2D
                     {
                         ySearch--;
                         el = m_GameBoard[x, ySearch];
-                    } while ((el == null || el.m_Type == ElementType.Void) && ySearch > 0);
+                    } while ((el == null || el.CanFall() == false) && ySearch > 0);
 
-                    if (el != null && el.m_Type != ElementType.Void)
+                    if (el != null && el.CanFall())
                     {
                         returnVal = true;
                         m_GameBoard[x, y] = m_GameBoard[x, ySearch];

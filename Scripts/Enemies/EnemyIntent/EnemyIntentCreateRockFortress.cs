@@ -45,7 +45,7 @@ public partial class EnemyIntentCreateRockFortress : BaseEnemyIntent
     private void _CheckTransform(Vector2I coordinate, ElementType type)
     {
         ElementBoard board = ElementBoard.GetBoard();
-        if (board.CheckCoordinate(coordinate))
+        if (board.CheckCoordinateForTransform(coordinate))
         {
             Element el = board.GetElement(coordinate);
             if (el != null && el.m_Type != type)

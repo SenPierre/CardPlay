@@ -19,4 +19,4 @@ script = ExtResource("1_g6748")
 m_BattleTarget = 50000
 m_LimitIncrement = 0
 m_EnemyIntents = Array[Object]([SubResource("Resource_om68o"), SubResource("Resource_i61xj")])
-m_BoardLayoutRes = "res://Resources/EnemyBoard/BoardFull.txt"
+m_BoardLayoutRes = "res://Resources/EnemyBoard/BoardCross.txt"

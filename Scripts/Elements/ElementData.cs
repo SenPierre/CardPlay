@@ -19,8 +19,11 @@ public partial class ElementData : Resource
 {
     [Export] public ElementType m_Type;
     [Export] public Texture2D m_Sprite;
-    [Export] public int m_RandomWeight;
-    [Export] public bool m_CanMatch;
-    [Export] public bool m_CanBeDestroyed;
+    [Export] public int m_RandomWeight = 0;
+    [Export] public bool m_CanMatch = false;
+    [Export] public bool m_CanBeDestroyed = true;
+    [Export] public bool m_CanBeMoved = true;
+    [Export] public bool m_CanBeTransformed = true;
+    [Export] public bool m_CanFall = true;
     [Export] public PackedScene m_ElementBehaviorNode;
 }

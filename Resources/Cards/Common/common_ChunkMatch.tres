@@ -10,6 +10,7 @@ script = ExtResource("1_ds107")
 [sub_resource type="Resource" id="Resource_bs5vg"]
 script = ExtResource("2_q4vy8")
 m_MinChunkSize = 0
+m_SelectionKind = 3
 
 [resource]
 script = ExtResource("3_l1d3q")

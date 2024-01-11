@@ -11,7 +11,7 @@ public partial class CardSelectionAdjacent : BaseCardSelection
     public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset)
     {
         m_ElementList.Clear();
-        if (gameBoard.CheckCoordinate(selectedElement) == false)
+        if (_CheckCoordinate(gameBoard, selectedElement) == false)
         {
             m_SelectionStatus = SelectionStatus.SelectionInvalid;
             return;
@@ -19,7 +19,7 @@ public partial class CardSelectionAdjacent : BaseCardSelection
 
         Vector2I AdjacentCoordinate = selectedElement + ComputeAdjacentOffset(clickCenterOffset);
 
-        if (gameBoard.CheckCoordinate(AdjacentCoordinate) == false)
+        if (_CheckCoordinate(gameBoard, AdjacentCoordinate) == false)
         {
             m_SelectionStatus = SelectionStatus.SelectionInvalid;
             return;

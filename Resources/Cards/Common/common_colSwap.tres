@@ -9,6 +9,7 @@ script = ExtResource("1_x0r1i")
 
 [sub_resource type="Resource" id="Resource_rfckd"]
 script = ExtResource("2_v61to")
+m_SelectionKind = 0
 
 [resource]
 script = ExtResource("3_5pdgj")

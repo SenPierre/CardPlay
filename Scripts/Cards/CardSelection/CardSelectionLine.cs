@@ -15,7 +15,7 @@ public partial class CardSelectionLine : BaseCardSelection
         for (int x = 0; x < gameBoard.m_Size; x++)
         {
             Vector2I elCoord = new Vector2I(x, selectedElement.Y);
-            if (gameBoard.CheckCoordinate(elCoord))
+            if (_CheckCoordinate(gameBoard, elCoord))
             {
                 m_ElementList.Add(elCoord);
             }

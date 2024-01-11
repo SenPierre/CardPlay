@@ -10,3 +10,6 @@ m_Sprite = ExtResource("1_agsop")
 m_RandomWeight = 0
 m_CanMatch = false
 m_CanBeDestroyed = false
+m_CanBeMoved = false
+m_CanBeTransformed = false
+m_CanFall = false

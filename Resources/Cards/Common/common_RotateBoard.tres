@@ -10,6 +10,7 @@ m_Anticlockwise = false
 
 [sub_resource type="Resource" id="Resource_unn4u"]
 script = ExtResource("2_mmss7")
+m_SelectionKind = 4
 
 [resource]
 script = ExtResource("1_j05ee")

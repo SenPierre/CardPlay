@@ -11,4 +11,6 @@ m_Sprite = ExtResource("2_yuou0")
 m_RandomWeight = 0
 m_CanMatch = true
 m_CanBeDestroyed = true
+m_CanBeMoved = true
+m_CanFall = true
 m_ElementBehaviorNode = ExtResource("1_1l135")
