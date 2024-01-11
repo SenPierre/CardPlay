@@ -186,6 +186,14 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
+    public bool IsEndOfTurn()
+    {
+        return m_StateMachine.IsCurrentState(State_TurnEnd);
+    }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
     public bool IsEnemyTurn()
     {
         return m_StateMachine.IsCurrentState(State_EnemyTurn);
@@ -198,7 +206,7 @@ public partial class BattleManager : Node2D
     {
         if (IsPlayerTurn())
         {
-            m_StateMachine.SetCurrentStateFunction(State_EnemyTurn);
+            m_StateMachine.SetCurrentStateFunction(State_TurnEnd);
         }
     }
 
@@ -556,14 +564,42 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public StateFunc State_EnemyTurn(StateFunctionCall a_Call)
+    public StateFunc State_TurnEnd(StateFunctionCall a_Call)
     {
         switch (a_Call)
         {
             case StateFunctionCall.Enter: 
             {
                 EmitSignal(SignalName.OnTurnEnd);
-                ElementBoard.GetBoard().ForceCheckBoardForMatch();
+                break;
+            }
+            case StateFunctionCall.Update: 
+            {
+                if (ElementBoard.GetBoard().IsBoardIdle())
+                {
+                    ElementBoard.GetBoard().ForceCheckBoardForMatch();
+                    return State_EnemyTurn;
+                }
+                break;
+            }
+            case StateFunctionCall.Exit: 
+            {
+                // N/A
+                break;
+            }
+        }
+        return null;
+    }
+    
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    public StateFunc State_EnemyTurn(StateFunctionCall a_Call)
+    {
+        switch (a_Call)
+        {
+            case StateFunctionCall.Enter: 
+            {
                 break;
             }
             case StateFunctionCall.Update: 

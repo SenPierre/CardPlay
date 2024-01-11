@@ -17,19 +17,23 @@ public class StateMachine
 	public void SetCurrentStateFunction(StateFunc a_newState)
 	{
 		Debug.Assert(m_Lock == false, "State Machine Lock disruption. Trying to call SetCurrentStateFunction during state call");
-		m_Lock = true;
-		if (m_CurrentStateFunction != null)
+		
+		if (a_newState != m_CurrentStateFunction)
 		{
-			m_CurrentStateFunction(StateFunctionCall.Exit);
-		}
+			m_Lock = true;
+			if (m_CurrentStateFunction != null)
+			{
+				m_CurrentStateFunction(StateFunctionCall.Exit);
+			}
 
-		m_CurrentStateFunction = a_newState;
+			m_CurrentStateFunction = a_newState;
 
-		if (m_CurrentStateFunction != null)
-		{
-			m_CurrentStateFunction(StateFunctionCall.Enter);
+			if (m_CurrentStateFunction != null)
+			{
+				m_CurrentStateFunction(StateFunctionCall.Enter);
+			}
+			m_Lock = false;
 		}
-		m_Lock = false;
 	}
 
 	public void UpdateStateMachine()

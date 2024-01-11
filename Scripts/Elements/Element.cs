@@ -63,6 +63,8 @@ public partial class Element : Node2D
     private float m_TargetAngle;
     private float m_TargetSquareRadius;
 
+    private Vector2 m_RotationCenter;
+
     private ElementBoard m_Board;
     private ElementMovementAnimation m_Animation;
 
@@ -96,6 +98,7 @@ public partial class Element : Node2D
         m_StartPos = startPos;
         m_TargetPos = targetPos;
         m_IsMoving = true;
+        m_RotationCenter = board.m_MiddleOfTheBoard;
     }
 
 	// -----------------------------------------------------------------
@@ -165,11 +168,11 @@ public partial class Element : Node2D
         m_Animation = animation;
         if (animation == ElementMovementAnimation.RotateClockwise || animation == ElementMovementAnimation.RotateAntiClockwise)
         {
-            Vector2 startRadiusVector = GlobalPosition - m_Board.m_MiddleOfTheBoard;
+            Vector2 startRadiusVector = GlobalPosition - m_RotationCenter;
             m_StartSquareRadius = startRadiusVector.LengthSquared();
             m_StartAngle = startRadiusVector.Angle();
 
-            Vector2 endRadiusVector = m_TargetPos - Position + GlobalPosition - m_Board.m_MiddleOfTheBoard;
+            Vector2 endRadiusVector = m_TargetPos - Position + GlobalPosition - m_RotationCenter;
             m_TargetSquareRadius = endRadiusVector.LengthSquared();
             m_TargetAngle = endRadiusVector.Angle();
         }
@@ -258,10 +261,19 @@ public partial class Element : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
+    public void SetRotationCenter(Vector2 center)
+    {
+        m_RotationCenter = center;
+    }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
     public void EndMove()
     {
         Position = m_TargetPos;
         m_IsMoving = false;
+        m_RotationCenter = m_Board.m_MiddleOfTheBoard;
     }
 
 	// -----------------------------------------------------------------
@@ -297,7 +309,7 @@ public partial class Element : Node2D
 
         float currentAngle = Mathf.Lerp(trueStartAngle, trueTargetAngle, m_Board.m_MovingElementLerp);
         Vector2 newVectorRadius = Vector2.FromAngle(currentAngle) * Mathf.Sqrt(currentSquareRadius);
-        GlobalPosition = m_Board.m_MiddleOfTheBoard + newVectorRadius;
+        GlobalPosition = m_RotationCenter + newVectorRadius;
     }
 
 	// -----------------------------------------------------------------

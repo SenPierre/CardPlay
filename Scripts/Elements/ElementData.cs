@@ -11,6 +11,7 @@ public enum ElementType {
     // -----------
     Bomb2,
     Mold,
+    Rotator,
 }
 
 

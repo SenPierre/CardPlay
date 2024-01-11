@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ElementData" load_steps=4 format=3 uid="uid://lm7jq2mxgf45"]
+
+[ext_resource type="PackedScene" uid="uid://cphamrqtki2tt" path="res://Scenes/Prefabs/Elements/RotatorElementBehavior.tscn" id="1_nfqv4"]
+[ext_resource type="Script" path="res://Scripts/Elements/ElementData.cs" id="2_2aohb"]
+[ext_resource type="Texture2D" uid="uid://ce5h62wevd2j5" path="res://Textures/Elements/Rotator.png" id="2_woopk"]
+
+[resource]
+script = ExtResource("2_2aohb")
+m_Type = 8
+m_Sprite = ExtResource("2_woopk")
+m_RandomWeight = 0
+m_CanMatch = false
+m_CanBeDestroyed = false
+m_CanBeMoved = false
+m_CanBeTransformed = false
+m_CanFall = false
+m_ElementBehaviorNode = ExtResource("1_nfqv4")

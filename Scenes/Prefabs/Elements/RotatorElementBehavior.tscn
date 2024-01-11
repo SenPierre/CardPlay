@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cphamrqtki2tt"]
+
+[ext_resource type="Script" path="res://Scripts/Elements/ElementBehavior/ElementBehaviorRotator.cs" id="1_feo7o"]
+
+[node name="RotatorElementBehavior" type="Node2D"]
+texture_filter = 1
+script = ExtResource("1_feo7o")

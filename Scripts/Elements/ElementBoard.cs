@@ -104,15 +104,16 @@ public partial class ElementBoard : Node2D
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
-    public void Swap(List<Vector2I> elementList)
+    public void Swap(List<Vector2I> elementList, ElementMovementAnimation anim = ElementMovementAnimation.Default)
     {
-        foreach (Vector2I coord in elementList)
-        {
-            if (CheckCoordinateForMovement(coord) == false)
-            {
-                return;
-            }
-        }
+        // No check anymore, if we are here, that mean we want to swap no matter what.
+//        foreach (Vector2I coord in elementList)
+//        {
+//            if (CheckCoordinateForMovement(coord) == false)
+//            {
+//                return;
+//            }
+//        }
 
         for (int i = 0; i * 2 < elementList.Count; i++)
         {
@@ -125,9 +126,36 @@ public partial class ElementBoard : Node2D
             m_GameBoard[coord1.X, coord1.Y] = elem2;
             m_GameBoard[coord2.X, coord2.Y] = elem1;
 
-            elem1.MoveElement(elem2.Position, ElementMovementAnimation.Default);
-            elem2.MoveElement(elem1.Position, ElementMovementAnimation.Default);
+            elem1.MoveElement(elem2.Position, anim);
+            elem2.MoveElement(elem1.Position, anim);
         }
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public void OffsetElements(List<Vector2I> elementList, int offset, ElementMovementAnimation anim = ElementMovementAnimation.Default)
+    {
+        List<Element> elementToMove = new List<Element>();
+
+        for(int i = 0; i < elementList.Count; i++)
+        {
+            Vector2I coordinate = elementList[i];
+            GD.Print(coordinate);
+            elementToMove.Add(m_GameBoard[coordinate.X, coordinate.Y]);
+        }
+
+        for(int i = 0; i < elementToMove.Count; i++)
+        {
+            int newCoordinateIndex = (i + elementToMove.Count + offset) % elementToMove.Count;
+            Vector2I newCoordinate = elementList[newCoordinateIndex];
+            Element el = elementToMove[i];
+            
+            m_GameBoard[newCoordinate.X, newCoordinate.Y] = el;
+
+            el.MoveElement((Vector2)newCoordinate * Element.ElementSize + Vector2.One * Element.ElementHalfSize, anim);
+        }
+
     }
     
     // -----------------------------------------------------------------
@@ -234,7 +262,7 @@ public partial class ElementBoard : Node2D
     // -----------------------------------------------------------------
     public bool CanCheckBoard()
     {
-        return m_BlockingCheckUntilEndOfTurn == 0 || BattleManager.GetManager().IsEnemyTurn();
+        return m_BlockingCheckUntilEndOfTurn == 0 || BattleManager.GetManager().IsEndOfTurn();
     }
 
     // -----------------------------------------------------------------
@@ -471,6 +499,18 @@ public partial class ElementBoard : Node2D
             }
             else if (c == '1')
             {
+                x++;
+            }
+            else if (c == '2')
+            {
+                Element newVoid = Element.CreateElementFromType(ElementType.Rotator);
+                AddChild(newVoid);
+                // TODO : This is icky BIS
+                newVoid.Init(
+                    this, 
+                    new Vector2(x * Element.ElementSize + Element.ElementHalfSize, y * Element.ElementSize + Element.ElementHalfSize), 
+                    new Vector2(x * Element.ElementSize + Element.ElementHalfSize, y * Element.ElementSize + Element.ElementHalfSize));
+                m_GameBoard[x, y] = newVoid;
                 x++;
             }
         }
