@@ -9,7 +9,7 @@
 [ext_resource type="Script" path="res://Scripts/Manager/RandomManager.cs" id="5_d8kwp"]
 [ext_resource type="Resource" uid="uid://kovfoutff5j6" path="res://Resources/Enemies/Grandma.tres" id="5_o47du"]
 [ext_resource type="Resource" uid="uid://g225lviiar8l" path="res://Resources/EnemyPools/PoolTest.tres" id="6_ov81h"]
-[ext_resource type="Resource" uid="uid://bg6emagcpjcvc" path="res://Resources/CardDecks/starterDeck.tres" id="9_2mhlr"]
+[ext_resource type="Resource" uid="uid://bm138nowc1u8u" path="res://Resources/CardDecks/TestDeck.tres" id="8_7wl30"]
 
 [node name="GameManager" type="Node2D"]
 position = Vector2(3, 0)
@@ -23,7 +23,7 @@ m_EnemyPool = Array[Object]([ExtResource("6_ov81h")])
 [node name="CardManager" type="Node2D" parent="."]
 position = Vector2(-1, 0)
 script = ExtResource("3_v33x5")
-m_StarterDeck = ExtResource("9_2mhlr")
+m_StarterDeck = ExtResource("8_7wl30")
 
 [node name="RandomManager" type="Node2D" parent="."]
 position = Vector2(0, -3)

@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 
 public enum ElementMovementAnimation {
-    Default,
-    RotateClockwise,
-    RotateAntiClockwise,
-    FadeOutFadeIn
+	Default,
+	RotateClockwise,
+	RotateAntiClockwise,
+	FadeOutFadeIn
 }
 
 //##########################################################################################################
@@ -14,7 +14,6 @@ public enum ElementMovementAnimation {
 //##########################################################################################################
 public class ElementsMatch
 {
-    [Export] public Sprite2D m_element;
     public ElementType m_Type;
     public List<Element> m_Element = new List<Element>();
     public Vector2 m_matchDirection;
@@ -22,16 +21,16 @@ public class ElementsMatch
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public void OnMatch(float multiplier)
-    {
-        int matchOverload = Math.Max(0, m_Element.Count - 4);
-        int scoreOverload = 0;
-        for (int i = 0; i < matchOverload; i++)
-        {
-            scoreOverload += scoreOverload + 100;
-        }
-        BattleManager.GetManager().AddToScore((int)Math.Floor((400 + scoreOverload) * multiplier));
-    }
+	public void OnMatch(float multiplier)
+	{
+		int matchOverload = Math.Max(0, m_Element.Count - 4);
+		int scoreOverload = 0;
+		for (int i = 0; i < matchOverload; i++)
+		{
+			scoreOverload += scoreOverload + 100;
+		}
+		BattleManager.GetManager().AddToScore((int)Math.Floor((400 + scoreOverload) * multiplier));
+	}
 }
 
 //##########################################################################################################
@@ -39,83 +38,85 @@ public class ElementsMatch
 //##########################################################################################################
 public partial class Element : Node2D
 {
-    static public float ElementSize = 80.0f;
-    static public float ElementHalfSize = 40.0f;
+	static public float ElementSize = 80.0f;
+	static public float ElementHalfSize = 40.0f;
 
-    [Signal]
-    public delegate void ElementTransformedEventHandler();
+	[Signal]
+	public delegate void ElementTransformedEventHandler();
 
-    [Export] Sprite2D m_Sprite;
-    public ElementType m_Type = ElementType.Void;
-    public bool m_ToDelete;
+	[Export] Sprite2D m_Sprite;
+	public ElementType m_Type = ElementType.Void;
+	public bool m_ToDelete;
 
-    private ElementData m_data = null;
+	private ElementData m_data = null;
 
-    private BaseElementBehavior m_Behavior = null;
+	private BaseElementBehavior m_Behavior = null;
 
-    private bool m_IsMoving = false;
+	private bool m_IsMoving = false;
 
-    private Vector2 m_StartPos;
-    private float m_StartAngle;
-    private float m_StartSquareRadius;
-    
-    private Vector2 m_TargetPos;
-    private float m_TargetAngle;
-    private float m_TargetSquareRadius;
+	private Vector2 m_StartPos;
+	private float m_StartAngle;
+	private float m_StartSquareRadius;
+	
+	private Vector2 m_TargetPos;
+	private float m_TargetAngle;
+	private float m_TargetSquareRadius;
 
-    private Vector2 m_RotationCenter;
+	private Vector2 m_RotationCenter;
 
-    private ElementBoard m_Board;
-    private ElementMovementAnimation m_Animation;
+	private ElementBoard m_Board;
+	private ElementMovementAnimation m_Animation;
 
-    private Dictionary<Vector2, ElementsMatch> m_Matches = new Dictionary<Vector2, ElementsMatch>();
-
-	// -----------------------------------------------------------------
-	// 
-	// -----------------------------------------------------------------
-    public static Element CreateElementFromType(ElementType element)
-    {
-        Element newEl = ResourceLoader.Load<PackedScene>("res://Scenes/Prefabs/Elements/ElementBase.tscn").Instantiate<Element>();
-        newEl.SetElement(element);
-        return newEl;
-    }
+	private Dictionary<Vector2, ElementsMatch> m_Matches = new Dictionary<Vector2, ElementsMatch>();
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public override void _Ready()
-    {
-
-    }
+	public static Element CreateElementFromType(ElementType element)
+	{
+		Element newEl = ResourceLoader.Load<PackedScene>("res://Scenes/Prefabs/Elements/ElementBase.tscn").Instantiate<Element>();
+		newEl.SetElement(element);
+		return newEl;
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public void Init(ElementBoard board, Vector2 startPos, Vector2 targetPos)
-    {
-        m_Board = board;
-        Position = startPos;
-        m_StartPos = startPos;
-        m_TargetPos = targetPos;
-        m_IsMoving = true;
-        m_RotationCenter = board.m_MiddleOfTheBoard;
-    }
+	public override void _Ready()
+	{
+
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void Init(ElementBoard board, Vector2 startPos, Vector2 targetPos)
+	{
+		(m_Sprite.Material as ShaderMaterial).SetShaderParameter("mask", BattleManager.GetManager().m_ElementBoardMaskViewport.GetTexture());
+
+		m_Board = board;
+		Position = startPos;
+		m_StartPos = startPos;
+		m_TargetPos = targetPos;
+		m_IsMoving = true;
+		m_RotationCenter = board.m_MiddleOfTheBoard;
+	}
 
 	// -----------------------------------------------------------------
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	// -----------------------------------------------------------------
 	public override void _Process(double delta)
 	{
-        if (IsMoving())
-        {
-            switch (m_Animation)
-            {
-                case ElementMovementAnimation.Default: _MoveDefault(); break;
-                case ElementMovementAnimation.RotateClockwise: _MoveRotate(false); break;
-                case ElementMovementAnimation.RotateAntiClockwise: _MoveRotate(true);break;
-                case ElementMovementAnimation.FadeOutFadeIn: _MoveFadeOutFadeIn(); break;
-            }
-        }
+		if (IsMoving())
+		{
+			switch (m_Animation)
+			{
+				case ElementMovementAnimation.Default: _MoveDefault(); break;
+				case ElementMovementAnimation.RotateClockwise: _MoveRotate(false); break;
+				case ElementMovementAnimation.RotateAntiClockwise: _MoveRotate(true);break;
+				case ElementMovementAnimation.FadeOutFadeIn: _MoveFadeOutFadeIn(); break;
+			}
+		}
 
 		base._Process(delta);
 	}
@@ -123,210 +124,210 @@ public partial class Element : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public void TransformElement(ElementType element)
-    {
-        EmitSignal(SignalName.ElementTransformed);
-        SetElement(element);
-    }
+	public void TransformElement(ElementType element)
+	{
+		EmitSignal(SignalName.ElementTransformed);
+		SetElement(element);
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public void SetElement(ElementType element)
-    {
-        m_Type = element;
-        
-        if (m_Behavior != null)
-        {
-            m_Behavior.ClearBehavior();
-            m_Behavior.QueueFree();
-        }
+	public void SetElement(ElementType element)
+	{
+		m_Type = element;
+		
+		if (m_Behavior != null)
+		{
+			m_Behavior.ClearBehavior();
+			m_Behavior.QueueFree();
+		}
 
-        ElementDataBase db = GameManager.GetManager().m_ElementDatabase;
-        m_data = db.GetDataFromType(element);
+		ElementDataBase db = GameManager.GetManager().m_ElementDatabase;
+		m_data = db.GetDataFromType(element);
 
-        m_Sprite.Texture = m_data.m_Sprite;
+		m_Sprite.Texture = m_data.m_Sprite;
 
-        if (m_data.m_ElementBehaviorNode != null && m_data.m_ElementBehaviorNode != null)
-        {
-            m_Behavior = m_data.m_ElementBehaviorNode.Instantiate<BaseElementBehavior>();
-            AddChild(m_Behavior);
-            m_Behavior.Position = Vector2.Zero;
-            m_Behavior.InitBehavior(this);
-        }
-    }
-
-	// -----------------------------------------------------------------
-	// 
-	// -----------------------------------------------------------------
-    public void MoveElement(Vector2 newPos, ElementMovementAnimation animation)
-    {
-        m_IsMoving = true;
-        m_StartPos = Position;
-        m_TargetPos = newPos;
-
-        m_Animation = animation;
-        if (animation == ElementMovementAnimation.RotateClockwise || animation == ElementMovementAnimation.RotateAntiClockwise)
-        {
-            Vector2 startRadiusVector = GlobalPosition - m_RotationCenter;
-            m_StartSquareRadius = startRadiusVector.LengthSquared();
-            m_StartAngle = startRadiusVector.Angle();
-
-            Vector2 endRadiusVector = m_TargetPos - Position + GlobalPosition - m_RotationCenter;
-            m_TargetSquareRadius = endRadiusVector.LengthSquared();
-            m_TargetAngle = endRadiusVector.Angle();
-        }
-    }
+		if (m_data.m_ElementBehaviorNode != null && m_data.m_ElementBehaviorNode != null)
+		{
+			m_Behavior = m_data.m_ElementBehaviorNode.Instantiate<BaseElementBehavior>();
+			AddChild(m_Behavior);
+			m_Behavior.Position = Vector2.Zero;
+			m_Behavior.InitBehavior(this);
+		}
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public bool IsMoving()
-    {
-        return m_IsMoving;
-    }
+	public void MoveElement(Vector2 newPos, ElementMovementAnimation animation)
+	{
+		m_IsMoving = true;
+		m_StartPos = Position;
+		m_TargetPos = newPos;
+
+		m_Animation = animation;
+		if (animation == ElementMovementAnimation.RotateClockwise || animation == ElementMovementAnimation.RotateAntiClockwise)
+		{
+			Vector2 startRadiusVector = GlobalPosition - m_RotationCenter;
+			m_StartSquareRadius = startRadiusVector.LengthSquared();
+			m_StartAngle = startRadiusVector.Angle();
+
+			Vector2 endRadiusVector = m_TargetPos - Position + GlobalPosition - m_RotationCenter;
+			m_TargetSquareRadius = endRadiusVector.LengthSquared();
+			m_TargetAngle = endRadiusVector.Angle();
+		}
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public ElementsMatch GetMatch(Vector2 directionMatch)
-    {
-        return m_Matches.ContainsKey(directionMatch) ? m_Matches[directionMatch] : null;
-    }
+	public bool IsMoving()
+	{
+		return m_IsMoving;
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public void SetMatch(Vector2 directionMatch, ElementsMatch match)
-    {
-        Debug.Assert(GetMatch(directionMatch) == null, "Set Match to an element which has already a match for the given direction.");
-        m_Matches[directionMatch] = match;
-        match.m_Element.Add(this);
-    }
+	public ElementsMatch GetMatch(Vector2 directionMatch)
+	{
+		return m_Matches.ContainsKey(directionMatch) ? m_Matches[directionMatch] : null;
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public bool CanMatch()
-    {
-        return m_data.m_CanMatch;
-    }
+	public void SetMatch(Vector2 directionMatch, ElementsMatch match)
+	{
+		Debug.Assert(GetMatch(directionMatch) == null, "Set Match to an element which has already a match for the given direction.");
+		m_Matches[directionMatch] = match;
+		match.m_Element.Add(this);
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public bool CanBeDestroyed()
-    {
-        return m_data.m_CanBeDestroyed;
-    }
+	public bool CanMatch()
+	{
+		return m_data.m_CanMatch;
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public bool CanBeMoved()
-    {
-        return m_data.m_CanBeMoved;
-    }
+	public bool CanBeDestroyed()
+	{
+		return m_data.m_CanBeDestroyed;
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public bool CanBeTransformed()
-    {
-        return m_data.m_CanBeTransformed;
-    }
+	public bool CanBeMoved()
+	{
+		return m_data.m_CanBeMoved;
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public bool CanFall()
-    {
-        return m_data.m_CanFall;
-    }
-    
-	// -----------------------------------------------------------------
-	// 
-	// -----------------------------------------------------------------
-    public void RemovedFromBoard()
-    {
-        // Animation, VFX, this kind of thing. For now just remove it.
-        if (m_Behavior != null)
-        {
-            m_Behavior.ClearBehavior();
-            m_Behavior.QueueFree();
-        }
-        QueueFree();
-    }
+	public bool CanBeTransformed()
+	{
+		return m_data.m_CanBeTransformed;
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public void SetRotationCenter(Vector2 center)
-    {
-        m_RotationCenter = center;
-    }
+	public bool CanFall()
+	{
+		return m_data.m_CanFall;
+	}
+	
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void RemovedFromBoard()
+	{
+		// Animation, VFX, this kind of thing. For now just remove it.
+		if (m_Behavior != null)
+		{
+			m_Behavior.ClearBehavior();
+			m_Behavior.QueueFree();
+		}
+		QueueFree();
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public void EndMove()
-    {
-        Position = m_TargetPos;
-        m_IsMoving = false;
-        m_RotationCenter = m_Board.m_MiddleOfTheBoard;
-    }
+	public void SetRotationCenter(Vector2 center)
+	{
+		m_RotationCenter = center;
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    private void _MoveDefault()
-    {
-        Position = m_StartPos.Lerp(m_TargetPos, m_Board.m_MovingElementLerp);
-    }
+	public void EndMove()
+	{
+		Position = m_TargetPos;
+		m_IsMoving = false;
+		m_RotationCenter = m_Board.m_MiddleOfTheBoard;
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    private void _MoveRotate(bool anticlockwise)
-    {
-        float currentSquareRadius = Mathf.Lerp(m_StartSquareRadius, m_TargetSquareRadius, m_Board.m_MovingElementLerp);
-        float trueStartAngle = m_StartAngle;
-        float trueTargetAngle = m_TargetAngle;
-        if (anticlockwise)
-        {
-            while (trueStartAngle < trueTargetAngle)
-            {
-                trueTargetAngle -= Mathf.DegToRad(360.0f);
-            }
-        }
-        else
-        {
-            while (trueStartAngle > trueTargetAngle)
-            {
-                trueTargetAngle += Mathf.DegToRad(360.0f);
-            }
-        }
-
-        float currentAngle = Mathf.Lerp(trueStartAngle, trueTargetAngle, m_Board.m_MovingElementLerp);
-        Vector2 newVectorRadius = Vector2.FromAngle(currentAngle) * Mathf.Sqrt(currentSquareRadius);
-        GlobalPosition = m_RotationCenter + newVectorRadius;
-    }
+	private void _MoveDefault()
+	{
+		Position = m_StartPos.Lerp(m_TargetPos, m_Board.m_MovingElementLerp);
+	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    private void _MoveFadeOutFadeIn()
-    {
-        Color color = Modulate;
-        if (m_Board.m_MovingElementLerp < 0.5f)
-        {
-            color.A = Mathf.Lerp(1, 0, m_Board.m_MovingElementLerp * 2.0f);
-        }
-        else
-        {
-            Position = m_TargetPos;
-            color.A = Mathf.Lerp(0, 1, (m_Board.m_MovingElementLerp * 2.0f) - 1.0f);
-        }
-        Modulate = color;
-    }
+	private void _MoveRotate(bool anticlockwise)
+	{
+		float currentSquareRadius = Mathf.Lerp(m_StartSquareRadius, m_TargetSquareRadius, m_Board.m_MovingElementLerp);
+		float trueStartAngle = m_StartAngle;
+		float trueTargetAngle = m_TargetAngle;
+		if (anticlockwise)
+		{
+			while (trueStartAngle < trueTargetAngle)
+			{
+				trueTargetAngle -= Mathf.DegToRad(360.0f);
+			}
+		}
+		else
+		{
+			while (trueStartAngle > trueTargetAngle)
+			{
+				trueTargetAngle += Mathf.DegToRad(360.0f);
+			}
+		}
+
+		float currentAngle = Mathf.Lerp(trueStartAngle, trueTargetAngle, m_Board.m_MovingElementLerp);
+		Vector2 newVectorRadius = Vector2.FromAngle(currentAngle) * Mathf.Sqrt(currentSquareRadius);
+		GlobalPosition = m_RotationCenter + newVectorRadius;
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	private void _MoveFadeOutFadeIn()
+	{
+		Color color = Modulate;
+		if (m_Board.m_MovingElementLerp < 0.5f)
+		{
+			color.A = Mathf.Lerp(1, 0, m_Board.m_MovingElementLerp * 2.0f);
+		}
+		else
+		{
+			Position = m_TargetPos;
+			color.A = Mathf.Lerp(0, 1, (m_Board.m_MovingElementLerp * 2.0f) - 1.0f);
+		}
+		Modulate = color;
+	}
 }

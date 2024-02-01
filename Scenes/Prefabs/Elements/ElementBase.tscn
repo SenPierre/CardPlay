@@ -1,9 +1,18 @@
-[gd_scene load_steps=7 format=3 uid="uid://byc4dj73ctdm8"]
+[gd_scene load_steps=10 format=3 uid="uid://byc4dj73ctdm8"]
 
 [ext_resource type="Script" path="res://Scripts/Elements/Element.cs" id="1_moows"]
 [ext_resource type="Texture2D" uid="uid://bc1dybxv08jp7" path="res://Textures/Elements/El4.png" id="2_a1as5"]
+[ext_resource type="Shader" path="res://Shaders/Element.gdshader" id="2_j78y4"]
 [ext_resource type="Script" path="res://Scripts/Common/ParticleHandler.cs" id="3_1ebhq"]
 [ext_resource type="Texture2D" uid="uid://bqmvribxibxgd" path="res://Textures/Fx/Fx1.png" id="3_dubhp"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_7ysbm"]
+size = Vector2(1920, 1080)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_txggy"]
+resource_local_to_scene = true
+shader = ExtResource("2_j78y4")
+shader_parameter/mask = SubResource("PlaceholderTexture2D_7ysbm")
 
 [sub_resource type="Curve" id="Curve_qfde1"]
 min_value = -360.0
@@ -24,6 +33,7 @@ m_Sprite = NodePath("Sprite2D")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
+material = SubResource("ShaderMaterial_txggy")
 scale = Vector2(4, 4)
 texture = ExtResource("2_a1as5")
 

@@ -7,7 +7,6 @@
 [ext_resource type="Texture2D" uid="uid://bx40tb7ctqwoi" path="res://Textures/BarFill.png" id="5_bqc06"]
 [ext_resource type="Texture2D" uid="uid://c0tlbcrpdasn4" path="res://Textures/Warning.png" id="6_gctwk"]
 [ext_resource type="Texture2D" uid="uid://bft04jl8po0hv" path="res://Textures/Heart.png" id="7_uxcxr"]
-[ext_resource type="Texture2D" uid="uid://btenh0d6cx6hb" path="res://Textures/Card/GridBackground.png" id="8_qpw4l"]
 [ext_resource type="Texture2D" uid="uid://d2sxmdqvwnst1" path="res://Textures/GridBorder.png" id="9_oic80"]
 [ext_resource type="Texture2D" uid="uid://gxxpb8xop2k1" path="res://Textures/Card/ManaGem.png" id="10_6dcct"]
 [ext_resource type="Texture2D" uid="uid://bpowu0h5ypuix" path="res://Textures/Sans titre.png" id="11_wtrpl"]
@@ -28,21 +27,41 @@ font_size = 32
 outline_size = 16
 outline_color = Color(0, 0, 0, 1)
 
-[node name="BattleScene" type="Node2D" node_paths=PackedStringArray("m_EnemyRoot", "m_ScoreBar", "m_LimitBar", "m_Hearts", "m_GameOverRect", "m_ManaLabel", "m_CardArrow", "m_HandNode", "m_DeckNode", "m_DiscardNode", "m_ModifierNode")]
+[sub_resource type="ViewportTexture" id="ViewportTexture_f0b3r"]
+viewport_path = NodePath("SubViewport")
+
+[node name="BattleScene" type="Node2D" node_paths=PackedStringArray("m_EnemyRoot", "m_ScoreBar", "m_LimitBar", "m_Hearts", "m_GameOverRect", "m_ManaLabel", "m_CardArrow", "m_HandNode", "m_DeckNode", "m_DiscardNode", "m_ModifierNode", "m_ElementBoardMaskViewport")]
 texture_filter = 1
 script = ExtResource("13_rpe5q")
 m_EnemyRoot = NodePath("Enemies")
 m_ScoreBar = NodePath("ElementBoard/Bar/TextureProgressBar")
 m_LimitBar = NodePath("ElementBoard/Bar/TextureProgressBar/TextureRect")
 m_Hearts = [NodePath("ElementBoard/Hearts/TextureRect"), NodePath("ElementBoard/Hearts/TextureRect2"), NodePath("ElementBoard/Hearts/TextureRect3")]
-m_GameOverRect = NodePath("Sprite2D")
+m_GameOverRect = NodePath("GameOverSprite")
 m_ManaLabel = NodePath("Button/Sprite2D/Label")
 m_HintColor = Color(1, 0.682353, 0.698039, 1)
 m_CardArrow = NodePath("CardArrow")
 m_HandNode = NodePath("Hand")
 m_DeckNode = NodePath("Deck")
 m_DiscardNode = NodePath("Discard")
-m_ModifierNode = NodePath("Node2D")
+m_ModifierNode = NodePath("ModifierNode")
+m_ElementBoardMaskViewport = NodePath("SubViewport")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+size = Vector2i(1920, 1080)
+render_target_clear_mode = 1
+
+[node name="ColorRect2" type="ColorRect" parent="SubViewport"]
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0, 0, 0, 1)
+
+[node name="ColorRect" type="ColorRect" parent="SubViewport"]
+z_index = 20
+offset_left = 490.0
+offset_top = 19.0
+offset_right = 1452.0
+offset_bottom = 981.0
 
 [node name="Deck" type="Node2D" parent="."]
 position = Vector2(865, 1567)
@@ -137,10 +156,10 @@ scale = Vector2(2, 2)
 texture = ExtResource("7_uxcxr")
 metadata/_edit_use_anchors_ = true
 
-[node name="Sprite2D" type="Sprite2D" parent="ElementBoard"]
+[node name="Sprite2D" type="ColorRect" parent="ElementBoard"]
 modulate = Color(1, 0.478431, 1, 0.384314)
-position = Vector2(480, 480)
-texture = ExtResource("8_qpw4l")
+offset_right = 960.0
+offset_bottom = 960.0
 
 [node name="Border" type="Sprite2D" parent="ElementBoard"]
 position = Vector2(480, 480)
@@ -210,15 +229,25 @@ position = Vector2(491, 20)
 points = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 width = 5.0
 
-[node name="Sprite2D" type="TextureRect" parent="."]
+[node name="GameOverSprite" type="TextureRect" parent="."]
 offset_left = 880.0
 offset_top = 447.0
 offset_right = 1080.0
 offset_bottom = 547.0
 texture = ExtResource("11_wtrpl")
 
-[node name="Node2D" type="Node2D" parent="."]
+[node name="ModifierNode" type="Node2D" parent="."]
 position = Vector2(1598, 68)
+
+[node name="MASK_TEST" type="TextureRect" parent="."]
+visible = false
+modulate = Color(1, 1, 1, 0.490196)
+offset_right = 40.0
+offset_bottom = 40.0
+texture = SubResource("ViewportTexture_f0b3r")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2(960, 540)
 
 [connection signal="input_event" from="ElementBoard/Area2D" to="ElementBoard" method="BoardInputEvent" flags=18]
 [connection signal="button_down" from="Button" to="." method="EndTurn"]
