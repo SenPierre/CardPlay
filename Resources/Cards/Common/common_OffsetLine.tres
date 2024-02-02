@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3 uid="uid://d0ulo12cougtw"]
+
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectOffset.cs" id="1_i54pt"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardSelection/CardSelectionDragColumn.cs" id="2_degol"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardData.cs" id="3_biq8h"]
+
+[sub_resource type="Resource" id="Resource_8l3im"]
+script = ExtResource("1_i54pt")
+
+[sub_resource type="Resource" id="Resource_lkdq3"]
+script = ExtResource("2_degol")
+m_SelectionKind = 0
+
+[resource]
+script = ExtResource("3_biq8h")
+m_ManaCost = 1
+m_Selection = SubResource("Resource_lkdq3")
+m_Effects = [SubResource("Resource_8l3im")]
+m_Name = "Jump"
+m_Description = "Reposition a column"
+m_Collectible = false

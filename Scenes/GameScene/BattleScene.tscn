@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://byld2rgu6ytjf"]
+[gd_scene load_steps=17 format=3 uid="uid://byld2rgu6ytjf"]
 
 [ext_resource type="Script" path="res://Scripts/Elements/ElementBoard.cs" id="1_n1ht2"]
 [ext_resource type="Script" path="res://Scripts/Elements/BoardHelper.cs" id="2_5sujc"]
@@ -27,9 +27,6 @@ font_size = 32
 outline_size = 16
 outline_color = Color(0, 0, 0, 1)
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_f0b3r"]
-viewport_path = NodePath("SubViewport")
-
 [node name="BattleScene" type="Node2D" node_paths=PackedStringArray("m_EnemyRoot", "m_ScoreBar", "m_LimitBar", "m_Hearts", "m_GameOverRect", "m_ManaLabel", "m_CardArrow", "m_HandNode", "m_DeckNode", "m_DiscardNode", "m_ModifierNode", "m_ElementBoardMaskViewport")]
 texture_filter = 1
 script = ExtResource("13_rpe5q")
@@ -54,6 +51,7 @@ render_target_clear_mode = 1
 [node name="ColorRect2" type="ColorRect" parent="SubViewport"]
 offset_right = 1920.0
 offset_bottom = 1080.0
+mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
 [node name="ColorRect" type="ColorRect" parent="SubViewport"]
@@ -62,6 +60,7 @@ offset_left = 490.0
 offset_top = 19.0
 offset_right = 1452.0
 offset_bottom = 981.0
+mouse_filter = 2
 
 [node name="Deck" type="Node2D" parent="."]
 position = Vector2(865, 1567)
@@ -160,6 +159,7 @@ metadata/_edit_use_anchors_ = true
 modulate = Color(1, 0.478431, 1, 0.384314)
 offset_right = 960.0
 offset_bottom = 960.0
+mouse_filter = 2
 
 [node name="Border" type="Sprite2D" parent="ElementBoard"]
 position = Vector2(480, 480)
@@ -239,15 +239,8 @@ texture = ExtResource("11_wtrpl")
 [node name="ModifierNode" type="Node2D" parent="."]
 position = Vector2(1598, 68)
 
-[node name="MASK_TEST" type="TextureRect" parent="."]
-visible = false
-modulate = Color(1, 1, 1, 0.490196)
-offset_right = 40.0
-offset_bottom = 40.0
-texture = SubResource("ViewportTexture_f0b3r")
-
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(960, 540)
 
-[connection signal="input_event" from="ElementBoard/Area2D" to="ElementBoard" method="BoardInputEvent" flags=18]
+[connection signal="input_event" from="ElementBoard/Area2D" to="ElementBoard" method="BoardInputEvent"]
 [connection signal="button_down" from="Button" to="." method="EndTurn"]

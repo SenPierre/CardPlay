@@ -81,23 +81,11 @@ public partial class ElementBoard : Node2D
         }
 
         InputEventMouse mouseEvent = (InputEventMouse)generatedEvent;
-        int buttonLeftPressed = ((int)mouseEvent.ButtonMask) & ((int)MouseButton.Left);
         Card currentCard = BattleManager.GetManager().m_CurrentHeldCard;
 
         if (currentCard != null)
         {
-            Vector2 pos = mouseEvent.Position - Position;
-
-            Vector2I index = new Vector2I((int)pos.X, (int)pos.Y) / (int)Element.ElementSize;
-            Vector2 intraElementSelectPos = (pos / Element.ElementSize) - index - new Vector2(0.5f, 0.5f);
-            if (buttonLeftPressed != 0)
-            {
-                currentCard.ApplyCardToBoard(this, index, intraElementSelectPos);
-            }
-            else
-            {
-                currentCard.UpdatePreview(this, index, intraElementSelectPos);
-            }
+            currentCard.UpdateCardSelection(this, mouseEvent);
         }
     }
 
@@ -141,7 +129,6 @@ public partial class ElementBoard : Node2D
         for(int i = 0; i < elementList.Count; i++)
         {
             Vector2I coordinate = elementList[i];
-            GD.Print(coordinate);
             elementToMove.Add(m_GameBoard[coordinate.X, coordinate.Y]);
         }
 
@@ -156,6 +143,78 @@ public partial class ElementBoard : Node2D
             el.MoveElement((Vector2)newCoordinate * Element.ElementSize + Vector2.One * Element.ElementHalfSize, anim);
         }
 
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public void ResetElementsPosition()
+    {
+        for (int x = m_Size - 1; x >= 0; x--)
+        {
+            for (int y = m_Size - 1; y >= 0; y--)
+            {
+                m_GameBoard[x, y].Position = new Vector2(x * Element.ElementSize + Element.ElementHalfSize, y * Element.ElementSize + Element.ElementHalfSize);
+            }
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public void PreviewLineDrag(int yLine, float offset)
+    {
+        List<int> coordinateToOffset = new List<int>();
+        for (int x = 0; x < m_Size; x++)
+        {
+            if (m_GameBoard[x, yLine].CanBeMoved())
+            {
+                coordinateToOffset.Add(x);
+            }
+        }
+
+        float roundedOffset = Mathf.Round(offset);
+        float decimalOffset = offset - roundedOffset;    
+        GD.Print(decimalOffset);
+        for (int i = 0; i < coordinateToOffset.Count; i++)
+        {
+            int oldX = coordinateToOffset[i];
+            int newIndex = i + (int) roundedOffset;
+            while (newIndex < 0) { newIndex += coordinateToOffset.Count; }
+            while (newIndex >= coordinateToOffset.Count) { newIndex -= coordinateToOffset.Count; }
+            int newX = coordinateToOffset[newIndex];
+
+            m_GameBoard[oldX, yLine].Position = new Vector2((newX + decimalOffset) * Element.ElementSize + Element.ElementHalfSize + decimalOffset, m_GameBoard[oldX, yLine].Position.Y);
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public void PreviewColumnDrag(int xLine, float offset)
+    {
+        List<int> coordinateToOffset = new List<int>();
+        for (int y = 0; y < m_Size; y++)
+        {
+            if (m_GameBoard[xLine, y].CanBeMoved())
+            {
+                coordinateToOffset.Add(y);
+            }
+        }
+
+        float roundedOffset = Mathf.Round(offset);
+        float decimalOffset = offset - roundedOffset;    
+        GD.Print(decimalOffset);
+        for (int i = 0; i < coordinateToOffset.Count; i++)
+        {
+            int oldY = coordinateToOffset[i];
+            int newIndex = i + (int) roundedOffset;
+            while (newIndex < 0) { newIndex += coordinateToOffset.Count; }
+            while (newIndex >= coordinateToOffset.Count) { newIndex -= coordinateToOffset.Count; }
+            int newY = coordinateToOffset[newIndex];
+
+            m_GameBoard[xLine, oldY].Position = new Vector2(m_GameBoard[xLine, oldY].Position.X, (newY + decimalOffset) * Element.ElementSize + Element.ElementHalfSize + decimalOffset);
+        }
     }
     
     // -----------------------------------------------------------------

@@ -10,7 +10,7 @@ public partial class CardSelectionMultiple : BaseCardSelection
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset)
+    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, InputEventMouse mouseEvent)
     {
         if (_CheckCoordinate(gameBoard, selectedElement))
         {

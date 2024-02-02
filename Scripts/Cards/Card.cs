@@ -12,6 +12,8 @@ public partial class Card : Node2D
     public bool m_MarkedForExhaust = false;
     BaseCardSelection m_Selection;
     BaseCardEffect[] m_Effects;
+
+    bool m_SelectionPressedLastFrame = false;
     
 	// -----------------------------------------------------------------
 	// 
@@ -55,9 +57,34 @@ public partial class Card : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public void ApplyCardToBoard(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset)
+    public void UpdateCardSelection(ElementBoard board, InputEventMouse mouseEvent)
     {
-        m_Selection.Select(gameBoard, selectedElement, clickCenterOffset);
+        
+        Vector2 pos = mouseEvent.Position - board.Position;
+
+        Vector2I index = new Vector2I((int)pos.X, (int)pos.Y) / (int)Element.ElementSize;
+        Vector2 intraElementSelectPos = (pos / Element.ElementSize) - index - new Vector2(0.5f, 0.5f);
+
+        int buttonLeftPressed = ((int)mouseEvent.ButtonMask) & ((int)MouseButton.Left);     
+
+        if (buttonLeftPressed == 0 && m_SelectionPressedLastFrame == false)
+        {
+            UpdatePreview(board, index, intraElementSelectPos);
+        }
+        else
+        {
+            ApplyCardToBoard(board, index, intraElementSelectPos, mouseEvent);
+        }
+
+        m_SelectionPressedLastFrame = buttonLeftPressed != 0;  
+    }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    public void ApplyCardToBoard(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, InputEventMouse mouseEvent)
+    {
+        m_Selection.Select(gameBoard, selectedElement, clickCenterOffset, mouseEvent);
         if (m_Selection.m_SelectionStatus == SelectionStatus.SelectionInvalid)
         {
             BattleManager.GetManager().DropCard();
@@ -94,6 +121,14 @@ public partial class Card : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
+    public void GetSelectionAdditionnalData<T>(ref T data)
+    {
+        m_Selection.GetAdditionnalData(ref data);
+    }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
     public Card Clone()
     {
         Card newCard = ResourceLoader.Load<PackedScene>("res://Scenes/Prefabs/Cards/Card.tscn").Instantiate<Card>();
@@ -108,4 +143,6 @@ public partial class Card : Node2D
 
         return newCard;
     }
+
+    //
 }

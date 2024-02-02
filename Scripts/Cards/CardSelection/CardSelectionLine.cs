@@ -8,7 +8,7 @@ public partial class CardSelectionLine : BaseCardSelection
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset)
+    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, InputEventMouse mouseEvent)
     {
         m_ElementList.Clear();
 

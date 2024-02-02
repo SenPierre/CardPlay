@@ -1,8 +1,12 @@
-[gd_resource type="Resource" script_class="CardDeckData" load_steps=3 format=3 uid="uid://bm138nowc1u8u"]
+[gd_resource type="Resource" script_class="CardDeckData" load_steps=7 format=3 uid="uid://bm138nowc1u8u"]
 
+[ext_resource type="Resource" uid="uid://ebx8pbjmfteg" path="res://Resources/Cards/Common/common_TransformB.tres" id="1_7hmqw"]
 [ext_resource type="Resource" uid="uid://dgdvqchkhcasc" path="res://Resources/Cards/Common/common_RotateBoard.tres" id="1_n6sj8"]
+[ext_resource type="Resource" uid="uid://co62h5g5oe4ax" path="res://Resources/Cards/Base/base_adjSwap.tres" id="2_4kn5m"]
+[ext_resource type="Resource" uid="uid://d0ulo12cougtw" path="res://Resources/Cards/Common/common_OffsetLine.tres" id="2_pvnb5"]
+[ext_resource type="Resource" uid="uid://dl2p2j0nbao45" path="res://Resources/Cards/Common/common_colSwap.tres" id="4_ar2bp"]
 [ext_resource type="Script" path="res://Scripts/Cards/CardDeckData.cs" id="5_6lvli"]
 
 [resource]
 script = ExtResource("5_6lvli")
-m_Cards = Array[Object]([ExtResource("1_n6sj8"), ExtResource("1_n6sj8"), ExtResource("1_n6sj8"), ExtResource("1_n6sj8"), ExtResource("1_n6sj8")])
+m_Cards = Array[Object]([ExtResource("1_7hmqw"), ExtResource("2_4kn5m"), ExtResource("1_n6sj8"), ExtResource("4_ar2bp"), ExtResource("2_pvnb5")])
