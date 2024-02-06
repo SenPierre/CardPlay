@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public enum ElementMovementAnimation {
 	Default,
+	Gravity,
 	RotateClockwise,
 	RotateAntiClockwise,
 	FadeOutFadeIn
@@ -41,10 +42,8 @@ public partial class Element : Node2D
 	static public float ElementSize = 80.0f;
 	static public float ElementHalfSize = 40.0f;
 
-	[Signal]
-	public delegate void ElementTransformedEventHandler();
-
 	[Export] Sprite2D m_Sprite;
+	[Export] AnimationPlayer m_Anim;
 	public ElementType m_Type = ElementType.Void;
 	public bool m_ToDelete;
 
@@ -53,6 +52,7 @@ public partial class Element : Node2D
 	private BaseElementBehavior m_Behavior = null;
 
 	private bool m_IsMoving = false;
+	private bool m_IsTransforming = false;
 
 	private Vector2 m_StartPos;
 	private float m_StartAngle;
@@ -61,6 +61,8 @@ public partial class Element : Node2D
 	private Vector2 m_TargetPos;
 	private float m_TargetAngle;
 	private float m_TargetSquareRadius;
+
+	private float m_gravitySpeed = 0.0f;
 
 	private Vector2 m_RotationCenter;
 
@@ -99,6 +101,7 @@ public partial class Element : Node2D
 		m_StartPos = startPos;
 		m_TargetPos = targetPos;
 		m_IsMoving = true;
+		m_Animation = ElementMovementAnimation.Gravity;
 		m_RotationCenter = board.m_MiddleOfTheBoard;
 	}
 
@@ -112,8 +115,9 @@ public partial class Element : Node2D
 			switch (m_Animation)
 			{
 				case ElementMovementAnimation.Default: _MoveDefault(); break;
-				case ElementMovementAnimation.RotateClockwise: _MoveRotate(false); break;
-				case ElementMovementAnimation.RotateAntiClockwise: _MoveRotate(true);break;
+				case ElementMovementAnimation.Gravity: _MoveGravity(); break;
+				case ElementMovementAnimation.RotateClockwise: _MoveRotate(); break;
+				case ElementMovementAnimation.RotateAntiClockwise: _MoveRotate();break;
 				case ElementMovementAnimation.FadeOutFadeIn: _MoveFadeOutFadeIn(); break;
 			}
 		}
@@ -126,8 +130,25 @@ public partial class Element : Node2D
 	// -----------------------------------------------------------------
 	public void TransformElement(ElementType element)
 	{
-		EmitSignal(SignalName.ElementTransformed);
-		SetElement(element);
+		m_Type = element;
+		m_Anim.Play("Transforming");
+		m_IsTransforming = true;
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void ConfirmTransform()
+	{
+		SetElement(m_Type);
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void EndTransform()
+	{
+		m_IsTransforming = false;
 	}
 
 	// -----------------------------------------------------------------
@@ -148,7 +169,7 @@ public partial class Element : Node2D
 
 		m_Sprite.Texture = m_data.m_Sprite;
 
-		if (m_data.m_ElementBehaviorNode != null && m_data.m_ElementBehaviorNode != null)
+		if (m_data.m_ElementBehaviorNode != null)
 		{
 			m_Behavior = m_data.m_ElementBehaviorNode.Instantiate<BaseElementBehavior>();
 			AddChild(m_Behavior);
@@ -160,11 +181,20 @@ public partial class Element : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
+	public bool IsIdle()
+	{
+		return (m_IsMoving == false) && (m_IsTransforming == false);
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
 	public void MoveElement(Vector2 newPos, ElementMovementAnimation animation)
 	{
 		m_IsMoving = true;
 		m_StartPos = Position;
 		m_TargetPos = newPos;
+		m_gravitySpeed = 200.0f;
 
 		m_Animation = animation;
 		if (animation == ElementMovementAnimation.RotateClockwise || animation == ElementMovementAnimation.RotateAntiClockwise)
@@ -176,6 +206,21 @@ public partial class Element : Node2D
 			Vector2 endRadiusVector = m_TargetPos - Position + GlobalPosition - m_RotationCenter;
 			m_TargetSquareRadius = endRadiusVector.LengthSquared();
 			m_TargetAngle = endRadiusVector.Angle();
+			
+			if (animation == ElementMovementAnimation.RotateAntiClockwise)
+			{
+				while (m_StartAngle < m_TargetAngle)
+				{
+					m_TargetAngle -= Mathf.DegToRad(360.0f);
+				}
+			}
+			else
+			{
+				while (m_StartAngle > m_TargetAngle)
+				{
+					m_TargetAngle += Mathf.DegToRad(360.0f);
+				}
+			}
 		}
 	}
 
@@ -248,7 +293,23 @@ public partial class Element : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-	public void RemovedFromBoard()
+	public void DestroyElement()
+	{
+		m_IsTransforming = true;
+		if (m_Matches.Count > 0)
+		{
+			m_Anim.Play("Matching");
+		}
+		else
+		{
+			m_Anim.Play("Destroying");
+		}
+	}
+	
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void RemoveFromBoard()
 	{
 		// Animation, VFX, this kind of thing. For now just remove it.
 		if (m_Behavior != null)
@@ -256,6 +317,7 @@ public partial class Element : Node2D
 			m_Behavior.ClearBehavior();
 			m_Behavior.QueueFree();
 		}
+		m_Board.RemoveElementFromBoard(this);
 		QueueFree();
 	}
 
@@ -283,34 +345,42 @@ public partial class Element : Node2D
 	private void _MoveDefault()
 	{
 		Position = m_StartPos.Lerp(m_TargetPos, m_Board.m_MovingElementLerp);
+		
+		if (m_Board.m_MovingElementLerp >= 1.0)
+		{
+			EndMove();
+		}
 	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-	private void _MoveRotate(bool anticlockwise)
+	private void _MoveGravity()
+	{
+		m_gravitySpeed += TimeManager.GetDeltaTime() * 1000.0f;
+		Position = Position.MoveToward(m_TargetPos, m_gravitySpeed * TimeManager.GetDeltaTime());
+
+		if (Position == m_TargetPos)
+		{
+			EndMove();
+		}
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	private void _MoveRotate()
 	{
 		float currentSquareRadius = Mathf.Lerp(m_StartSquareRadius, m_TargetSquareRadius, m_Board.m_MovingElementLerp);
-		float trueStartAngle = m_StartAngle;
-		float trueTargetAngle = m_TargetAngle;
-		if (anticlockwise)
-		{
-			while (trueStartAngle < trueTargetAngle)
-			{
-				trueTargetAngle -= Mathf.DegToRad(360.0f);
-			}
-		}
-		else
-		{
-			while (trueStartAngle > trueTargetAngle)
-			{
-				trueTargetAngle += Mathf.DegToRad(360.0f);
-			}
-		}
 
-		float currentAngle = Mathf.Lerp(trueStartAngle, trueTargetAngle, m_Board.m_MovingElementLerp);
+		float currentAngle = Mathf.Lerp(m_StartAngle, m_TargetAngle, m_Board.m_MovingElementLerp);
 		Vector2 newVectorRadius = Vector2.FromAngle(currentAngle) * Mathf.Sqrt(currentSquareRadius);
 		GlobalPosition = m_RotationCenter + newVectorRadius;
+
+		if (m_Board.m_MovingElementLerp >= 1.0)
+		{
+			EndMove();
+		}
 	}
 
 	// -----------------------------------------------------------------
@@ -318,16 +388,22 @@ public partial class Element : Node2D
 	// -----------------------------------------------------------------
 	private void _MoveFadeOutFadeIn()
 	{
-		Color color = Modulate;
+		float alphaModulate = 1.0f;
 		if (m_Board.m_MovingElementLerp < 0.5f)
 		{
-			color.A = Mathf.Lerp(1, 0, m_Board.m_MovingElementLerp * 2.0f);
+			alphaModulate = Mathf.Lerp(1, 0, m_Board.m_MovingElementLerp * 2.0f);
 		}
 		else
 		{
 			Position = m_TargetPos;
-			color.A = Mathf.Lerp(0, 1, (m_Board.m_MovingElementLerp * 2.0f) - 1.0f);
+			alphaModulate = Mathf.Lerp(0, 1, (m_Board.m_MovingElementLerp * 2.0f) - 1.0f);
 		}
-		Modulate = color;
+
+		(m_Sprite.Material as ShaderMaterial).SetShaderParameter("alphaModulate", alphaModulate);
+		
+		if (m_Board.m_MovingElementLerp >= 1.0)
+		{
+			EndMove();
+		}
 	}
 }

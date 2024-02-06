@@ -69,14 +69,15 @@ public partial class Card : Node2D
 
         if (buttonLeftPressed == 0 && m_SelectionPressedLastFrame == false)
         {
+            m_SelectionPressedLastFrame = buttonLeftPressed != 0;  
             UpdatePreview(board, index, intraElementSelectPos);
         }
         else
         {
+            m_SelectionPressedLastFrame = buttonLeftPressed != 0;  
             ApplyCardToBoard(board, index, intraElementSelectPos, mouseEvent);
         }
 
-        m_SelectionPressedLastFrame = buttonLeftPressed != 0;  
     }
 
 	// -----------------------------------------------------------------
@@ -88,9 +89,11 @@ public partial class Card : Node2D
         if (m_Selection.m_SelectionStatus == SelectionStatus.SelectionInvalid)
         {
             BattleManager.GetManager().DropCard();
+            m_SelectionPressedLastFrame = false;
         }
         else if (m_Selection.m_SelectionStatus == SelectionStatus.SelectionComplete)
         {
+            m_SelectionPressedLastFrame = false;
             List<Vector2I> list = m_Selection.m_ElementList;
 
             foreach(BaseCardEffect effect in m_Effects)

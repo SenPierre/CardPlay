@@ -1,7 +1,5 @@
 using Godot;
-using System;
 using System.Collections.Generic;
-using System.IO;
 
 public partial class ElementBoard : Node2D
 {
@@ -175,7 +173,6 @@ public partial class ElementBoard : Node2D
 
         float roundedOffset = Mathf.Round(offset);
         float decimalOffset = offset - roundedOffset;    
-        GD.Print(decimalOffset);
         for (int i = 0; i < coordinateToOffset.Count; i++)
         {
             int oldX = coordinateToOffset[i];
@@ -203,8 +200,7 @@ public partial class ElementBoard : Node2D
         }
 
         float roundedOffset = Mathf.Round(offset);
-        float decimalOffset = offset - roundedOffset;    
-        GD.Print(decimalOffset);
+        float decimalOffset = offset - roundedOffset;  
         for (int i = 0; i < coordinateToOffset.Count; i++)
         {
             int oldY = coordinateToOffset[i];
@@ -450,8 +446,7 @@ public partial class ElementBoard : Node2D
                 Element el = m_GameBoard[x, y];
                 if (el != null && el.m_ToDelete)
                 {
-                    m_GameBoard[x, y] = null;
-                    el.RemovedFromBoard();
+                    el.DestroyElement();
                 }
             }
         }
@@ -460,20 +455,12 @@ public partial class ElementBoard : Node2D
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
-    public void EndElementMove()
+    public void RemoveElementFromBoard(Element el)
     {
-        for (int x = 0; x < m_Size; x++)
-        {
-            for (int y = 0; y < m_Size; y++)
-            {
-                Element el = m_GameBoard[x, y];
-                if (el != null)
-                {
-                    el.EndMove();
-                }
-            }
-        }
+        Vector2I coordinate = GetElementCoordinate(el);
+        m_GameBoard[coordinate.X, coordinate.Y] = null;
     }
+    
 
     // -----------------------------------------------------------------
     // 
@@ -517,7 +504,7 @@ public partial class ElementBoard : Node2D
                         m_GameBoard[x, y] = m_GameBoard[x, ySearch];
                         m_GameBoard[x, ySearch] = null;
                         // TODO : This is icky
-                        el.MoveElement(new Vector2(x * Element.ElementSize + Element.ElementHalfSize, y * Element.ElementSize + Element.ElementHalfSize), ElementMovementAnimation.Default);
+                        el.MoveElement(new Vector2(x * Element.ElementSize + Element.ElementHalfSize, y * Element.ElementSize + Element.ElementHalfSize), ElementMovementAnimation.Gravity);
                     }
                 }
             }
@@ -528,12 +515,29 @@ public partial class ElementBoard : Node2D
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
+    public bool CheckAllElementAreIdle()
+    {
+        for (int x = m_Size - 1; x >= 0; x--)
+        {
+            for (int y = m_Size - 1; y >= 0; y--)
+            {
+                Element el = m_GameBoard[x, y];
+                if (el != null && el.IsIdle() == false)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
     public void InitBoard(string boardLayoutRes)
     {
         Godot.FileAccess f = Godot.FileAccess.Open(boardLayoutRes, Godot.FileAccess.ModeFlags.Read);
         string boardLayoutText = f.GetAsText();
-
-        GD.Print(boardLayoutRes);
 
         int x = 0;
         int y = 0;
@@ -824,27 +828,29 @@ public partial class ElementBoard : Node2D
                     if (m_MovingElementLerp > 1.0f)
                     {
                         m_MovingElementLerp = 1.0f;
-                        if (CanCheckBoard() && _CheckBoardState())
+                        if (CheckAllElementAreIdle())
                         {
-                            return State_DestroyElements;
+                            if (CanCheckBoard() && _CheckBoardState())
+                            {
+                                return State_DestroyElements;
+                            }
+                            else if (BattleManager.GetManager().CheckEndFight())
+                            {
+                                ClearBoard();
+                                BattleManager.GetManager().EndFight();
+                            }
+                            else if (CanFillTheBoard())
+                            {
+                                return State_FillBoard;
+                            }
+                            return State_WaitingForInput;
                         }
-                        else if (BattleManager.GetManager().CheckEndFight())
-                        {
-                            ClearBoard();
-                            BattleManager.GetManager().EndFight();
-                        }
-                        else if (CanFillTheBoard())
-                        {
-                            return State_FillBoard;
-                        }
-                        return State_WaitingForInput;
 
                     }
                     break;
                 }
             case StateFunctionCall.Exit:
                 {
-                    EndElementMove();
                     break;
                 }
         }
@@ -866,8 +872,7 @@ public partial class ElementBoard : Node2D
                 }
             case StateFunctionCall.Update:
                 {
-                    m_MovingElementLerp += TimeManager.GetDeltaTime() * 2.0f;
-                    if (m_MovingElementLerp > 1.0f)
+                    if (CheckAllElementAreIdle())
                     {
                         if (GravityCheck())
                         {

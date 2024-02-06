@@ -1,10 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://byc4dj73ctdm8"]
+[gd_scene load_steps=15 format=3 uid="uid://byc4dj73ctdm8"]
 
 [ext_resource type="Script" path="res://Scripts/Elements/Element.cs" id="1_moows"]
 [ext_resource type="Texture2D" uid="uid://bc1dybxv08jp7" path="res://Textures/Elements/El4.png" id="2_a1as5"]
 [ext_resource type="Shader" path="res://Shaders/Element.gdshader" id="2_j78y4"]
-[ext_resource type="Script" path="res://Scripts/Common/ParticleHandler.cs" id="3_1ebhq"]
-[ext_resource type="Texture2D" uid="uid://bqmvribxibxgd" path="res://Textures/Fx/Fx1.png" id="3_dubhp"]
+[ext_resource type="Script" path="res://Scripts/Elements/ElementShaderVariablesHandler.cs" id="4_mje0y"]
+[ext_resource type="Texture2D" uid="uid://cl0grcqdanxt4" path="res://Textures/Fx/SmallStar.png" id="4_pg7ad"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_7ysbm"]
 size = Vector2(1920, 1080)
@@ -12,56 +12,204 @@ size = Vector2(1920, 1080)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_txggy"]
 resource_local_to_scene = true
 shader = ExtResource("2_j78y4")
+shader_parameter/blackness = 0.0
+shader_parameter/whiteness = 0.0
+shader_parameter/destroying = -0.615
+shader_parameter/alphaModulate = 1.0
 shader_parameter/mask = SubResource("PlaceholderTexture2D_7ysbm")
 
-[sub_resource type="Curve" id="Curve_qfde1"]
+[sub_resource type="Curve" id="Curve_dfrsx"]
 min_value = -360.0
 max_value = 360.0
-_data = [Vector2(0, 360), 0.0, 0.0, 0, 0, Vector2(0.8, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="Curve" id="Curve_k2b0b"]
-max_value = 2.0
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.8, 2), 0.0, 0.0, 0, 0]
-point_count = 2
+[sub_resource type="Gradient" id="Gradient_sx6n6"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
 
-[node name="Element" type="Node2D" node_paths=PackedStringArray("m_Sprite")]
-position = Vector2(150, 103)
+[sub_resource type="Animation" id="Animation_xt8u5"]
+resource_name = "Destroying"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:blackness")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:destroying")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.5, 0.5001, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 1.0]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"RemoveFromBoard"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_8ws22"]
+resource_name = "Idle"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CPUParticles2D:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_5tofa"]
+resource_name = "Matching"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:whiteness")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.4, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(4, 4), Vector2(4, 0)]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.6),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"RemoveFromBoard"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_lagym"]
+resource_name = "Transforming"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:whiteness")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 0.8),
+"transitions": PackedFloat32Array(1, 1e+06, 1e-05),
+"update": 0,
+"values": [0.0, 1.0, 0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CPUParticles2D:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.8),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.8, 1),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"ConfirmTransform"
+}, {
+"args": [],
+"method": &"EndTransform"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2ggpq"]
+_data = {
+"Destroying": SubResource("Animation_xt8u5"),
+"Idle": SubResource("Animation_8ws22"),
+"Matching": SubResource("Animation_5tofa"),
+"Transforming": SubResource("Animation_lagym")
+}
+
+[node name="Element" type="Node2D" node_paths=PackedStringArray("m_Sprite", "m_Anim")]
 scale = Vector2(0.8, 0.8)
 script = ExtResource("1_moows")
 m_Sprite = NodePath("Sprite2D")
+m_Anim = NodePath("AnimationPlayer")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
 material = SubResource("ShaderMaterial_txggy")
 scale = Vector2(4, 4)
 texture = ExtResource("2_a1as5")
+script = ExtResource("4_mje0y")
+destroying = -0.615
+alphaModulate = 1.0
 
-[node name="EmitterHandler" type="Node2D" parent="."]
-script = ExtResource("3_1ebhq")
-
-[node name="CPUParticles2D" type="CPUParticles2D" parent="EmitterHandler"]
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
 texture_filter = 1
 scale = Vector2(0.8, 0.8)
 emitting = false
-amount = 1
-texture = ExtResource("3_dubhp")
-gravity = Vector2(0, 0)
-angular_velocity_min = 1.0
-angular_velocity_max = 1.0
-angular_velocity_curve = SubResource("Curve_qfde1")
-scale_amount_curve = SubResource("Curve_k2b0b")
+amount = 10
+one_shot = true
+explosiveness = 1.0
+texture = ExtResource("4_pg7ad")
+spread = 180.0
+gravity = Vector2(0, 1000)
+initial_velocity_min = 1000.0
+initial_velocity_max = 1000.0
+damping_min = 500.0
+damping_max = 500.0
+angle_min = -180.0
+angle_curve = SubResource("Curve_dfrsx")
+color_ramp = SubResource("Gradient_sx6n6")
 
-[node name="CPUParticles2D2" type="CPUParticles2D" parent="EmitterHandler"]
-texture_filter = 1
-scale = Vector2(0.8, 0.8)
-emitting = false
-amount = 1
-texture = ExtResource("3_dubhp")
-gravity = Vector2(0, 0)
-angular_velocity_min = -1.0
-angular_velocity_max = -1.0
-angular_velocity_curve = SubResource("Curve_qfde1")
-scale_amount_curve = SubResource("Curve_k2b0b")
-
-[connection signal="ElementTransformed" from="." to="EmitterHandler" method="EmitBurst"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_2ggpq")
+}
