@@ -31,10 +31,14 @@ public partial class BattleManager : Node2D
 	[Export] public Node2D m_DiscardNode;
 	
 	[Export] public Node2D m_ModifierNode;
+	
+	[Export] public Label m_ButtonLabel;
 
 	[Export] public int m_MaxMana = 3;
 
 	[Export] public SubViewport m_ElementBoardMaskViewport;
+
+	
 
 	[Signal]
 	public delegate void OnTurnEndEventHandler();
@@ -63,7 +67,7 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-	public void InitFight(EnemyData enemyData)
+	public void InitFight(Enemy newEnemy)
 	{
 		g_Manager = this;
 		
@@ -71,12 +75,9 @@ public partial class BattleManager : Node2D
 		m_GameOverRect.Visible = false;
 		m_CardArrow.DefaultColor = m_HintColor;
 		
-		m_ActiveEnemy = Enemy.CreateEnemyFromData(enemyData);
+		m_ActiveEnemy = newEnemy;
 		m_EnemyRoot.AddChild(m_ActiveEnemy);        
-		m_ActiveEnemy.UpdateIntentVisual();
-		m_TargetBattleScore = m_ActiveEnemy.m_BattleTarget;
-		m_CurrentBattleScore = 0;
-		ElementBoard.GetBoard().InitBoard(m_ActiveEnemy.m_BoardLayoutRes);
+		//m_ActiveEnemy.UpdateIntentVisual();
 		m_StateMachine.SetCurrentStateFunction(State_StartBattle);
 	}
 
@@ -148,7 +149,7 @@ public partial class BattleManager : Node2D
 			DamagePlayer();
 		}
 		m_ActiveEnemy.ApplyCurrentIntent();
-		m_ActiveEnemy.UpdateIntentVisual();
+		//m_ActiveEnemy.UpdateIntentVisual();
 	}
 
 	// -----------------------------------------------------------------
@@ -402,6 +403,72 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
+	public void SetupBattle()
+	{
+		ElementBoard.GetBoard().InitBoard(m_ActiveEnemy.m_BoardLayoutRes);
+		CopyRunDeckToGameDeck();
+		ShuffleDeck();
+		UpdateLimit();
+		m_TargetBattleScore = m_ActiveEnemy.m_BattleTarget;
+		m_CurrentBattleScore = 0;
+	}
+	
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void CreatePuzzleSituation()
+	{
+		Puzzle puzzle = m_ActiveEnemy as Puzzle;
+		if (puzzle.m_PuzzleDeck != null)
+		{
+			foreach(CardData cardData in puzzle.m_PuzzleDeck.m_Cards)
+			{
+				Card newCard = Card.CreateCardFromCardData(cardData);
+				AddChild(newCard);
+				m_CardDeck.Add(newCard);
+				newCard.Position = m_DeckNode.Position;
+			}
+		}
+		
+		if (puzzle.m_PuzzleHand != null)
+		{
+			foreach(CardData cardData in puzzle.m_PuzzleHand.m_Cards)
+			{
+				Card newCard = Card.CreateCardFromCardData(cardData);
+				AddChild(newCard);
+				m_CardHand.Add(newCard);
+			}
+		}
+		UpdateCardHandPosition();
+
+		if (puzzle.m_PuzzleDiscard != null)
+		{
+			foreach(CardData cardData in puzzle.m_PuzzleDiscard.m_Cards)
+			{
+				Card newCard = Card.CreateCardFromCardData(cardData);
+				AddChild(newCard);
+				m_CardDiscard.Add(newCard);
+				newCard.Position = m_DeckNode.Position;
+			}
+		}
+
+		m_MaxMana = puzzle.m_StartingMana;
+		m_CurrentMana = m_MaxMana;
+		m_ManaLabel.Text = m_CurrentMana.ToString();
+
+		m_TargetBattleScore = m_ActiveEnemy.m_BattleTarget;
+		m_CurrentBattleScore = 0;
+
+		ElementBoard.GetBoard().m_PuzzleMode = true;
+		ElementBoard.GetBoard().ClearBoard();
+		ElementBoard.GetBoard().InitBoard(m_ActiveEnemy.m_BoardLayoutRes);
+		
+		UpdateUI();
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
 	public void Discard(Card card)
 	{
 		m_CardHand.Remove(card);
@@ -517,9 +584,15 @@ public partial class BattleManager : Node2D
 		{
 			case StateFunctionCall.Enter: 
 			{
-				CopyRunDeckToGameDeck();
-				ShuffleDeck();
-				UpdateLimit();
+				if (m_ActiveEnemy.IsAPuzzle() == false)
+				{
+					SetupBattle();
+				}
+				else
+				{
+					m_ButtonLabel.Text = "Reset";
+					CreatePuzzleSituation();
+				}
 				break;
 			}
 			case StateFunctionCall.Update: 
@@ -579,8 +652,19 @@ public partial class BattleManager : Node2D
 			{
 				if (ElementBoard.GetBoard().IsBoardIdle())
 				{
-					ElementBoard.GetBoard().ForceCheckBoardForMatch();
-					return State_EnemyTurn;
+					if (m_ActiveEnemy.IsAPuzzle() == false)
+					{
+						ElementBoard.GetBoard().ForceCheckBoardForMatch();
+						return State_EnemyTurn;
+					}
+					else
+					{
+						DiscardAll();
+						ReshuffleDiscardInDeck(false);
+						ClearGameDeck();
+						DamagePlayer();
+						return State_StartBattle;
+					}
 				}
 				break;
 			}

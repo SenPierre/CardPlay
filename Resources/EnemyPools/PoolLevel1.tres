@@ -9,3 +9,4 @@ script = ExtResource("1_e5sbl")
 m_EnemyData = [ExtResource("1_jk7io"), ExtResource("2_2d5ie")]
 m_EliteData = []
 m_BossData = []
+m_PuzzleData = []

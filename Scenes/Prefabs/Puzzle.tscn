@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://hia3da8ssycy"]
+
+[ext_resource type="Script" path="res://Scripts/Puzzles/Puzzle.cs" id="1_44w4q"]
+
+[node name="Puzzle" type="Node2D"]
+script = ExtResource("1_44w4q")
+
+[node name="IntentRoot" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="IntentRoot"]
+visible = false
+position = Vector2(0, -25)
+scale = Vector2(2, 2)
+
+[node name="Sprite2D2" type="Sprite2D" parent="IntentRoot"]
+visible = false
+position = Vector2(0, -25)
+scale = Vector2(2, 2)

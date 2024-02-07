@@ -1,11 +1,13 @@
-[gd_resource type="Resource" script_class="EnemyDataPool" load_steps=4 format=3 uid="uid://g225lviiar8l"]
+[gd_resource type="Resource" script_class="EnemyDataPool" load_steps=5 format=3 uid="uid://g225lviiar8l"]
 
 [ext_resource type="Resource" uid="uid://ogijxmu6ckms" path="res://Resources/Enemies/Lvl1/Normal/EnemyCrossRock.tres" id="1_51loo"]
 [ext_resource type="Resource" uid="uid://dyuew323ofhxg" path="res://Resources/Enemies/Lvl1/Normal/EnemyRoundGarbage.tres" id="2_8y27x"]
 [ext_resource type="Script" path="res://Scripts/Enemies/EnemyDataPool.cs" id="3_2xkgl"]
+[ext_resource type="Resource" uid="uid://073lb7hvxacm" path="res://Resources/Puzzles/PuzzleTest.tres" id="3_tbwff"]
 
 [resource]
 script = ExtResource("3_2xkgl")
 m_EnemyData = [ExtResource("1_51loo"), ExtResource("2_8y27x")]
 m_EliteData = []
 m_BossData = []
+m_PuzzleData = [ExtResource("3_tbwff")]

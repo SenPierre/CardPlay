@@ -27,13 +27,13 @@ font_size = 32
 outline_size = 16
 outline_color = Color(0, 0, 0, 1)
 
-[node name="BattleScene" type="Node2D" node_paths=PackedStringArray("m_EnemyRoot", "m_ScoreBar", "m_LimitBar", "m_Hearts", "m_GameOverRect", "m_ManaLabel", "m_CardArrow", "m_HandNode", "m_DeckNode", "m_DiscardNode", "m_ModifierNode", "m_ElementBoardMaskViewport")]
+[node name="BattleScene" type="Node2D" node_paths=PackedStringArray("m_EnemyRoot", "m_ScoreBar", "m_LimitBar", "m_Hearts", "m_GameOverRect", "m_ManaLabel", "m_CardArrow", "m_HandNode", "m_DeckNode", "m_DiscardNode", "m_ModifierNode", "m_ButtonLabel", "m_ElementBoardMaskViewport")]
 texture_filter = 1
 script = ExtResource("13_rpe5q")
 m_EnemyRoot = NodePath("Enemies")
 m_ScoreBar = NodePath("ElementBoard/Bar/TextureProgressBar")
 m_LimitBar = NodePath("ElementBoard/Bar/TextureProgressBar/TextureRect")
-m_Hearts = []
+m_Hearts = [NodePath("ElementBoard/Hearts/TextureRect"), NodePath("ElementBoard/Hearts/TextureRect2"), NodePath("ElementBoard/Hearts/TextureRect3")]
 m_GameOverRect = NodePath("GameOverSprite")
 m_ManaLabel = NodePath("Button/Sprite2D/Label")
 m_HintColor = Color(1, 0.682353, 0.698039, 1)
@@ -42,6 +42,7 @@ m_HandNode = NodePath("Hand")
 m_DeckNode = NodePath("Deck")
 m_DiscardNode = NodePath("Discard")
 m_ModifierNode = NodePath("ModifierNode")
+m_ButtonLabel = NodePath("Button/Label")
 m_ElementBoardMaskViewport = NodePath("SubViewport")
 
 [node name="SubViewport" type="SubViewport" parent="."]

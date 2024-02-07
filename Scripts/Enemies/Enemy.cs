@@ -70,4 +70,6 @@ public partial class Enemy : Node
     {
         return m_EnemyIntent[m_currentIntent].GetLimitBase() + m_LimitIncrement * m_LimitCount;
     }
+
+    virtual public bool IsAPuzzle() { return false; }
 }

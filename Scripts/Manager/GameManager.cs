@@ -30,8 +30,10 @@ public partial class GameManager : Node2D
 	private int m_currentMapIndex = 0;
 
 	private List<int> m_AlreadyDidEnemy = new List<int>();
+	private List<int> m_AlreadyDidPuzzle = new List<int>();
 
 	private EnemyData m_NextEnemy = null;
+	private PuzzleData m_NextPuzzle = null;
 
 	// -----------------------------------------------------------------
 	// 
@@ -81,6 +83,9 @@ public partial class GameManager : Node2D
 	// -----------------------------------------------------------------
 	public void StartGrandmaFight()
 	{
+		StartPuzzle();
+		return;
+
 		m_NextEnemy = m_GrandmaData;
 		m_StateMachine.SetCurrentStateFunction(State_Battle);
 	}
@@ -92,7 +97,8 @@ public partial class GameManager : Node2D
 	{
 		int newEnemyIndex = 0;
 
-		if (m_EnemyPool[0].m_EnemyData.Length == m_AlreadyDidEnemy.Count)
+		Debug.Assert(m_EnemyPool[0].m_EnemyData.Length != m_AlreadyDidEnemy.Count, "No more enemy");
+		
 
 		do {
 			newEnemyIndex = RandomManager.GetIntRange(0, m_EnemyPool[0].m_EnemyData.Length - 1);
@@ -102,6 +108,25 @@ public partial class GameManager : Node2D
 
 		m_NextEnemy = m_EnemyPool[0].m_EnemyData[newEnemyIndex];
 		m_StateMachine.SetCurrentStateFunction(State_Battle);
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void StartPuzzle()
+	{
+		int newPuzzleIndex = 0;
+
+		Debug.Assert(m_EnemyPool[0].m_PuzzleData.Length != m_AlreadyDidEnemy.Count, "No more puzzle");
+
+		do {
+			newPuzzleIndex = RandomManager.GetIntRange(0, m_EnemyPool[0].m_PuzzleData.Length - 1);
+		} while (m_AlreadyDidEnemy.Contains(newPuzzleIndex));
+
+		m_AlreadyDidPuzzle.Add(newPuzzleIndex);
+
+		m_NextPuzzle = m_EnemyPool[0].m_PuzzleData[newPuzzleIndex];
+		m_StateMachine.SetCurrentStateFunction(State_Puzzle);
 	}
 
 	// -----------------------------------------------------------------
@@ -125,7 +150,7 @@ public partial class GameManager : Node2D
 	// -----------------------------------------------------------------
 	public void SelectingACard(Card card)
 	{
-		if (m_StateMachine.IsCurrentState(State_Battle))
+		if (m_StateMachine.IsCurrentState(State_Battle) || m_StateMachine.IsCurrentState(State_Puzzle))
 		{
 			BattleManager.GetManager().PickCard(card);
 		}
@@ -165,7 +190,37 @@ public partial class GameManager : Node2D
 			{
 				BattleManager manager = m_BattleScene.Instantiate<BattleManager>();
 				InitSubScene(manager);
-				manager.InitFight(m_NextEnemy);
+				Enemy newEnemy = Enemy.CreateEnemyFromData(m_NextEnemy);
+				manager.InitFight(newEnemy);
+				break;
+			}
+			case StateFunctionCall.Update: 
+			{
+				// N/A
+				break;
+			}
+			case StateFunctionCall.Exit: 
+			{
+				ClearSubScene();
+				break;
+			}
+		}
+		return null;
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	private StateFunc State_Puzzle(StateFunctionCall a_Call)
+	{
+		switch (a_Call)
+		{
+			case StateFunctionCall.Enter: 
+			{
+				BattleManager manager = m_BattleScene.Instantiate<BattleManager>();
+				InitSubScene(manager);
+				Enemy newPuzzle = Puzzle.CreatePuzzleFromData(m_NextPuzzle);
+				manager.InitFight(newPuzzle);
 				break;
 			}
 			case StateFunctionCall.Update: 

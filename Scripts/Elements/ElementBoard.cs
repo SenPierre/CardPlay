@@ -32,6 +32,7 @@ public partial class ElementBoard : Node2D
     public Vector2 m_MiddleOfTheBoardCoordinate;
 
     public int m_MatchCount = 4;
+    public bool m_PuzzleMode = false;
 
     private float m_MatchMultiplier;
 
@@ -531,6 +532,18 @@ public partial class ElementBoard : Node2D
         return true;
     }
 
+    private void _InitElement(int x, int y, ElementType type)
+    {
+        Element newVoid = Element.CreateElementFromType(type);
+        AddChild(newVoid);
+        // TODO : This is icky
+        newVoid.Init(
+            this, 
+            new Vector2(x * Element.ElementSize + Element.ElementHalfSize, y * Element.ElementSize + Element.ElementHalfSize), 
+            new Vector2(x * Element.ElementSize + Element.ElementHalfSize, y * Element.ElementSize + Element.ElementHalfSize));
+        m_GameBoard[x, y] = newVoid;
+    }
+
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
@@ -543,38 +556,17 @@ public partial class ElementBoard : Node2D
         int y = 0;
         foreach(char c in boardLayoutText)
         {
-            if (c == '\n')
+            switch (c)
             {
-                x = 0;
-                y++;
-            }
-            else if (c == '0')
-            {
-                Element newVoid = Element.CreateElementFromType(ElementType.Void);
-                AddChild(newVoid);
-                // TODO : This is icky
-                newVoid.Init(
-                    this, 
-                    new Vector2(x * Element.ElementSize + Element.ElementHalfSize, y * Element.ElementSize + Element.ElementHalfSize), 
-                    new Vector2(x * Element.ElementSize + Element.ElementHalfSize, y * Element.ElementSize + Element.ElementHalfSize));
-                m_GameBoard[x, y] = newVoid;
-                x++;
-            }
-            else if (c == '1')
-            {
-                x++;
-            }
-            else if (c == '2')
-            {
-                Element newVoid = Element.CreateElementFromType(ElementType.Rotator);
-                AddChild(newVoid);
-                // TODO : This is icky BIS
-                newVoid.Init(
-                    this, 
-                    new Vector2(x * Element.ElementSize + Element.ElementHalfSize, y * Element.ElementSize + Element.ElementHalfSize), 
-                    new Vector2(x * Element.ElementSize + Element.ElementHalfSize, y * Element.ElementSize + Element.ElementHalfSize));
-                m_GameBoard[x, y] = newVoid;
-                x++;
+                case '\n': x = 0; y++;                                       break;
+                case 'X':                                               x++; break;
+                case '>': _InitElement(x, y, ElementType.Rotator);      x++; break;
+                case ' ': _InitElement(x, y, ElementType.Void);         x++; break;
+                case '1': _InitElement(x, y, ElementType.Element1);     x++; break;
+                case '2': _InitElement(x, y, ElementType.Element2);     x++; break;
+                case '3': _InitElement(x, y, ElementType.Element3);     x++; break;
+                case '4': _InitElement(x, y, ElementType.Element4);     x++; break;
+                case 'R': _InitElement(x, y, ElementType.RockElement);  x++; break;
             }
         }
 
@@ -839,7 +831,7 @@ public partial class ElementBoard : Node2D
                                 ClearBoard();
                                 BattleManager.GetManager().EndFight();
                             }
-                            else if (CanFillTheBoard())
+                            else if (CanFillTheBoard() && m_PuzzleMode == false)
                             {
                                 return State_FillBoard;
                             }
@@ -904,13 +896,28 @@ public partial class ElementBoard : Node2D
         {
             case StateFunctionCall.Enter:
                 {
-                    FillBoard();
+                    if (m_PuzzleMode == false)
+                    {
+                        FillBoard();
+                    }
                     break;
                 }
             case StateFunctionCall.Update:
                 {
                     // This state purely exist to reset the MovingElement State.
-                    return State_MovingElements;
+                    if (m_PuzzleMode == false)
+                    {
+                        return State_MovingElements;
+                    }
+                    else
+                    {
+                        if (BattleManager.GetManager().CheckEndFight())
+                        {
+                            ClearBoard();
+                            BattleManager.GetManager().EndFight();
+                        }
+                        return State_WaitingForInput;
+                    }
                 }
             case StateFunctionCall.Exit:
                 {

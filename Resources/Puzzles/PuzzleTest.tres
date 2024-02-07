@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="PuzzleData" load_steps=6 format=3 uid="uid://073lb7hvxacm"]
+
+[ext_resource type="Resource" uid="uid://dgdvqchkhcasc" path="res://Resources/Cards/Common/common_RotateBoard.tres" id="1_5jx5y"]
+[ext_resource type="Script" path="res://Scripts/Puzzles/PuzzleData.cs" id="1_cg3w7"]
+[ext_resource type="Resource" uid="uid://dhe7l8malgg62" path="res://Resources/Cards/Base/base_selectDestroy.tres" id="2_i71ax"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardDeckData.cs" id="3_1p51b"]
+
+[sub_resource type="Resource" id="Resource_lcamo"]
+script = ExtResource("3_1p51b")
+m_Cards = Array[Object]([ExtResource("1_5jx5y"), ExtResource("2_i71ax")])
+
+[resource]
+script = ExtResource("1_cg3w7")
+m_PuzzleTarget = 1320
+m_StartingMana = 1
+m_BoardLayoutRes = "res://Resources/PuzzleBoards/PuzzleBoard1.txt"
+m_PuzzleHand = SubResource("Resource_lcamo")
