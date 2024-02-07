@@ -83,9 +83,6 @@ public partial class GameManager : Node2D
 	// -----------------------------------------------------------------
 	public void StartGrandmaFight()
 	{
-		StartPuzzle();
-		return;
-
 		m_NextEnemy = m_GrandmaData;
 		m_StateMachine.SetCurrentStateFunction(State_Battle);
 	}

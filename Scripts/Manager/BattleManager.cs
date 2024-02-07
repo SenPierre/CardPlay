@@ -411,6 +411,8 @@ public partial class BattleManager : Node2D
 		UpdateLimit();
 		m_TargetBattleScore = m_ActiveEnemy.m_BattleTarget;
 		m_CurrentBattleScore = 0;
+		
+		UpdateUI();
 	}
 	
 	// -----------------------------------------------------------------
