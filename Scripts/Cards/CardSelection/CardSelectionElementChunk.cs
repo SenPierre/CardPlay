@@ -10,17 +10,20 @@ public partial class CardSelectionElementChunk : BaseCardSelection
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
-    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, InputEventMouse mouseEvent)
+    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, MouseButtonMask mouseButtonMask, Vector2 mousePos)
     {
-        gameBoard.ComputeChunkElement(ref m_ElementList, selectedElement);
-        
-        if (m_ElementList.Count >= m_MinChunkSize)
+        if (_CheckCoordinate(gameBoard, selectedElement))
         {
-            m_SelectionStatus = SelectionStatus.SelectionComplete;
-        }
-        else
-        {
-            m_SelectionStatus = SelectionStatus.SelectionInvalid;
+            gameBoard.ComputeChunkElement(ref m_ElementList, selectedElement);
+            
+            if (m_ElementList.Count >= m_MinChunkSize)
+            {
+                m_SelectionStatus = SelectionStatus.SelectionComplete;
+            }
+            else
+            {
+                m_SelectionStatus = SelectionStatus.SelectionInvalid;
+            }
         }
     }
 
@@ -29,14 +32,17 @@ public partial class CardSelectionElementChunk : BaseCardSelection
     // -----------------------------------------------------------------
     public override void ApplySelectionPreview(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset)
     {
-        List<Vector2I> selection = new List<Vector2I>();
-        gameBoard.ComputeChunkElement(ref selection, selectedElement);
-
-        if (selection.Count >= m_MinChunkSize)
+        if (_CheckCoordinate(gameBoard, selectedElement))
         {
-            foreach (Vector2I coord in selection)
+            List<Vector2I> selection = new List<Vector2I>();
+            gameBoard.ComputeChunkElement(ref selection, selectedElement);
+
+            if (selection.Count >= m_MinChunkSize)
             {
-                gameBoard.m_Helper.AddHint(coord, coord, BattleManager.GetManager().m_HintColor);
+                foreach (Vector2I coord in selection)
+                {
+                    gameBoard.m_Helper.AddHint(coord, coord, BattleManager.GetManager().m_HintColor);
+                }
             }
         }
     }

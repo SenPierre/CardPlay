@@ -14,7 +14,8 @@ public partial class Card : Node2D
     BaseCardEffect[] m_Effects;
 
     bool m_SelectionPressedLastFrame = false;
-    
+    bool m_Selected = false;
+
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
@@ -45,29 +46,38 @@ public partial class Card : Node2D
 	// -----------------------------------------------------------------
     public void CardInputEvent(Node viewport, InputEvent generatedEvent, int shapeIdx)
     {
-        InputEventMouse mouseEvent = (InputEventMouse)generatedEvent;
-        int buttonLeftPressed = ((int)mouseEvent.ButtonMask) & ((int)MouseButton.Left);
-        if (buttonLeftPressed != 0)
+        if (m_Selected == false)
         {
-            GameManager.GetManager().SelectingACard(this);
-            m_Selection.Reset();
+            InputEventMouse mouseEvent = (InputEventMouse)generatedEvent;
+            int buttonLeftPressed = ((int)mouseEvent.ButtonMask) & ((int)MouseButton.Left);
+            if (buttonLeftPressed != 0)
+            {
+                GameManager.GetManager().SelectingACard(this);
+                m_Selection.Reset();
+            }
         }
     }
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public void UpdateCardSelection(ElementBoard board, InputEventMouse mouseEvent)
+    public void UpdateCardSelection(ElementBoard board, MouseButtonMask mouseButtonMask, Vector2 mousePos)
     {
         
-        Vector2 pos = mouseEvent.Position - board.Position;
+        Vector2 pos = mousePos - board.Position;
 
         Vector2I index = new Vector2I((int)pos.X, (int)pos.Y) / (int)Element.ElementSize;
         Vector2 intraElementSelectPos = (pos / Element.ElementSize) - index - new Vector2(0.5f, 0.5f);
 
-        int buttonLeftPressed = ((int)mouseEvent.ButtonMask) & ((int)MouseButton.Left);     
+        int buttonLeftPressed = ((int)mouseButtonMask) & ((int)MouseButton.Left);     
+        int buttonRightPressed = ((int)mouseButtonMask) & ((int)MouseButton.Right);    
 
-        if (buttonLeftPressed == 0 && m_SelectionPressedLastFrame == false)
+        if (buttonRightPressed != 0)
+        {
+            board.m_Helper.ClearHint();
+            BattleManager.GetManager().DropCard();
+        }
+        else if (buttonLeftPressed == 0 && m_SelectionPressedLastFrame == false)
         {
             m_SelectionPressedLastFrame = buttonLeftPressed != 0;  
             UpdatePreview(board, index, intraElementSelectPos);
@@ -75,7 +85,7 @@ public partial class Card : Node2D
         else
         {
             m_SelectionPressedLastFrame = buttonLeftPressed != 0;  
-            ApplyCardToBoard(board, index, intraElementSelectPos, mouseEvent);
+            ApplyCardToBoard(board, index, intraElementSelectPos, mouseButtonMask, mousePos);
         }
 
     }
@@ -83,11 +93,17 @@ public partial class Card : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public void ApplyCardToBoard(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, InputEventMouse mouseEvent)
+    public void ApplyCardToBoard(
+        ElementBoard gameBoard, 
+        Vector2I selectedElement, 
+        Vector2 clickCenterOffset, 
+        MouseButtonMask mouseButtonMask, 
+        Vector2 mousePos)
     {
-        m_Selection.Select(gameBoard, selectedElement, clickCenterOffset, mouseEvent);
+        m_Selection.Select(gameBoard, selectedElement, clickCenterOffset, mouseButtonMask, mousePos);
         if (m_Selection.m_SelectionStatus == SelectionStatus.SelectionInvalid)
         {
+            gameBoard.m_Helper.ClearHint();
             BattleManager.GetManager().DropCard();
             m_SelectionPressedLastFrame = false;
         }
@@ -147,5 +163,43 @@ public partial class Card : Node2D
         return newCard;
     }
 
-    //
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    public void Selected()
+    {
+        BattleManager.GetManager().AddToStateQueue(Queue_CardSelected);
+        m_Selected = true;
+    }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    public void Dropped()
+    {
+        m_Selected = false;
+    }
+
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    public bool Queue_CardSelected(QueueFuncCall a_Call)
+    {
+		switch (a_Call)
+		{
+			case QueueFuncCall.Activation: 
+			{
+				break;
+			}
+			case QueueFuncCall.Update: 
+			{
+                ElementBoard board = ElementBoard.GetBoard();                
+                UpdateCardSelection(board, Input.GetMouseButtonMask(), GetViewport().GetMousePosition());
+                return m_Selected == false;
+			}
+		}
+		// End of battle, never leeeeave
+		return false;
+    }
 }

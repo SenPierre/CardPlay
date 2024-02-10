@@ -16,6 +16,6 @@ public partial class CardEffectDestroy : BaseCardEffect
                 el.m_ToDelete = true;
             }
         }
-        gameBoard.SetStateToDestroyElement();
+        gameBoard.RequestToDestroyElement();
     }
 }

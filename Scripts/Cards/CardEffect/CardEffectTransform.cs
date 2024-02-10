@@ -14,6 +14,6 @@ public partial class CardEffectTransform : BaseCardEffect
             Element el = gameBoard.GetElement(coord);
             el.TransformElement(newElement);
         }
-        gameBoard.SetStateToMoveElement();
+        gameBoard.RequestToMoveElement();
     }
 }

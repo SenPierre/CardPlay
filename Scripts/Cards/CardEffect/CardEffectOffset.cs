@@ -16,6 +16,6 @@ public partial class CardEffectOffset : BaseCardEffect
         card.GetSelectionAdditionnalData(ref offset);
 
         gameBoard.OffsetElements(elementList, offset.m_value);
-        gameBoard.SetStateToMoveElement();
+        gameBoard.RequestToMoveElement();
     }
 }

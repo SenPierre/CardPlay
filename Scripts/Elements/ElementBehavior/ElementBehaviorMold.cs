@@ -53,6 +53,6 @@ public partial class ElementBehaviorMold : BaseElementBehavior
             }
         }
         
-        board.SetStateToMoveElement();
+        board.RequestToMoveElement();
     }
 }

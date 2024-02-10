@@ -38,21 +38,19 @@ public partial class BattleManager : Node2D
 
 	[Export] public SubViewport m_ElementBoardMaskViewport;
 
-	
-
 	[Signal]
 	public delegate void OnTurnEndEventHandler();
-
-	private int m_enemyIndex = 0;
 
 	private Enemy m_ActiveEnemy = null;
 	private int m_CurrentBattleScore = 0;
 	private int m_TargetBattleScore = 0;
 	private int m_CurrentLifeLimit = 0;
-
 	private int m_PlayerLife = 3;
+
+	private bool m_AwaitingPlayerInput = false;
+	private bool m_IsEndOfTurn = false;
 	
-	private StateMachine m_StateMachine = new StateMachine();
+	private StateQueue m_StateQueue = new StateQueue();
 	
 	List<Card> m_CardDeck = new List<Card>();
 	List<Card> m_CardHand = new List<Card>();
@@ -63,6 +61,16 @@ public partial class BattleManager : Node2D
 	List<BaseModifier> m_Modifiers = new List<BaseModifier>();
 
 	int m_CurrentMana = 0;
+
+	private float m_CardAnimTimer = 0.0f;
+	
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public override void _Ready()
+	{
+		base._Ready();
+	}
 	
 	// -----------------------------------------------------------------
 	// 
@@ -78,28 +86,118 @@ public partial class BattleManager : Node2D
 		m_ActiveEnemy = newEnemy;
 		m_EnemyRoot.AddChild(m_ActiveEnemy);        
 		//m_ActiveEnemy.UpdateIntentVisual();
-		m_StateMachine.SetCurrentStateFunction(State_StartBattle);
+		ResetBattle();
 	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-	public override void _Ready()
+	public void ResetBattle()
 	{
-		base._Ready();
+		if (m_ActiveEnemy.IsAPuzzle() == false)
+		{
+			SetupBattle();
+		}
+		else
+		{
+			m_ButtonLabel.Text = "Reset";
+			CreatePuzzleSituation();
+		}
+		StartTurn();
 	}
-
+	
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
+	public void SetupBattle()
+	{
+		ElementBoard.GetBoard().InitBoard(m_ActiveEnemy.m_BoardLayoutRes);
+		CopyRunDeckToGameDeck();
+		ShuffleDeck();
+		UpdateLimit();
+		m_TargetBattleScore = m_ActiveEnemy.m_BattleTarget;
+		m_CurrentBattleScore = 0;
+		
+		UpdateUI();
+	}
+	
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void CreatePuzzleSituation()
+	{
+		Puzzle puzzle = m_ActiveEnemy as Puzzle;
+		if (puzzle.m_PuzzleDeck != null)
+		{
+			foreach(CardData cardData in puzzle.m_PuzzleDeck.m_Cards)
+			{
+				Card newCard = Card.CreateCardFromCardData(cardData);
+				AddChild(newCard);
+				m_CardDeck.Add(newCard);
+				newCard.Position = m_DeckNode.Position;
+			}
+		}
+		
+		if (puzzle.m_PuzzleHand != null)
+		{
+			foreach(CardData cardData in puzzle.m_PuzzleHand.m_Cards)
+			{
+				Card newCard = Card.CreateCardFromCardData(cardData);
+				AddChild(newCard);
+				m_CardHand.Add(newCard);
+			}
+		}
+		UpdateCardHandPosition();
+
+		if (puzzle.m_PuzzleDiscard != null)
+		{
+			foreach(CardData cardData in puzzle.m_PuzzleDiscard.m_Cards)
+			{
+				Card newCard = Card.CreateCardFromCardData(cardData);
+				AddChild(newCard);
+				m_CardDiscard.Add(newCard);
+				newCard.Position = m_DeckNode.Position;
+			}
+		}
+
+		m_MaxMana = puzzle.m_StartingMana;
+		m_CurrentMana = m_MaxMana;
+		m_ManaLabel.Text = m_CurrentMana.ToString();
+
+		m_TargetBattleScore = m_ActiveEnemy.m_BattleTarget;
+		m_CurrentBattleScore = 0;
+
+		ElementBoard.GetBoard().m_PuzzleMode = true;
+		ElementBoard.GetBoard().ClearBoard();
+		ElementBoard.GetBoard().InitBoard(m_ActiveEnemy.m_BoardLayoutRes);
+		
+		UpdateUI();
+	}
+
+	// =================================================================
+	// 
+	// =================================================================
 	public override void _Process(double delta)
 	{
-		m_StateMachine.UpdateStateMachine();
+		QueueRedraw();
+		m_StateQueue.UpdateQueue();
 		UpdateCardHandPosition();
 		UpdateArrow();
 
 		base._Process(delta);
 	}
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public override void _Draw()
+    {
+        base._Draw();
+#if TOOLS
+        m_StateQueue.DebugDraw(this);
+
+#endif
+    }
 
 	// -----------------------------------------------------------------
 	// 
@@ -181,9 +279,27 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-	public bool IsPlayerTurn()
+	public void StartTurn()
 	{
-		return m_StateMachine.IsCurrentState(State_PlayerTurn);
+		ResetManaToMax();
+		DrawCard(5);
+		AddToStateQueue(Queue_AwaitingPlayerInput);
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void AwaitForInput()
+	{
+		AddToStateQueue(Queue_AwaitingPlayerInput);
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public bool IsAwaitingPlayerInput()
+	{
+		return m_StateQueue.IsCurrentState(Queue_AwaitingPlayerInput);
 	}
 
 	// -----------------------------------------------------------------
@@ -191,25 +307,21 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	public bool IsEndOfTurn()
 	{
-		return m_StateMachine.IsCurrentState(State_TurnEnd);
+		return m_IsEndOfTurn;
 	}
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-	public bool IsEnemyTurn()
+	public void ButtonEndTurnPressed()
 	{
-		return m_StateMachine.IsCurrentState(State_EnemyTurn);
-	}
-
-	// -----------------------------------------------------------------
-	// 
-	// -----------------------------------------------------------------
-	public void EndTurn()
-	{
-		if (IsPlayerTurn())
+		if (IsAwaitingPlayerInput())
 		{
-			m_StateMachine.SetCurrentStateFunction(State_TurnEnd);
+			DiscardAll();
+			EmitSignal(SignalName.OnTurnEnd);
+			AddToStateQueue(Queue_TurnEnding);
+			m_AwaitingPlayerInput = false;
+			m_IsEndOfTurn = true;
 		}
 	}
 
@@ -232,12 +344,8 @@ public partial class BattleManager : Node2D
 	public void EndFight()
 	{
 		GameManager.GetManager().EndBattle();
-		m_StateMachine.SetCurrentStateFunction(State_EndBattle);
-
-		m_ActiveEnemy.QueueFree();
-		m_ActiveEnemy = null;
+		AddToStateQueue(Queue_EndBattle);
 	}
-	
 
 	// -----------------------------------------------------------------
 	// 
@@ -274,14 +382,8 @@ public partial class BattleManager : Node2D
 	{
 		while (count > 0 && (m_CardDeck.Count > 0 || m_CardDiscard.Count > 0))
 		{
-			if (m_CardDeck.Count == 0)
-			{
-				ReshuffleDiscardInDeck(true);
-			}
 			count--;
-			Card card = m_CardDeck[0];
-			m_CardDeck.RemoveAt(0);
-			m_CardHand.Add(card);
+			AddToStateQueue(Queue_DrawCard);
 		}
 		
 		//GD.Print("CardDeckCount : " + m_CardDeck.Count);
@@ -309,9 +411,19 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	public void PickCard(Card card)
 	{
-		if (m_CurrentMana >= card.m_ManaCost)
+		if (IsAwaitingPlayerInput() || HasACardSelected())
 		{
-			m_CurrentHeldCard = card;
+			if (m_CurrentMana >= card.m_ManaCost)
+			{
+				if (m_CurrentHeldCard != null)
+				{
+					m_CurrentHeldCard.Dropped();
+				}
+
+				m_CurrentHeldCard = card;
+				m_AwaitingPlayerInput = false;
+				m_CurrentHeldCard.Selected();
+			}
 		}
 	}
 
@@ -320,7 +432,18 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	public void DropCard()
 	{
+		m_CurrentHeldCard.Dropped();
 		m_CurrentHeldCard = null;
+		m_AwaitingPlayerInput = false;
+		AddToStateQueue(Queue_AwaitingPlayerInput);
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public bool HasACardSelected()
+	{
+		return m_CurrentHeldCard != null;
 	}
 
 	// -----------------------------------------------------------------
@@ -398,74 +521,6 @@ public partial class BattleManager : Node2D
 			m_CardDeck.Add(newCard);
 			newCard.Position = m_DeckNode.Position;
 		}
-	}
-
-	// -----------------------------------------------------------------
-	// 
-	// -----------------------------------------------------------------
-	public void SetupBattle()
-	{
-		ElementBoard.GetBoard().InitBoard(m_ActiveEnemy.m_BoardLayoutRes);
-		CopyRunDeckToGameDeck();
-		ShuffleDeck();
-		UpdateLimit();
-		m_TargetBattleScore = m_ActiveEnemy.m_BattleTarget;
-		m_CurrentBattleScore = 0;
-		
-		UpdateUI();
-	}
-	
-	// -----------------------------------------------------------------
-	// 
-	// -----------------------------------------------------------------
-	public void CreatePuzzleSituation()
-	{
-		Puzzle puzzle = m_ActiveEnemy as Puzzle;
-		if (puzzle.m_PuzzleDeck != null)
-		{
-			foreach(CardData cardData in puzzle.m_PuzzleDeck.m_Cards)
-			{
-				Card newCard = Card.CreateCardFromCardData(cardData);
-				AddChild(newCard);
-				m_CardDeck.Add(newCard);
-				newCard.Position = m_DeckNode.Position;
-			}
-		}
-		
-		if (puzzle.m_PuzzleHand != null)
-		{
-			foreach(CardData cardData in puzzle.m_PuzzleHand.m_Cards)
-			{
-				Card newCard = Card.CreateCardFromCardData(cardData);
-				AddChild(newCard);
-				m_CardHand.Add(newCard);
-			}
-		}
-		UpdateCardHandPosition();
-
-		if (puzzle.m_PuzzleDiscard != null)
-		{
-			foreach(CardData cardData in puzzle.m_PuzzleDiscard.m_Cards)
-			{
-				Card newCard = Card.CreateCardFromCardData(cardData);
-				AddChild(newCard);
-				m_CardDiscard.Add(newCard);
-				newCard.Position = m_DeckNode.Position;
-			}
-		}
-
-		m_MaxMana = puzzle.m_StartingMana;
-		m_CurrentMana = m_MaxMana;
-		m_ManaLabel.Text = m_CurrentMana.ToString();
-
-		m_TargetBattleScore = m_ActiveEnemy.m_BattleTarget;
-		m_CurrentBattleScore = 0;
-
-		ElementBoard.GetBoard().m_PuzzleMode = true;
-		ElementBoard.GetBoard().ClearBoard();
-		ElementBoard.GetBoard().InitBoard(m_ActiveEnemy.m_BoardLayoutRes);
-		
-		UpdateUI();
 	}
 
 	// -----------------------------------------------------------------
@@ -576,155 +631,142 @@ public partial class BattleManager : Node2D
 			position += Vector2.Right * 50.0f;
 		}
 	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void AddToStateQueue(QueueFunc func)
+	{
+		m_StateQueue.AddToTheQueue(func);
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void AddToStartOfTheStateQueue(QueueFunc func)
+	{
+		m_StateQueue.AddToStartOfTheQueue(func);
+	}
 	
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-	public StateFunc State_StartBattle(StateFunctionCall a_Call)
+	public bool Queue_AwaitingPlayerInput(QueueFuncCall a_Call)
 	{
 		switch (a_Call)
 		{
-			case StateFunctionCall.Enter: 
+			case QueueFuncCall.Activation : 
 			{
-				if (m_ActiveEnemy.IsAPuzzle() == false)
+				m_AwaitingPlayerInput = true;
+				return false;
+			}
+			case QueueFuncCall.Update :
+			{
+				return m_AwaitingPlayerInput == false;
+			}
+		}
+		return false;
+	}
+	
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public bool Queue_DrawCard(QueueFuncCall a_Call)
+	{
+		switch (a_Call)
+		{
+			case QueueFuncCall.Activation : 
+			{
+				if (m_CardDeck.Count == 0)
 				{
-					SetupBattle();
+					ReshuffleDiscardInDeck(true);
+					if (m_CardDeck.Count == 0)
+					{
+						// Deck and discard empty !!
+						return false;
+					}
+				}
+				Card card = m_CardDeck[0];
+				m_CardDeck.RemoveAt(0);
+				m_CardHand.Add(card);
+				m_CardAnimTimer = 0.0f;
+				break;
+			}
+			case QueueFuncCall.Update :
+			{
+				m_CardAnimTimer += TimeManager.GetDeltaTime();
+				if (m_CardAnimTimer > 0.1f)
+				{
+					return true;
+				}
+				break;
+			}
+		}
+		return false;
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public bool Queue_TurnEnding(QueueFuncCall a_Call)
+	{
+		if (m_ActiveEnemy.IsAPuzzle() == false)
+		{
+			ElementBoard.GetBoard().ForceCheckBoardForMatch();
+			AddToStateQueue(Queue_EnemyTurn);
+		}
+		else
+		{
+			DiscardAll();
+			ReshuffleDiscardInDeck(false);
+			ClearGameDeck();
+			DamagePlayer();
+			ResetBattle();
+		}
+		m_IsEndOfTurn = false;
+		return true;
+	}
+	
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public bool Queue_EnemyTurn(QueueFuncCall a_Call)
+	{
+		switch (a_Call)
+		{
+			case QueueFuncCall.Activation : 
+			{
+				ApplyEnemyAttack();
+
+				if (m_PlayerLife > 0)
+				{
+					StartTurn();
 				}
 				else
 				{
-					m_ButtonLabel.Text = "Reset";
-					CreatePuzzleSituation();
+					AddToStateQueue(Queue_GAMEOVER);
 				}
-				break;
+				return true;
 			}
-			case StateFunctionCall.Update: 
+			case QueueFuncCall.Update :
 			{
-				return State_PlayerTurn;
-			}
-			case StateFunctionCall.Exit: 
-			{
-				DiscardAll();
-				break;
+				return true;
 			}
 		}
-		return null;
+		return false;
 	}
 	
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-	public StateFunc State_PlayerTurn(StateFunctionCall a_Call)
+	public bool Queue_EndBattle(QueueFuncCall a_Call)
 	{
 		switch (a_Call)
 		{
-			case StateFunctionCall.Enter: 
+			case QueueFuncCall.Activation: 
 			{
-				ElementBoard.GetBoard().SetStateToMoveElement();
-				ResetManaToMax();
-				DrawCard(5);
-				break;
-			}
-			case StateFunctionCall.Update: 
-			{
-				// N/A
-				break;
-			}
-			case StateFunctionCall.Exit: 
-			{
-				DiscardAll();
-				break;
-			}
-		}
-		return null;
-	}
-	
-	// -----------------------------------------------------------------
-	// 
-	// -----------------------------------------------------------------
-	public StateFunc State_TurnEnd(StateFunctionCall a_Call)
-	{
-		switch (a_Call)
-		{
-			case StateFunctionCall.Enter: 
-			{
-				EmitSignal(SignalName.OnTurnEnd);
-				break;
-			}
-			case StateFunctionCall.Update: 
-			{
-				if (ElementBoard.GetBoard().IsBoardIdle())
-				{
-					if (m_ActiveEnemy.IsAPuzzle() == false)
-					{
-						ElementBoard.GetBoard().ForceCheckBoardForMatch();
-						return State_EnemyTurn;
-					}
-					else
-					{
-						DiscardAll();
-						ReshuffleDiscardInDeck(false);
-						ClearGameDeck();
-						DamagePlayer();
-						return State_StartBattle;
-					}
-				}
-				break;
-			}
-			case StateFunctionCall.Exit: 
-			{
-				// N/A
-				break;
-			}
-		}
-		return null;
-	}
-	
-	// -----------------------------------------------------------------
-	// 
-	// -----------------------------------------------------------------
-	public StateFunc State_EnemyTurn(StateFunctionCall a_Call)
-	{
-		switch (a_Call)
-		{
-			case StateFunctionCall.Enter: 
-			{
-				break;
-			}
-			case StateFunctionCall.Update: 
-			{
-				if (ElementBoard.GetBoard().IsBoardIdle())
-				{
-					ApplyEnemyAttack();
-
-					if (m_PlayerLife > 0)
-					{
-						return State_PlayerTurn;
-					}
-					else
-					{
-						return State_GAMEOVER;
-					}
-				}
-				break;
-			}
-			case StateFunctionCall.Exit: 
-			{
-				// N/A
-				break;
-			}
-		}
-		return null;
-	}
-	
-	// -----------------------------------------------------------------
-	// 
-	// -----------------------------------------------------------------
-	public StateFunc State_EndBattle(StateFunctionCall a_Call)
-	{
-		switch (a_Call)
-		{
-			case StateFunctionCall.Enter: 
-			{
+				m_ActiveEnemy.QueueFree();
+				m_ActiveEnemy = null;
 				GD.Print("End of battle !");
 				m_TargetBattleScore = 0;
 				DiscardAll();
@@ -734,18 +776,14 @@ public partial class BattleManager : Node2D
 				GameManager.GetManager().EndBattle();
 				break;
 			}
-			case StateFunctionCall.Update: 
-			{
-				// N/A
-				break;
-			}
-			case StateFunctionCall.Exit: 
+			case QueueFuncCall.Update: 
 			{
 				// N/A
 				break;
 			}
 		}
-		return null;
+		// End of battle, never leeeeave
+		return false;
 	}
 
 	
@@ -753,26 +791,21 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-	public StateFunc State_GAMEOVER(StateFunctionCall a_Call)
+	public bool Queue_GAMEOVER(QueueFuncCall a_Call)
 	{
 		switch (a_Call)
 		{
-			case StateFunctionCall.Enter: 
+			case QueueFuncCall.Activation: 
 			{
 				m_GameOverRect.Visible = true;
 				break;
 			}
-			case StateFunctionCall.Update: 
-			{
-				// N/A
-				break;
-			}
-			case StateFunctionCall.Exit: 
+			case QueueFuncCall.Update: 
 			{
 				// N/A
 				break;
 			}
 		}
-		return null;
+		return false;
 	}
 }

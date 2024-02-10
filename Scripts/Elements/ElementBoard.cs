@@ -18,11 +18,9 @@ public partial class ElementBoard : Node2D
 
     private Element[,] m_GameBoard;
 
-    private StateMachine m_StateMachine = new StateMachine();
-
     private List<ElementsMatch> m_CurrentMatch = new List<ElementsMatch>();
 
-    public float m_MovingElementLerp = 1.0f;
+    public float m_MovingElementLerp = 0.0f;
 
     public bool m_DrawCardNextPhase = false;
     public bool m_GainManaNextPhase = false;
@@ -36,6 +34,8 @@ public partial class ElementBoard : Node2D
 
     private float m_MatchMultiplier;
 
+    private bool m_MovementAlreadyRequestedThisFrame = false;
+
     private int m_BlockingCheckUntilEndOfTurn;
 
     // -----------------------------------------------------------------
@@ -45,7 +45,6 @@ public partial class ElementBoard : Node2D
     {
         g_Board = this;
         m_GameBoard = new Element[m_Size, m_Size];
-        m_StateMachine.SetCurrentStateFunction(State_WaitingForInput);
 
         
         m_MiddleOfTheBoardCoordinate = new Vector2((float)(m_Size - 1) / 2.0f, (float)(m_Size - 1) / 2.0f);
@@ -57,35 +56,8 @@ public partial class ElementBoard : Node2D
     // -----------------------------------------------------------------
     public override void _Process(double delta)
     {
-        m_StateMachine.UpdateStateMachine();
-    }
-
-    // -----------------------------------------------------------------
-    // 
-    // -----------------------------------------------------------------
-    public bool IsBoardIdle()
-    {
-        return m_StateMachine.IsCurrentState(State_WaitingForInput);
-    }
-
-    // -----------------------------------------------------------------
-    // 
-    // -----------------------------------------------------------------
-    public void BoardInputEvent(Node viewport, InputEvent generatedEvent, int shapeIdx)
-    {
-        m_Helper.ClearHint();
-        if (m_StateMachine.IsCurrentState(State_WaitingForInput) == false || BattleManager.GetManager().IsPlayerTurn() == false)
-        {
-            return;
-        }
-
-        InputEventMouse mouseEvent = (InputEventMouse)generatedEvent;
-        Card currentCard = BattleManager.GetManager().m_CurrentHeldCard;
-
-        if (currentCard != null)
-        {
-            currentCard.UpdateCardSelection(this, mouseEvent);
-        }
+        base._Process(delta);
+        m_MovementAlreadyRequestedThisFrame = false;
     }
 
     // -----------------------------------------------------------------
@@ -344,7 +316,7 @@ public partial class ElementBoard : Node2D
     {
         if (_CheckBoardState())
         {
-            SetStateToDestroyElement();
+            RequestToDestroyElement();
         }
     }
 
@@ -532,6 +504,9 @@ public partial class ElementBoard : Node2D
         return true;
     }
 
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
     private void _InitElement(int x, int y, ElementType type)
     {
         Element newVoid = Element.CreateElementFromType(type);
@@ -570,7 +545,7 @@ public partial class ElementBoard : Node2D
             }
         }
 
-        m_StateMachine.SetCurrentStateFunction(State_FillBoard);
+        RequestToFillBoard();
     }
 
     // -----------------------------------------------------------------
@@ -749,19 +724,30 @@ public partial class ElementBoard : Node2D
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
-    public void SetStateToDestroyElement()
+    public void RequestToDestroyElement()
     {
-        m_StateMachine.SetCurrentStateFunction(State_DestroyElements);
+        BattleManager.GetManager().AddToStartOfTheStateQueue(Queue_DestroyElements);
     }
 
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
-    public void SetStateToMoveElement()
+    public void RequestToMoveElement()
     {
-        m_StateMachine.SetCurrentStateFunction(State_MovingElements);
+        if (m_MovementAlreadyRequestedThisFrame == false)
+        {
+            BattleManager.GetManager().AddToStartOfTheStateQueue(Queue_MovingElements);
+            m_MovementAlreadyRequestedThisFrame = true;
+        }
     }
 
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public void RequestToFillBoard()
+    {
+        BattleManager.GetManager().AddToStartOfTheStateQueue(Queue_FillBoard);
+    }
 
     // -----------------------------------------------------------------
     // 
@@ -779,42 +765,16 @@ public partial class ElementBoard : Node2D
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
-    public StateFunc State_WaitingForInput(StateFunctionCall a_Call)
+    public bool Queue_MovingElements(QueueFuncCall a_Call)
     {
         switch (a_Call)
         {
-            case StateFunctionCall.Enter:
-                {
-                    m_MatchMultiplier = 1.0f;
-                    break;
-                }
-            case StateFunctionCall.Update:
-                {
-                    // N/A
-                    break;
-                }
-            case StateFunctionCall.Exit:
-                {
-                    // N/A
-                    break;
-                }
-        }
-        return null;
-    }
-
-    // -----------------------------------------------------------------
-    // 
-    // -----------------------------------------------------------------
-    public StateFunc State_MovingElements(StateFunctionCall a_Call)
-    {
-        switch (a_Call)
-        {
-            case StateFunctionCall.Enter:
+            case QueueFuncCall.Activation:
                 {
                     m_MovingElementLerp = 0.0f;
                     break;
                 }
-            case StateFunctionCall.Update:
+            case QueueFuncCall.Update:
                 {
                     m_MovingElementLerp += TimeManager.GetDeltaTime() * 2.0f;
                     if (m_MovingElementLerp > 1.0f)
@@ -824,7 +784,7 @@ public partial class ElementBoard : Node2D
                         {
                             if (CanCheckBoard() && _CheckBoardState())
                             {
-                                return State_DestroyElements;
+                                RequestToDestroyElement();
                             }
                             else if (BattleManager.GetManager().CheckEndFight())
                             {
@@ -833,68 +793,60 @@ public partial class ElementBoard : Node2D
                             }
                             else if (CanFillTheBoard() && m_PuzzleMode == false)
                             {
-                                return State_FillBoard;
+                                RequestToFillBoard();
                             }
-                            return State_WaitingForInput;
+                            m_MovingElementLerp = 0.0f;
+                            return true;
                         }
 
                     }
                     break;
                 }
-            case StateFunctionCall.Exit:
-                {
-                    break;
-                }
         }
-        return null;
+        return false;
     }
 
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
-    public StateFunc State_DestroyElements(StateFunctionCall a_Call)
+    public bool Queue_DestroyElements(QueueFuncCall a_Call)
     {
         switch (a_Call)
         {
-            case StateFunctionCall.Enter:
+            case QueueFuncCall.Activation:
                 {
                     TriggerDetectedMatches();
                     DeleteMarkedElement();
                     break;
                 }
-            case StateFunctionCall.Update:
+            case QueueFuncCall.Update:
                 {
                     if (CheckAllElementAreIdle())
                     {
                         if (GravityCheck())
                         {
-                            return State_MovingElements;
+                            RequestToMoveElement();
                         }
                         else
                         {
-                            return State_FillBoard;
+                            RequestToFillBoard();
                         }
-
+                        return true;
                     }
                     break;
                 }
-            case StateFunctionCall.Exit:
-                {
-                    m_DestroyDontTrigger = false;
-                    break;
-                }
         }
-        return null;
+        return false;
     }
 
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
-    public StateFunc State_FillBoard(StateFunctionCall a_Call)
+    public bool Queue_FillBoard(QueueFuncCall a_Call)
     {
         switch (a_Call)
         {
-            case StateFunctionCall.Enter:
+            case QueueFuncCall.Activation:
                 {
                     if (m_PuzzleMode == false)
                     {
@@ -902,12 +854,12 @@ public partial class ElementBoard : Node2D
                     }
                     break;
                 }
-            case StateFunctionCall.Update:
+            case QueueFuncCall.Update:
                 {
                     // This state purely exist to reset the MovingElement State.
                     if (m_PuzzleMode == false)
                     {
-                        return State_MovingElements;
+                        RequestToMoveElement();
                     }
                     else
                     {
@@ -916,15 +868,11 @@ public partial class ElementBoard : Node2D
                             ClearBoard();
                             BattleManager.GetManager().EndFight();
                         }
-                        return State_WaitingForInput;
                     }
+                    return true;
                 }
-            case StateFunctionCall.Exit:
-                {
-                    // N/A
-                    break;
-                }
+                
         }
-        return null;
+        return false;
     }
 }

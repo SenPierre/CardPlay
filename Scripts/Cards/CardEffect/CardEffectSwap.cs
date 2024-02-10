@@ -9,6 +9,6 @@ public partial class CardEffectSwap : BaseCardEffect
     public override void ApplyEffect(ElementBoard gameBoard, Card card, List<Vector2I> elementList)
     {
         gameBoard.Swap(elementList);
-        gameBoard.SetStateToMoveElement();
+        gameBoard.RequestToMoveElement();
     }
 }

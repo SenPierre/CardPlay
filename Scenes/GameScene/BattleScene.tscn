@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://byld2rgu6ytjf"]
+[gd_scene load_steps=16 format=3 uid="uid://byld2rgu6ytjf"]
 
 [ext_resource type="Script" path="res://Scripts/Elements/ElementBoard.cs" id="1_n1ht2"]
 [ext_resource type="Script" path="res://Scripts/Elements/BoardHelper.cs" id="2_5sujc"]
@@ -13,9 +13,6 @@
 [ext_resource type="Texture2D" uid="uid://b26u82a8o0eho" path="res://Textures/Background.png" id="12_mj4x8"]
 [ext_resource type="Script" path="res://Scripts/Manager/BattleManager.cs" id="13_rpe5q"]
 [ext_resource type="Texture2D" uid="uid://c1dtx4txnfg24" path="res://Textures/PassButton.png" id="14_uv1mv"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_8p4ie"]
-size = Vector2(960, 960)
 
 [sub_resource type="LabelSettings" id="LabelSettings_qscjm"]
 font_size = 40
@@ -77,12 +74,6 @@ position = Vector2(491, 20)
 script = ExtResource("1_n1ht2")
 m_Helper = NodePath("BoardHelper")
 m_Size = 12
-
-[node name="Area2D" type="Area2D" parent="ElementBoard"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ElementBoard/Area2D"]
-position = Vector2(480, 480)
-shape = SubResource("RectangleShape2D_8p4ie")
 
 [node name="BoardHelper" type="Node2D" parent="ElementBoard" node_paths=PackedStringArray("m_Board")]
 script = ExtResource("2_5sujc")
@@ -243,5 +234,4 @@ position = Vector2(1598, 68)
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(960, 540)
 
-[connection signal="input_event" from="ElementBoard/Area2D" to="ElementBoard" method="BoardInputEvent"]
-[connection signal="button_down" from="Button" to="." method="EndTurn"]
+[connection signal="button_down" from="Button" to="." method="ButtonEndTurnPressed"]

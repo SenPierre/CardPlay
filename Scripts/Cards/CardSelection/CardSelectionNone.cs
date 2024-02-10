@@ -8,9 +8,12 @@ public partial class CardSelectionNone : BaseCardSelection
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, InputEventMouse mouseEvent)
+    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, MouseButtonMask mouseButtonMask, Vector2 mousePos)
     {        
-        m_SelectionStatus = SelectionStatus.SelectionComplete;
+        if (_CheckCoordinate(gameBoard, selectedElement))
+        {
+            m_SelectionStatus = SelectionStatus.SelectionComplete;
+        }
     }
     
 	// -----------------------------------------------------------------
@@ -18,6 +21,9 @@ public partial class CardSelectionNone : BaseCardSelection
 	// -----------------------------------------------------------------
     public override void ApplySelectionPreview(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset)
     {
-        gameBoard.m_Helper.AddHint(new Vector2I(0,0), new Vector2I(gameBoard.m_Size-1,gameBoard.m_Size-1), BattleManager.GetManager().m_HintColor);
+        if (_CheckCoordinate(gameBoard, selectedElement))
+        {
+            gameBoard.m_Helper.AddHint(new Vector2I(0,0), new Vector2I(gameBoard.m_Size-1,gameBoard.m_Size-1), BattleManager.GetManager().m_HintColor);
+        }
     }
 }

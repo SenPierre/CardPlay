@@ -8,12 +8,11 @@ public partial class CardSelectionAdjacent : BaseCardSelection
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, InputEventMouse mouseEvent)
+    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, MouseButtonMask mouseButtonMask, Vector2 mousePos)
     {
         m_ElementList.Clear();
         if (_CheckCoordinate(gameBoard, selectedElement) == false)
         {
-            m_SelectionStatus = SelectionStatus.SelectionInvalid;
             return;
         }
 
@@ -21,7 +20,6 @@ public partial class CardSelectionAdjacent : BaseCardSelection
 
         if (_CheckCoordinate(gameBoard, AdjacentCoordinate) == false)
         {
-            m_SelectionStatus = SelectionStatus.SelectionInvalid;
             return;
         }
 
@@ -37,6 +35,12 @@ public partial class CardSelectionAdjacent : BaseCardSelection
     public override void ApplySelectionPreview(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset)
     {
         Vector2I AdjacentCoordinate = ComputeAdjacentOffset(clickCenterOffset);
+
+        if (_CheckCoordinate(gameBoard, selectedElement + AdjacentCoordinate) == false || _CheckCoordinate(gameBoard, selectedElement) == false)
+        {
+            return;
+        }
+
         if (AdjacentCoordinate.X == -1 || AdjacentCoordinate.Y == -1)
         {
             gameBoard.m_Helper.AddHint(selectedElement + AdjacentCoordinate, selectedElement, BattleManager.GetManager().m_HintColor);

@@ -10,7 +10,7 @@ public partial class CardSelectionMultiple : BaseCardSelection
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, InputEventMouse mouseEvent)
+    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, MouseButtonMask mouseButtonMask, Vector2 mousePos)
     {
         if (_CheckCoordinate(gameBoard, selectedElement))
         {
@@ -25,10 +25,6 @@ public partial class CardSelectionMultiple : BaseCardSelection
 
             m_SelectionStatus = m_ElementList.Count == m_SelectCount ? SelectionStatus.SelectionComplete : SelectionStatus.SelectionIncomplete;
         }
-        else
-        {
-            m_SelectionStatus = SelectionStatus.SelectionInvalid;
-        }
     }
     
 	// -----------------------------------------------------------------
@@ -36,10 +32,13 @@ public partial class CardSelectionMultiple : BaseCardSelection
 	// -----------------------------------------------------------------
     public override void ApplySelectionPreview(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset)
     {
-        gameBoard.m_Helper.AddHint(selectedElement, selectedElement, BattleManager.GetManager().m_HintColor);
-        foreach(Vector2I coord in m_ElementList)
+        if (_CheckCoordinate(gameBoard, selectedElement))
         {
-            gameBoard.m_Helper.AddHint(coord, coord, BattleManager.GetManager().m_HintColor);
+            gameBoard.m_Helper.AddHint(selectedElement, selectedElement, BattleManager.GetManager().m_HintColor);
+            foreach(Vector2I coord in m_ElementList)
+            {
+                gameBoard.m_Helper.AddHint(coord, coord, BattleManager.GetManager().m_HintColor);
+            }
         }
     }
 }

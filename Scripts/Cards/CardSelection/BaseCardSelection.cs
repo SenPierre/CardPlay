@@ -27,7 +27,7 @@ public abstract partial class BaseCardSelection : Resource
     public SelectionStatus m_SelectionStatus = SelectionStatus.SelectionIncomplete;
     
     public abstract void ApplySelectionPreview(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset);
-    public abstract void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, InputEventMouse mouseEvent);
+    public abstract void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, MouseButtonMask mouseButtonMask, Vector2 mousePos);
     public void Reset()
     {
         m_ElementList.Clear();

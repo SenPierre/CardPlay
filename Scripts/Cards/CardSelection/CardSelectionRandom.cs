@@ -10,22 +10,25 @@ public partial class CardSelectionRandom : BaseCardSelection
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, InputEventMouse mouseEvent)
+    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, MouseButtonMask mouseButtonMask, Vector2 mousePos)
     {
-        m_ElementList.Clear();
-
-        for (int i = 0; i < m_RandomCount; i++)
+        if (_CheckCoordinate(gameBoard, selectedElement))
         {
-            Vector2I newRandom = new Vector2I();
+            m_ElementList.Clear();
 
-            do {
-                newRandom.X = RandomManager.GetIntRange(0,gameBoard.m_Size-1);
-                newRandom.Y = RandomManager.GetIntRange(0,gameBoard.m_Size-1);
-            } while (_CheckCoordinate(gameBoard, newRandom) == false || m_ElementList.Contains(newRandom));
-            m_ElementList.Add(newRandom);
+            for (int i = 0; i < m_RandomCount; i++)
+            {
+                Vector2I newRandom = new Vector2I();
+
+                do {
+                    newRandom.X = RandomManager.GetIntRange(0,gameBoard.m_Size-1);
+                    newRandom.Y = RandomManager.GetIntRange(0,gameBoard.m_Size-1);
+                } while (_CheckCoordinate(gameBoard, newRandom) == false || m_ElementList.Contains(newRandom));
+                m_ElementList.Add(newRandom);
+            }
+            
+            m_SelectionStatus = SelectionStatus.SelectionComplete;
         }
-        
-        m_SelectionStatus = SelectionStatus.SelectionComplete;
     }
     
 	// -----------------------------------------------------------------
@@ -33,9 +36,12 @@ public partial class CardSelectionRandom : BaseCardSelection
 	// -----------------------------------------------------------------
     public override void ApplySelectionPreview(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset)
     {
-        Vector2I newRandom = new Vector2I();
-        newRandom.X = RandomManager.GetIntRange(0,gameBoard.m_Size-1);
-        newRandom.Y = RandomManager.GetIntRange(0,gameBoard.m_Size-1);
-        gameBoard.m_Helper.AddHint(newRandom, newRandom, BattleManager.GetManager().m_HintColor);
+        if (_CheckCoordinate(gameBoard, selectedElement))
+        {
+            Vector2I newRandom = new Vector2I();
+            newRandom.X = RandomManager.GetIntRange(0,gameBoard.m_Size-1);
+            newRandom.Y = RandomManager.GetIntRange(0,gameBoard.m_Size-1);
+            gameBoard.m_Helper.AddHint(newRandom, newRandom, BattleManager.GetManager().m_HintColor);
+        }
     }
 }

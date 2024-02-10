@@ -12,14 +12,13 @@ public partial class CardSelectionDragColumn : BaseCardSelection
     // -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, InputEventMouse mouseEvent)
+    public override void Select(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset, MouseButtonMask mouseButtonMask, Vector2 mousePos)
     {
         m_ElementList.Clear();
 
+        int buttonLeftPressed = ((int)mouseButtonMask) & ((int)MouseButton.Left);     
 
-        int buttonLeftPressed = ((int)mouseEvent.ButtonMask) & ((int)MouseButton.Left);     
-
-        if (buttonLeftPressed == 0) // leaving the drag
+        if (buttonLeftPressed == 0 && m_DragHappening) // leaving the drag
         {
             m_DragHappening = false;
             for (int y = 0; y < gameBoard.m_Size; y++)
@@ -44,12 +43,16 @@ public partial class CardSelectionDragColumn : BaseCardSelection
         {
             if (m_DragHappening == false)
             {
-                m_DragStartPos = mouseEvent.GlobalPosition.Y;
+                if (_CheckCoordinate(gameBoard, selectedElement) == false)
+                {
+                    return;
+                }
+                m_DragStartPos = mousePos.Y;
                 xLineSelected = selectedElement.X;
                 m_DragHappening = true;
             }
             
-            float offset = (mouseEvent.GlobalPosition.Y - m_DragStartPos) / Element.ElementSize;
+            float offset = (mousePos.Y - m_DragStartPos) / Element.ElementSize;
             m_DragOffset = (int)Mathf.Round(offset);
 
             gameBoard.PreviewColumnDrag(xLineSelected, offset);
@@ -63,11 +66,14 @@ public partial class CardSelectionDragColumn : BaseCardSelection
 	// -----------------------------------------------------------------
     public override void ApplySelectionPreview(ElementBoard gameBoard, Vector2I selectedElement, Vector2 clickCenterOffset)
     {
-        Vector2I min = selectedElement;
-        Vector2I max = selectedElement;
-        min.Y = 0;
-        max.Y = gameBoard.m_Size - 1;
-        gameBoard.m_Helper.AddHint(min, max, BattleManager.GetManager().m_HintColor);
+        if (_CheckCoordinate(gameBoard, selectedElement) || m_DragHappening)
+        {
+            Vector2I min = selectedElement;
+            Vector2I max = selectedElement;
+            min.Y = 0;
+            max.Y = gameBoard.m_Size - 1;
+            gameBoard.m_Helper.AddHint(min, max, BattleManager.GetManager().m_HintColor);
+        }
     }
 
 	// -----------------------------------------------------------------

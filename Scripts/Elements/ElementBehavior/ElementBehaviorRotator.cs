@@ -56,6 +56,6 @@ public partial class ElementBehaviorRotator : BaseElementBehavior
 
         board.OffsetElements(directionList, 1, ElementMovementAnimation.RotateClockwise);
         
-        board.SetStateToMoveElement();
+        board.RequestToMoveElement();
     }
 }

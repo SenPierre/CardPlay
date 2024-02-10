@@ -60,7 +60,7 @@ public partial class ElementBehaviorBomb : BaseElementBehavior
 			}
 		}
 		
-		board.SetStateToDestroyElement();
+		board.RequestToDestroyElement();
 	}
 
 	// -----------------------------------------------------------------
