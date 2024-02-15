@@ -8,6 +8,7 @@ using System;
 public partial class BaseModifierData : Resource
 {
    [Export] public Texture2D m_Sprite;
+   [Export] public string m_Title;
    [Export] public string m_BaseDescription;
 
     public BaseModifier CreateModifierFromData(ModifierDisplay display) 
@@ -36,6 +37,7 @@ public class BaseModifier
         m_data = data; 
         m_Display = display;
         m_Display.UpdateSprite(m_data.m_Sprite);
+        m_Display.UpdateTitle(m_data.m_Title);
         _Init();
         _UpdateDisplay();
         UpdateModifierDescription();

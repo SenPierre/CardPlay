@@ -55,22 +55,22 @@ color = Color(0, 0, 0, 1)
 [node name="ColorRect" type="ColorRect" parent="SubViewport"]
 z_index = 20
 offset_left = 490.0
-offset_top = 19.0
+offset_top = 99.0
 offset_right = 1452.0
-offset_bottom = 981.0
+offset_bottom = 1061.0
 mouse_filter = 2
 
 [node name="Deck" type="Node2D" parent="."]
 position = Vector2(865, 1567)
 
 [node name="Hand" type="Node2D" parent="."]
-position = Vector2(100, 520)
+position = Vector2(100, 600)
 
 [node name="Discard" type="Node2D" parent="."]
 position = Vector2(864, 1583)
 
 [node name="ElementBoard" type="Node2D" parent="." node_paths=PackedStringArray("m_Helper")]
-position = Vector2(491, 20)
+position = Vector2(491, 100)
 script = ExtResource("1_n1ht2")
 m_Helper = NodePath("BoardHelper")
 m_Size = 12
@@ -158,7 +158,7 @@ position = Vector2(480, 480)
 texture = ExtResource("9_oic80")
 
 [node name="Enemies" type="Node2D" parent="."]
-position = Vector2(1634, 274)
+position = Vector2(1634, 354)
 
 [node name="Button" type="Button" parent="."]
 anchors_preset = -1
@@ -167,9 +167,9 @@ anchor_top = 6.225
 anchor_right = -34.525
 anchor_bottom = 6.225
 offset_left = 188.0
-offset_top = 875.0
-offset_right = 388.0
-offset_bottom = 975.0
+offset_top = 955.0
+offset_right = 396.0
+offset_bottom = 1063.0
 icon = ExtResource("14_uv1mv")
 metadata/_edit_use_anchors_ = true
 
@@ -229,7 +229,7 @@ offset_bottom = 547.0
 texture = ExtResource("11_wtrpl")
 
 [node name="ModifierNode" type="Node2D" parent="."]
-position = Vector2(1598, 68)
+position = Vector2(1598, 148)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(960, 540)

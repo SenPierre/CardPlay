@@ -7,15 +7,14 @@ public partial class ModifierDisplay : Node2D
 {
     [Export] public Sprite2D m_Sprite;
     [Export] public Label m_CounterLabel;
-    [Export] public Label m_DescriptionLabel;
-    [Export] public Node2D m_DescriptionPanel;
+    [Export] public Tooltip m_Tooltip;
 
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
     public override void _Ready()
     {
-        m_DescriptionPanel.Visible = false;
+        m_Tooltip.SetVisible(false);
     }
 
     // -----------------------------------------------------------------
@@ -39,9 +38,17 @@ public partial class ModifierDisplay : Node2D
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
+    public void UpdateTitle(string text)
+    {
+        m_Tooltip.SetTitle(text);
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
     public void UpdateDescription(string text)
     {
-        m_DescriptionLabel.Text = text;
+        m_Tooltip.SetDescription(text);
     }
 
     
@@ -50,7 +57,7 @@ public partial class ModifierDisplay : Node2D
     // -----------------------------------------------------------------
     public void MouseEnter()
     {
-        m_DescriptionPanel.Visible = true;
+        m_Tooltip.SetVisible(true);
     }
     
     // -----------------------------------------------------------------
@@ -58,7 +65,7 @@ public partial class ModifierDisplay : Node2D
     // -----------------------------------------------------------------
     public void MouseExit()
     {
-        m_DescriptionPanel.Visible = false;
+        m_Tooltip.SetVisible(false);
     }
     
     // -----------------------------------------------------------------
@@ -67,6 +74,6 @@ public partial class ModifierDisplay : Node2D
     public void BoardInputEvent(Node viewport, InputEvent generatedEvent, int shapeIdx)
     {
         InputEventMouse mouseEvent = (InputEventMouse)generatedEvent;
-        m_DescriptionPanel.GlobalPosition = mouseEvent.GlobalPosition;
+        m_Tooltip.GlobalPosition = mouseEvent.GlobalPosition;
     }
 }

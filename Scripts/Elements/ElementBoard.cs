@@ -33,6 +33,9 @@ public partial class ElementBoard : Node2D
     public bool m_PuzzleMode = false;
 
     private float m_MatchMultiplier;
+    private float m_BaseMatchMultiplier = 1.0f;
+    private float m_IncrementMatchMultiplier = 1.0f;
+    private float m_MaxMatchMultiplier = 2.5f;
 
     private bool m_MovementAlreadyRequestedThisFrame = false;
 
@@ -440,15 +443,23 @@ public partial class ElementBoard : Node2D
     // -----------------------------------------------------------------
     public void TriggerDetectedMatches()
     {
-        // 
-        m_MatchMultiplier += (m_CurrentMatch.Count - 1) * 0.1f;
+        m_MatchMultiplier += (m_CurrentMatch.Count - 1) * m_IncrementMatchMultiplier;
         foreach (ElementsMatch match in m_CurrentMatch)
         {
-            match.OnMatch(Mathf.Min(m_MatchMultiplier, 2.5f));
+            match.OnMatch(Mathf.Min(m_MatchMultiplier, m_MaxMatchMultiplier));
         }
+        EventManager.GetManager().EmitSignal(EventManager.SignalName.OnMatches);
 
-        m_MatchMultiplier += 0.1f;
+        m_MatchMultiplier += m_IncrementMatchMultiplier;
         m_CurrentMatch.Clear();
+    }
+
+    // -----------------------------------------------------------------
+    // 
+    // -----------------------------------------------------------------
+    public void ResetMultiplier()
+    {
+        m_MatchMultiplier = m_BaseMatchMultiplier;
     }
 
     // -----------------------------------------------------------------

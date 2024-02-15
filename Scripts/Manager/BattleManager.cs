@@ -38,9 +38,6 @@ public partial class BattleManager : Node2D
 
 	[Export] public SubViewport m_ElementBoardMaskViewport;
 
-	[Signal]
-	public delegate void OnTurnEndEventHandler();
-
 	private Enemy m_ActiveEnemy = null;
 	private int m_CurrentBattleScore = 0;
 	private int m_TargetBattleScore = 0;
@@ -283,6 +280,7 @@ public partial class BattleManager : Node2D
 	{
 		ResetManaToMax();
 		DrawCard(5);
+		EventManager.GetManager().EmitSignal(EventManager.SignalName.OnTurnStart);
 		AddToStateQueue(Queue_AwaitingPlayerInput);
 	}
 
@@ -318,7 +316,7 @@ public partial class BattleManager : Node2D
 		if (IsAwaitingPlayerInput())
 		{
 			DiscardAll();
-			EmitSignal(SignalName.OnTurnEnd);
+			EventManager.GetManager().EmitSignal(EventManager.SignalName.OnTurnEnd);
 			AddToStateQueue(Queue_TurnEnding);
 			m_AwaitingPlayerInput = false;
 			m_IsEndOfTurn = true;
@@ -383,7 +381,7 @@ public partial class BattleManager : Node2D
 		while (count > 0 && (m_CardDeck.Count > 0 || m_CardDiscard.Count > 0))
 		{
 			count--;
-			AddToStateQueue(Queue_DrawCard);
+			AddToStartOfTheStateQueue(Queue_DrawCard);
 		}
 		
 		//GD.Print("CardDeckCount : " + m_CardDeck.Count);
@@ -657,6 +655,7 @@ public partial class BattleManager : Node2D
 		{
 			case QueueFuncCall.Activation : 
 			{
+				ElementBoard.GetBoard().ResetMultiplier();
 				m_AwaitingPlayerInput = true;
 				return false;
 			}

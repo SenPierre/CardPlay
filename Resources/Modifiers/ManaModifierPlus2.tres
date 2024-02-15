@@ -8,4 +8,5 @@ script = ExtResource("2_eo7n4")
 m_ManaModifier = 2
 m_TurnDuration = 1
 m_Sprite = ExtResource("1_ol8ld")
+m_Title = "MANA OVERFLOW"
 m_BaseDescription = "For [X] turn(s), you have [Y] mana at the start of your turn"

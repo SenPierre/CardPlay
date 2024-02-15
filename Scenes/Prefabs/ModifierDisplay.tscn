@@ -2,26 +2,22 @@
 
 [ext_resource type="Script" path="res://Scripts/Modifier/ModifierDisplay.cs" id="1_ogujs"]
 [ext_resource type="Texture2D" uid="uid://uhucealg4fvx" path="res://Textures/ModifierSprite/ManaModifier.png" id="2_a6tjd"]
+[ext_resource type="PackedScene" uid="uid://biwxlidtga36m" path="res://Scenes/Prefabs/UI/Tooltip.tscn" id="3_8sye1"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_e3g1j"]
 outline_size = 5
 outline_color = Color(0, 0, 0, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_6otu6"]
-outline_size = 3
-outline_color = Color(0, 0, 0, 1)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i8tn8"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_r6gqy"]
-
-[node name="ModifierDisplay" type="Node2D" node_paths=PackedStringArray("m_Sprite", "m_CounterLabel", "m_DescriptionLabel", "m_DescriptionPanel")]
+[node name="ModifierDisplay" type="Node2D" node_paths=PackedStringArray("m_Sprite", "m_CounterLabel", "m_Tooltip")]
 self_modulate = Color(1, 0, 0, 1)
 texture_filter = 1
 scale = Vector2(2, 2)
 script = ExtResource("1_ogujs")
 m_Sprite = NodePath("Sprite2D")
 m_CounterLabel = NodePath("Label")
-m_DescriptionLabel = NodePath("Helper/Label")
-m_DescriptionPanel = NodePath("Helper")
+m_Tooltip = NodePath("Tooltip")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("2_a6tjd")
@@ -35,21 +31,12 @@ text = "1"
 label_settings = SubResource("LabelSettings_e3g1j")
 horizontal_alignment = 2
 
-[node name="Helper" type="Node2D" parent="."]
-scale = Vector2(0.5, 0.5)
-
-[node name="Label" type="Label" parent="Helper"]
-offset_top = 20.0
-offset_right = 200.0
-offset_bottom = 120.0
-text = "For [X] turn, you have [Y] mana at the start of your turn."
-label_settings = SubResource("LabelSettings_6otu6")
-autowrap_mode = 3
-
 [node name="Area2D" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-shape = SubResource("RectangleShape2D_r6gqy")
+shape = SubResource("RectangleShape2D_i8tn8")
+
+[node name="Tooltip" parent="." instance=ExtResource("3_8sye1")]
 
 [connection signal="input_event" from="Area2D" to="." method="BoardInputEvent"]
 [connection signal="mouse_entered" from="Area2D" to="." method="MouseEnter"]

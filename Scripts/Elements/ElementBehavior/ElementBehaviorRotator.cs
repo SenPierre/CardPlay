@@ -10,7 +10,7 @@ public partial class ElementBehaviorRotator : BaseElementBehavior
     public override void InitBehavior(Element el) 
     {
         base.InitBehavior(el);
-        BattleManager.GetManager().OnTurnEnd += OnTurnEnd;
+        EventManager.GetManager().OnTurnEnd += OnTurnEnd;
 
     }
 
@@ -19,7 +19,7 @@ public partial class ElementBehaviorRotator : BaseElementBehavior
 	// -----------------------------------------------------------------
     public override void ClearBehavior() 
     {
-        BattleManager.GetManager().OnTurnEnd -= OnTurnEnd;
+        EventManager.GetManager().OnTurnEnd -= OnTurnEnd;
     }
 
 	// -----------------------------------------------------------------

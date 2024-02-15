@@ -7,4 +7,5 @@
 script = ExtResource("1_cv7re")
 m_TurnDuration = 1
 m_Sprite = ExtResource("1_yxy7e")
+m_Title = "MATCH DELAY"
 m_BaseDescription = "For [X] turn(s), matches are blocked until the end of your turn."

@@ -16,7 +16,7 @@ public partial class ElementBehaviorBomb : BaseElementBehavior
 		base.InitBehavior(el);
 		m_Countdown = m_CountdownBase;
 		_UpdateLabel();
-		BattleManager.GetManager().OnTurnEnd += OnTurnEnd;
+		EventManager.GetManager().OnTurnEnd += OnTurnEnd;
 
 	}
 
@@ -25,7 +25,7 @@ public partial class ElementBehaviorBomb : BaseElementBehavior
 	// -----------------------------------------------------------------
 	public override void ClearBehavior() 
 	{
-		BattleManager.GetManager().OnTurnEnd -= OnTurnEnd;
+		EventManager.GetManager().OnTurnEnd -= OnTurnEnd;
 	}
 
 	// -----------------------------------------------------------------

@@ -23,12 +23,12 @@ public class ModifierTurnBased : BaseModifier
     {
         base._Init();
         m_remainingTurn = ((ModifierTurnBasedData)m_data).m_TurnDuration;
-        BattleManager.GetManager().OnTurnEnd += _OnTurnEnd;
+        EventManager.GetManager().OnTurnEnd += _OnTurnEnd;
     }
 
     protected override void _Clear()
     {
-        BattleManager.GetManager().OnTurnEnd -= _OnTurnEnd;
+        EventManager.GetManager().OnTurnEnd -= _OnTurnEnd;
         base._Clear();
     }
 

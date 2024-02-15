@@ -8,4 +8,5 @@ script = ExtResource("2_irmve")
 m_MatchModifier = 1
 m_TurnDuration = 1
 m_Sprite = ExtResource("1_jlvey")
+m_Title = "ELEMENT COMPLEXITY"
 m_BaseDescription = "For [X] turn(s), matches require [Y] element(s)."

@@ -15,22 +15,30 @@ public enum ElementMovementAnimation {
 //##########################################################################################################
 public class ElementsMatch
 {
+	public static ElementsMatch s_currentMatch = null;
     public ElementType m_Type;
     public List<Element> m_Element = new List<Element>();
     public Vector2 m_matchDirection;
+	public int m_matchScore = 0;
 
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
 	public void OnMatch(float multiplier)
 	{
+		s_currentMatch = this;
 		int matchOverload = Math.Max(0, m_Element.Count - 4);
 		int scoreOverload = 0;
 		for (int i = 0; i < matchOverload; i++)
 		{
 			scoreOverload += scoreOverload + 100;
 		}
-		BattleManager.GetManager().AddToScore((int)Math.Floor((400 + scoreOverload) * multiplier));
+		m_matchScore = (int)Math.Floor((400 + scoreOverload) * multiplier);
+		
+		EventManager.GetManager().EmitSignal(EventManager.SignalName.OnIndividualMatch);
+
+		BattleManager.GetManager().AddToScore(m_matchScore);
+		s_currentMatch = null;
 	}
 }
 
