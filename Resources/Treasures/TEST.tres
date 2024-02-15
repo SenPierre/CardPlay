@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/Treasures/TreasureData.cs" id="1_bcw4d"]
 [ext_resource type="Script" path="res://Scripts/Treasures/TreasureEffects/OnMatchesEffects/DrawOnMatchTreasureEffect.cs" id="1_h3qw2"]
-[ext_resource type="Texture2D" uid="uid://difjw62744kfb" path="res://Textures/MapIcon/Treasure.png" id="1_r4lrc"]
+[ext_resource type="Texture2D" uid="uid://bev6bkqi5t3x8" path="res://Textures/Elements/El2.png" id="2_gr1ok"]
 
 [sub_resource type="Resource" id="Resource_i4lw2"]
 script = ExtResource("1_h3qw2")
@@ -11,8 +11,8 @@ m_MatchCountRequired = 5
 
 [resource]
 script = ExtResource("1_bcw4d")
-m_Sprite = ExtResource("1_r4lrc")
+m_Sprite = ExtResource("2_gr1ok")
 m_Effects = [SubResource("Resource_i4lw2")]
-m_Name = "TEST"
-m_Description = "Ceci est un merveilleux test."
+m_Name = "POWER OF CIRCLE"
+m_Description = "When making a 5+ match of circle, draw a card"
 m_Collectible = false

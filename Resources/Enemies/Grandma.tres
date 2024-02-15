@@ -1,31 +1,13 @@
-[gd_resource type="Resource" script_class="EnemyData" load_steps=10 format=3 uid="uid://kovfoutff5j6"]
+[gd_resource type="Resource" script_class="EnemyData" load_steps=6 format=3 uid="uid://kovfoutff5j6"]
 
-[ext_resource type="Script" path="res://Scripts/Modifier/ModifierChangeMatchCountData.cs" id="1_4sbee"]
 [ext_resource type="Script" path="res://Scripts/Enemies/EnemyData.cs" id="1_g6748"]
-[ext_resource type="Texture2D" uid="uid://b6h4juojtfen3" path="res://Textures/ModifierSprite/MatchCountModifier.png" id="1_trwx0"]
+[ext_resource type="Resource" uid="uid://e2uo8s12yacv" path="res://Resources/Modifiers/ManaModifierPlus2.tres" id="1_y2i3o"]
 [ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentAddModifier.cs" id="2_o74bf"]
-[ext_resource type="Texture2D" uid="uid://uhucealg4fvx" path="res://Textures/ModifierSprite/ManaModifier.png" id="3_k7yvr"]
-[ext_resource type="Script" path="res://Scripts/Modifier/ModifierChangeMaxManaData.cs" id="4_hxhd0"]
-
-[sub_resource type="Resource" id="Resource_ndew5"]
-script = ExtResource("1_4sbee")
-m_MatchModifier = 1
-m_TurnDuration = 1
-m_Sprite = ExtResource("1_trwx0")
-m_Title = ""
-m_BaseDescription = ""
-
-[sub_resource type="Resource" id="Resource_pb52n"]
-script = ExtResource("4_hxhd0")
-m_ManaModifier = 1
-m_TurnDuration = 1
-m_Sprite = ExtResource("3_k7yvr")
-m_Title = ""
-m_BaseDescription = ""
+[ext_resource type="Resource" uid="uid://rdgk711e1hmj" path="res://Resources/Modifiers/MatchModifierPlus1.tres" id="2_y02wn"]
 
 [sub_resource type="Resource" id="Resource_w5r3v"]
 script = ExtResource("2_o74bf")
-m_CardToAdd = Array[Object]([SubResource("Resource_ndew5"), SubResource("Resource_pb52n")])
+m_CardToAdd = Array[Object]([ExtResource("1_y2i3o"), ExtResource("2_y02wn")])
 m_LimitBase = 0
 
 [resource]
