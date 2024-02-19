@@ -7,6 +7,6 @@
 script = ExtResource("1_vm8pc")
 m_Sprite = ExtResource("2_5tqul")
 m_Effects = []
-m_Name = "Strangely Shaped Rock"
+m_Name = "STRANGELY SHAPED ROCK"
 m_Description = "Rock can be matched"
 m_Collectible = false

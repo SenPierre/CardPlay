@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://b6knmfltijo60"]
+[gd_scene load_steps=15 format=3 uid="uid://b6knmfltijo60"]
 
 [ext_resource type="Script" path="res://Scripts/Manager/GameManager.cs" id="1_eqyqm"]
 [ext_resource type="PackedScene" uid="uid://byld2rgu6ytjf" path="res://Scenes/GameScene/BattleScene.tscn" id="2_dmg4c"]
@@ -11,6 +11,9 @@
 [ext_resource type="Resource" uid="uid://g225lviiar8l" path="res://Resources/EnemyPools/PoolTest.tres" id="6_ov81h"]
 [ext_resource type="Resource" uid="uid://bm138nowc1u8u" path="res://Resources/CardDecks/TestDeck.tres" id="8_7wl30"]
 [ext_resource type="Script" path="res://Scripts/Manager/EventManager.cs" id="10_uidns"]
+[ext_resource type="Script" path="res://Scripts/Manager/TreasureManager.cs" id="12_nj54p"]
+[ext_resource type="Resource" uid="uid://c3gogkjxggfuq" path="res://Resources/Treasures/DynamitedMana.tres" id="13_bxgxy"]
+[ext_resource type="Texture2D" uid="uid://1ysfi1lwgtja" path="res://Textures/Taskbar.png" id="14_emka6"]
 
 [node name="GameManager" type="Node2D"]
 texture_filter = 1
@@ -36,3 +39,16 @@ script = ExtResource("10_uidns")
 
 [node name="TimeManager" type="Node2D" parent="."]
 script = ExtResource("2_qqcu1")
+
+[node name="TreasureManager" type="Node2D" parent="."]
+z_index = 1
+position = Vector2(47, 40)
+script = ExtResource("12_nj54p")
+m_TreasureTest = ExtResource("13_bxgxy")
+
+[node name="TextureRect" type="TextureRect" parent="TreasureManager"]
+offset_left = -47.0
+offset_top = -40.0
+offset_right = 913.0
+scale = Vector2(2, 2)
+texture = ExtResource("14_emka6")

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="TreasureData" load_steps=5 format=3 uid="uid://c3gogkjxggfuq"]
+
+[ext_resource type="Script" path="res://Scripts/Treasures/TreasureData.cs" id="1_3c8no"]
+[ext_resource type="Script" path="res://Scripts/Treasures/TreasureEffects/OnDestroyEffects/DestroyMakeManaEffect.cs" id="1_jqdqe"]
+[ext_resource type="Texture2D" uid="uid://gxxpb8xop2k1" path="res://Textures/Card/ManaGem.png" id="2_cnyg7"]
+
+[sub_resource type="Resource" id="Resource_ki4ws"]
+script = ExtResource("1_jqdqe")
+m_ManaGain = 1
+m_DestroyCountMax = 20
+
+[resource]
+script = ExtResource("1_3c8no")
+m_Sprite = ExtResource("2_cnyg7")
+m_Effects = [SubResource("Resource_ki4ws")]
+m_Name = "DYNAMITED MANA"
+m_Description = "Each 20 destroyed element, gain 1 mana"
+m_Collectible = false
