@@ -24,6 +24,8 @@ public partial class EventManager : Node2D
 	[Signal]
 	public delegate void OnMatchesEventHandler();
 	[Signal]
+	public delegate void OnIndividualDestroyEventHandler();
+	[Signal]
 	public delegate void OnIndividualMatchEventHandler();
 	[Signal]
 	public delegate void OnCardPlayedEventHandler();

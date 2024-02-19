@@ -60,6 +60,7 @@ public partial class BattleManager : Node2D
 	int m_CurrentMana = 0;
 
 	private float m_CardAnimTimer = 0.0f;
+	private bool m_StartingTurn = false;
 	
 	// -----------------------------------------------------------------
 	// 
@@ -278,10 +279,11 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	public void StartTurn()
 	{
+		m_StartingTurn = true;
 		ResetManaToMax();
 		DrawCard(5);
 		EventManager.GetManager().EmitSignal(EventManager.SignalName.OnTurnStart);
-		AddToStateQueue(Queue_AwaitingPlayerInput);
+		AddToStateQueue(Queue_AwaitingPlayerInput, -100);
 	}
 
 	// -----------------------------------------------------------------
@@ -289,7 +291,7 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	public void AwaitForInput()
 	{
-		AddToStateQueue(Queue_AwaitingPlayerInput);
+		AddToStateQueue(Queue_AwaitingPlayerInput, -100);
 	}
 
 	// -----------------------------------------------------------------
@@ -317,7 +319,7 @@ public partial class BattleManager : Node2D
 		{
 			DiscardAll();
 			EventManager.GetManager().EmitSignal(EventManager.SignalName.OnTurnEnd);
-			AddToStateQueue(Queue_TurnEnding);
+			AddToStateQueue(Queue_TurnEnding, -10);
 			m_AwaitingPlayerInput = false;
 			m_IsEndOfTurn = true;
 		}
@@ -342,7 +344,7 @@ public partial class BattleManager : Node2D
 	public void EndFight()
 	{
 		GameManager.GetManager().EndBattle();
-		AddToStateQueue(Queue_EndBattle);
+		AddToStateQueue(Queue_EndBattle, -50);
 	}
 
 	// -----------------------------------------------------------------
@@ -381,7 +383,7 @@ public partial class BattleManager : Node2D
 		while (count > 0 && (m_CardDeck.Count > 0 || m_CardDiscard.Count > 0))
 		{
 			count--;
-			AddToStartOfTheStateQueue(Queue_DrawCard);
+			AddToStateQueue(Queue_DrawCard, m_StartingTurn ? 0 : 50);
 		}
 		
 		//GD.Print("CardDeckCount : " + m_CardDeck.Count);
@@ -433,7 +435,7 @@ public partial class BattleManager : Node2D
 		m_CurrentHeldCard.Dropped();
 		m_CurrentHeldCard = null;
 		m_AwaitingPlayerInput = false;
-		AddToStateQueue(Queue_AwaitingPlayerInput);
+		AddToStateQueue(Queue_AwaitingPlayerInput, -100);
 	}
 
 	// -----------------------------------------------------------------
@@ -633,17 +635,9 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-	public void AddToStateQueue(QueueFunc func)
+	public void AddToStateQueue(QueueFunc func, int priority)
 	{
-		m_StateQueue.AddToTheQueue(func);
-	}
-
-	// -----------------------------------------------------------------
-	// 
-	// -----------------------------------------------------------------
-	public void AddToStartOfTheStateQueue(QueueFunc func)
-	{
-		m_StateQueue.AddToStartOfTheQueue(func);
+		m_StateQueue.AddToTheQueue(func, priority);
 	}
 	
 	// -----------------------------------------------------------------
@@ -655,6 +649,7 @@ public partial class BattleManager : Node2D
 		{
 			case QueueFuncCall.Activation : 
 			{
+				m_StartingTurn = false;
 				ElementBoard.GetBoard().ResetMultiplier();
 				m_AwaitingPlayerInput = true;
 				return false;
@@ -712,7 +707,7 @@ public partial class BattleManager : Node2D
 		if (m_ActiveEnemy.IsAPuzzle() == false)
 		{
 			ElementBoard.GetBoard().ForceCheckBoardForMatch();
-			AddToStateQueue(Queue_EnemyTurn);
+			AddToStateQueue(Queue_EnemyTurn, 0);
 		}
 		else
 		{
@@ -743,7 +738,7 @@ public partial class BattleManager : Node2D
 				}
 				else
 				{
-					AddToStateQueue(Queue_GAMEOVER);
+					AddToStateQueue(Queue_GAMEOVER, 0);
 				}
 				return true;
 			}

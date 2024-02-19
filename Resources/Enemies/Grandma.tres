@@ -1,18 +1,17 @@
-[gd_resource type="Resource" script_class="EnemyData" load_steps=6 format=3 uid="uid://kovfoutff5j6"]
+[gd_resource type="Resource" script_class="EnemyData" load_steps=4 format=3 uid="uid://kovfoutff5j6"]
 
 [ext_resource type="Script" path="res://Scripts/Enemies/EnemyData.cs" id="1_g6748"]
-[ext_resource type="Resource" uid="uid://e2uo8s12yacv" path="res://Resources/Modifiers/ManaModifierPlus2.tres" id="1_y2i3o"]
-[ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentAddModifier.cs" id="2_o74bf"]
-[ext_resource type="Resource" uid="uid://rdgk711e1hmj" path="res://Resources/Modifiers/MatchModifierPlus1.tres" id="2_y02wn"]
+[ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentAddElementToBoard.cs" id="1_upfo2"]
 
-[sub_resource type="Resource" id="Resource_w5r3v"]
-script = ExtResource("2_o74bf")
-m_CardToAdd = Array[Object]([ExtResource("1_y2i3o"), ExtResource("2_y02wn")])
+[sub_resource type="Resource" id="Resource_tbimy"]
+script = ExtResource("1_upfo2")
+m_Count = 10
+m_Type = 4
 m_LimitBase = 0
 
 [resource]
 script = ExtResource("1_g6748")
 m_BattleTarget = 50000
 m_LimitIncrement = 0
-m_EnemyIntents = Array[Object]([SubResource("Resource_w5r3v")])
+m_EnemyIntents = Array[Object]([SubResource("Resource_tbimy")])
 m_BoardLayoutRes = "res://Resources/EnemyBoard/BoardRotator.txt"

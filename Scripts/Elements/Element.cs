@@ -49,6 +49,7 @@ public partial class Element : Node2D
 {
 	static public float ElementSize = 80.0f;
 	static public float ElementHalfSize = 40.0f;
+	static public Element s_LastDestroyedElement = null;
 
 	[Export] Sprite2D m_Sprite;
 	[Export] AnimationPlayer m_Anim;
@@ -303,6 +304,7 @@ public partial class Element : Node2D
 	// -----------------------------------------------------------------
 	public void DestroyElement()
 	{
+		s_LastDestroyedElement = this;
 		m_IsTransforming = true;
 		if (m_Matches.Count > 0)
 		{
@@ -310,6 +312,7 @@ public partial class Element : Node2D
 		}
 		else
 		{
+			EventManager.GetManager().EmitSignal(EventManager.SignalName.OnIndividualDestroy);
 			m_Anim.Play("Destroying");
 		}
 	}

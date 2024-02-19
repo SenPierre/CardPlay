@@ -9,6 +9,7 @@ script = ExtResource("1_ds107")
 
 [sub_resource type="Resource" id="Resource_bs5vg"]
 script = ExtResource("2_q4vy8")
+m_ElementFilter = 9
 m_MinChunkSize = 0
 m_SelectionKind = 3
 

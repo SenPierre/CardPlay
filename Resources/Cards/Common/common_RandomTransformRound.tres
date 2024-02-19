@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=8 format=3 uid="uid://co385hm7dhc3i"]
+
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectTransform.cs" id="1_5ov1k"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardSelection/CardSelectionRandom.cs" id="2_an65e"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectExhaust.cs" id="2_wtm2y"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardData.cs" id="3_0km3o"]
+
+[sub_resource type="Resource" id="Resource_aee7c"]
+script = ExtResource("1_5ov1k")
+newElement = 1
+
+[sub_resource type="Resource" id="Resource_attby"]
+script = ExtResource("2_wtm2y")
+
+[sub_resource type="Resource" id="Resource_slp3j"]
+script = ExtResource("2_an65e")
+m_RandomCount = 15
+m_IgnoreElement = 1
+m_SelectionKind = 1
+
+[resource]
+script = ExtResource("3_0km3o")
+m_ManaCost = 1
+m_Selection = SubResource("Resource_slp3j")
+m_Effects = [SubResource("Resource_aee7c"), SubResource("Resource_attby")]
+m_Name = "Improvise"
+m_Description = "Transform 15 randoms elements into Circle. Exhaust."
+m_Collectible = true

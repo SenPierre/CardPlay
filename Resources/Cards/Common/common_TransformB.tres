@@ -19,5 +19,5 @@ m_ManaCost = 1
 m_Selection = SubResource("Resource_8i8ct")
 m_Effects = [SubResource("Resource_lxmn6")]
 m_Name = "Transmutation B"
-m_Description = "Transform an element into a circle"
+m_Description = "Transform an element into a circle."
 m_Collectible = true

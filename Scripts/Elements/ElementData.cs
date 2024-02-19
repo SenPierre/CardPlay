@@ -12,6 +12,9 @@ public enum ElementType {
     Bomb2,
     Mold,
     Rotator,
+    // -----------
+    _Count,
+    BasicElement
 }
 
 

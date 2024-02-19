@@ -5,6 +5,7 @@ using System.Collections.Generic;
 [GlobalClass]
 public partial class CardSelectionElementChunk : BaseCardSelection
 {
+    [Export] ElementType m_ElementFilter = ElementType._Count;
     [Export] int m_MinChunkSize = 0;
 
     // -----------------------------------------------------------------
@@ -14,15 +15,18 @@ public partial class CardSelectionElementChunk : BaseCardSelection
     {
         if (_CheckCoordinate(gameBoard, selectedElement))
         {
-            gameBoard.ComputeChunkElement(ref m_ElementList, selectedElement);
-            
-            if (m_ElementList.Count >= m_MinChunkSize)
+            if (m_ElementFilter == ElementType._Count || m_ElementFilter == gameBoard.GetElement(selectedElement).m_Type)
             {
-                m_SelectionStatus = SelectionStatus.SelectionComplete;
-            }
-            else
-            {
-                m_SelectionStatus = SelectionStatus.SelectionInvalid;
+                gameBoard.ComputeChunkElement(ref m_ElementList, selectedElement);
+                
+                if (m_ElementList.Count >= m_MinChunkSize)
+                {
+                    m_SelectionStatus = SelectionStatus.SelectionComplete;
+                }
+                else
+                {
+                    m_SelectionStatus = SelectionStatus.SelectionInvalid;
+                }
             }
         }
     }
@@ -34,14 +38,17 @@ public partial class CardSelectionElementChunk : BaseCardSelection
     {
         if (_CheckCoordinate(gameBoard, selectedElement))
         {
-            List<Vector2I> selection = new List<Vector2I>();
-            gameBoard.ComputeChunkElement(ref selection, selectedElement);
-
-            if (selection.Count >= m_MinChunkSize)
+            if (m_ElementFilter == ElementType._Count || m_ElementFilter == gameBoard.GetElement(selectedElement).m_Type)
             {
-                foreach (Vector2I coord in selection)
+                List<Vector2I> selection = new List<Vector2I>();
+                gameBoard.ComputeChunkElement(ref selection, selectedElement);
+
+                if (selection.Count >= m_MinChunkSize)
                 {
-                    gameBoard.m_Helper.AddHint(coord, coord, BattleManager.GetManager().m_HintColor);
+                    foreach (Vector2I coord in selection)
+                    {
+                        gameBoard.m_Helper.AddHint(coord, coord, BattleManager.GetManager().m_HintColor);
+                    }
                 }
             }
         }

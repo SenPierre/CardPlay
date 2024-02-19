@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3 uid="uid://bn5v3oh2o8mh6"]
+
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectTransform.cs" id="1_vpmb1"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardSelection/CardSelectionElementChunk.cs" id="2_t4weu"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardData.cs" id="3_4i13e"]
+
+[sub_resource type="Resource" id="Resource_6cudh"]
+script = ExtResource("1_vpmb1")
+newElement = 10
+
+[sub_resource type="Resource" id="Resource_bs5vg"]
+script = ExtResource("2_t4weu")
+m_ElementFilter = 4
+m_MinChunkSize = 0
+m_SelectionKind = 1
+
+[resource]
+script = ExtResource("3_4i13e")
+m_ManaCost = 1
+m_Selection = SubResource("Resource_bs5vg")
+m_Effects = [SubResource("Resource_6cudh")]
+m_Name = "Clean the dance floor"
+m_Description = "Transform a chunk of rock into a random basic element"
+m_Collectible = true

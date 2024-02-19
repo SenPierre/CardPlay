@@ -21,10 +21,10 @@ public class MapNodeData
     {
         150, // Fight
         5,  // Treasure
-        20,  // Puzzle
+        10,  // Puzzle
         10,  // Elite
         5,  // Rest
-        30,  // Event
+        0,  // Event
         0,  // Start
         0,  // Grandma
     };

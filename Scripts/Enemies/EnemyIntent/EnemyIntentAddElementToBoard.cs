@@ -23,12 +23,13 @@ public partial class EnemyIntentAddElementToBoard : BaseEnemyIntent
             do {
                 newRandom.X = RandomManager.GetIntRange(0,gameBoard.m_Size-1);
                 newRandom.Y = RandomManager.GetIntRange(0,gameBoard.m_Size-1);
-            } while (gameBoard.CheckCoordinate(newRandom) == false);
+            } while (gameBoard.CheckCoordinateForTransform(newRandom) == false);
 
             
             Element el = gameBoard.GetElement(newRandom);
             el.TransformElement(m_Type);
         }
+        gameBoard.RequestToMoveElement();
     }
 
 	// -----------------------------------------------------------------

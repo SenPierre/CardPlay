@@ -168,7 +168,7 @@ public partial class Card : Node2D
 	// -----------------------------------------------------------------
     public void Selected()
     {
-        BattleManager.GetManager().AddToStateQueue(Queue_CardSelected);
+        BattleManager.GetManager().AddToStateQueue(Queue_CardSelected, 10);
         m_Selected = true;
     }
 

@@ -12,7 +12,7 @@ public partial class ElementDataBase
     // -----------------------------------------------------------------
     public void Init()
     {
-        m_AllElementData = new ElementData[Enum.GetValues(typeof(ElementType)).Length];
+        m_AllElementData = new ElementData[(int)ElementType._Count];
         string[] allElementsData = Directory.GetFiles("Resources/Elements", "*", SearchOption.AllDirectories);
         foreach(string ElementDataFile in allElementsData)
         {
@@ -54,8 +54,36 @@ public partial class ElementDataBase
 	// -----------------------------------------------------------------
     public ElementData GetDataFromType(ElementType type)
     {
+        Debug.Assert((int)type < (int)ElementType._Count, "Invalid Element '" + type + "' !");
         Debug.Assert(m_AllElementData[(int)type] != null, "Missing elements with type '" + type + "' !");
 
         return m_AllElementData[(int)type];
+    }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    public ElementType GetRandomBasicElementType()
+    {
+        int randomMax = 0;
+        for (ElementType el = ElementType.Element1; el <= ElementType.Element4; el++)
+        {
+            randomMax += m_AllElementData[(int)el].m_RandomWeight;
+        }
+
+        int randomGot = RandomManager.GetIntRange(0, randomMax);
+
+        ElementData selectedData = null;
+        for (ElementType el = ElementType.Element1; el <= ElementType.Element4; el++)
+        {
+            selectedData = m_AllElementData[(int)el];
+            randomGot -=  m_AllElementData[(int)el].m_RandomWeight;
+            if (randomGot <= 0)
+            {
+                break;
+            }
+        }
+
+        return selectedData.m_Type;
     }
 }

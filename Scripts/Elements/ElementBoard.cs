@@ -737,7 +737,7 @@ public partial class ElementBoard : Node2D
     // -----------------------------------------------------------------
     public void RequestToDestroyElement()
     {
-        BattleManager.GetManager().AddToStartOfTheStateQueue(Queue_DestroyElements);
+        BattleManager.GetManager().AddToStateQueue(Queue_DestroyElements, 10);
     }
 
     // -----------------------------------------------------------------
@@ -747,7 +747,7 @@ public partial class ElementBoard : Node2D
     {
         if (m_MovementAlreadyRequestedThisFrame == false)
         {
-            BattleManager.GetManager().AddToStartOfTheStateQueue(Queue_MovingElements);
+            BattleManager.GetManager().AddToStateQueue(Queue_MovingElements, 10);
             m_MovementAlreadyRequestedThisFrame = true;
         }
     }
@@ -757,7 +757,7 @@ public partial class ElementBoard : Node2D
     // -----------------------------------------------------------------
     public void RequestToFillBoard()
     {
-        BattleManager.GetManager().AddToStartOfTheStateQueue(Queue_FillBoard);
+        BattleManager.GetManager().AddToStateQueue(Queue_FillBoard, 10);
     }
 
     // -----------------------------------------------------------------

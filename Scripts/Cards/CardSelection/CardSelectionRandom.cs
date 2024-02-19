@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public partial class CardSelectionRandom : BaseCardSelection
 {
     [Export] int m_RandomCount = 10;
+    [Export] public ElementType m_IgnoreElement = ElementType.Void;
 
 	// -----------------------------------------------------------------
 	// 
@@ -23,7 +24,9 @@ public partial class CardSelectionRandom : BaseCardSelection
                 do {
                     newRandom.X = RandomManager.GetIntRange(0,gameBoard.m_Size-1);
                     newRandom.Y = RandomManager.GetIntRange(0,gameBoard.m_Size-1);
-                } while (_CheckCoordinate(gameBoard, newRandom) == false || m_ElementList.Contains(newRandom));
+                } while (_CheckCoordinate(gameBoard, newRandom) == false 
+                || m_ElementList.Contains(newRandom) 
+                || m_IgnoreElement == gameBoard.GetElement(newRandom).m_Type);
                 m_ElementList.Add(newRandom);
             }
             
