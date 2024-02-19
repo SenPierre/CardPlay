@@ -5,7 +5,7 @@ using System.Collections.Generic;
 [GlobalClass]
 public partial class CardEffectTransform : BaseCardEffect
 {
-    [Export] public ElementType newElement; 
+    [Export] public ElementType newElement = ElementType.BasicElement; 
     public override void ApplyEffect(ElementBoard gameBoard, Card card, List<Vector2I> elementList)
     {
         ElementType trueType = newElement;

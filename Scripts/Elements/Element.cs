@@ -86,7 +86,7 @@ public partial class Element : Node2D
 	public static Element CreateElementFromType(ElementType element)
 	{
 		Element newEl = ResourceLoader.Load<PackedScene>("res://Scenes/Prefabs/Elements/ElementBase.tscn").Instantiate<Element>();
-		newEl.SetElement(element);
+		newEl._SetElement(element);
 		return newEl;
 	}
 
@@ -149,7 +149,7 @@ public partial class Element : Node2D
 	// -----------------------------------------------------------------
 	public void ConfirmTransform()
 	{
-		SetElement(m_Type);
+		_SetElement(m_Type);
 	}
 
 	// -----------------------------------------------------------------
@@ -163,7 +163,7 @@ public partial class Element : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-	public void SetElement(ElementType element)
+	private void _SetElement(ElementType element)
 	{
 		m_Type = element;
 		
@@ -185,6 +185,24 @@ public partial class Element : Node2D
 			m_Behavior.Position = Vector2.Zero;
 			m_Behavior.InitBehavior(this);
 		}
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public bool CheckElement(ElementType type)
+	{
+		if (type == ElementType._Count)
+		{
+			return true;
+		}
+
+		if (type == ElementType.BasicElement)
+		{
+			return m_Type >= ElementType.Element1 && m_Type <= ElementType.Element4;
+		}
+
+		return m_Type == type;
 	}
 
 	// -----------------------------------------------------------------

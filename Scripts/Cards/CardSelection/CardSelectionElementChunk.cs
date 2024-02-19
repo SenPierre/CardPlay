@@ -15,7 +15,7 @@ public partial class CardSelectionElementChunk : BaseCardSelection
     {
         if (_CheckCoordinate(gameBoard, selectedElement))
         {
-            if (m_ElementFilter == ElementType._Count || m_ElementFilter == gameBoard.GetElement(selectedElement).m_Type)
+            if (gameBoard.GetElement(selectedElement).CheckElement(m_ElementFilter))
             {
                 gameBoard.ComputeChunkElement(ref m_ElementList, selectedElement);
                 

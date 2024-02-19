@@ -5,6 +5,7 @@ using System.Collections.Generic;
 [GlobalClass]
 public partial class CardSelectionMultiple : BaseCardSelection
 {
+    [Export] ElementType m_ElementFilter = ElementType._Count;
     [Export] int m_SelectCount = 2;
 
 	// -----------------------------------------------------------------
@@ -14,16 +15,21 @@ public partial class CardSelectionMultiple : BaseCardSelection
     {
         if (_CheckCoordinate(gameBoard, selectedElement))
         {
-            if (m_ElementList.Contains(selectedElement))
+            if (gameBoard.GetElement(selectedElement).CheckElement(m_ElementFilter))
             {
-                m_ElementList.Remove(selectedElement);
-            }
-            else
-            {
-                m_ElementList.Add(selectedElement);
-            }
+                if (m_ElementList.Contains(selectedElement))
+                {
+                    m_ElementList.Remove(selectedElement);
+                }
+                else
+                {
+                    m_ElementList.Add(selectedElement);
+                }
 
-            m_SelectionStatus = m_ElementList.Count == m_SelectCount ? SelectionStatus.SelectionComplete : SelectionStatus.SelectionIncomplete;
+                m_SelectionStatus = m_ElementList.Count == m_SelectCount 
+                                    ? SelectionStatus.SelectionComplete 
+                                    : SelectionStatus.SelectionIncomplete;
+            }
         }
     }
     
