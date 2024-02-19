@@ -1,23 +1,21 @@
 [gd_resource type="Resource" script_class="CardData" load_steps=6 format=3 uid="uid://dolbmfsix36a4"]
 
-[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectSpreadElement.cs" id="1_awxoo"]
-[ext_resource type="Script" path="res://Scripts/Cards/CardSelection/CardSelectionMultiple.cs" id="2_yucgw"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectDestroy.cs" id="1_pf65s"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardSelection/CardSelectionAll.cs" id="2_ncvtl"]
 [ext_resource type="Script" path="res://Scripts/Cards/CardData.cs" id="3_qawxc"]
 
-[sub_resource type="Resource" id="Resource_djg73"]
-script = ExtResource("1_awxoo")
+[sub_resource type="Resource" id="Resource_y1wv0"]
+script = ExtResource("1_pf65s")
 
-[sub_resource type="Resource" id="Resource_8i8ct"]
-script = ExtResource("2_yucgw")
-m_ElementFilter = 9
-m_SelectCount = 1
-m_SelectionKind = 1
+[sub_resource type="Resource" id="Resource_lj0tx"]
+script = ExtResource("2_ncvtl")
+m_SelectionKind = 2
 
 [resource]
 script = ExtResource("3_qawxc")
 m_ManaCost = 2
-m_Selection = SubResource("Resource_8i8ct")
-m_Effects = [SubResource("Resource_djg73")]
-m_Name = "Spreading"
-m_Description = "Spread an element to its neighbors"
+m_Selection = SubResource("Resource_lj0tx")
+m_Effects = [SubResource("Resource_y1wv0")]
+m_Name = "Clear mind"
+m_Description = "Destroy the whole board"
 m_Collectible = true
