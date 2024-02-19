@@ -1,12 +1,8 @@
-[gd_resource type="Resource" script_class="CardDeckData" load_steps=7 format=3 uid="uid://bm138nowc1u8u"]
+[gd_resource type="Resource" script_class="CardDeckData" load_steps=3 format=3 uid="uid://bm138nowc1u8u"]
 
-[ext_resource type="Resource" uid="uid://egcjv1caqib7" path="res://Resources/Cards/Common/common_DestroyAll.tres" id="1_p8oiw"]
-[ext_resource type="Resource" uid="uid://co62h5g5oe4ax" path="res://Resources/Cards/Base/base_adjSwap.tres" id="2_4kn5m"]
-[ext_resource type="Resource" uid="uid://c7jcucxmp6wyw" path="res://Resources/Cards/Base/base_lineDestroy.tres" id="4_c5tjx"]
-[ext_resource type="Resource" uid="uid://dolbmfsix36a4" path="res://Resources/Cards/Common/common_Spread.tres" id="4_s2eje"]
+[ext_resource type="Resource" uid="uid://odlgwfgw3emg" path="res://Resources/Cards/Common/common_echoSwap.tres" id="1_8ywtr"]
 [ext_resource type="Script" path="res://Scripts/Cards/CardDeckData.cs" id="5_6lvli"]
-[ext_resource type="Resource" uid="uid://co385hm7dhc3i" path="res://Resources/Cards/Common/common_RandomTransformRound.tres" id="5_7chlm"]
 
 [resource]
 script = ExtResource("5_6lvli")
-m_Cards = Array[Object]([ExtResource("1_p8oiw"), ExtResource("2_4kn5m"), ExtResource("4_c5tjx"), ExtResource("4_s2eje"), ExtResource("5_7chlm")])
+m_Cards = Array[Object]([ExtResource("1_8ywtr")])

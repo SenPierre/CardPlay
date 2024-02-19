@@ -460,6 +460,13 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	public void DiscardAll()
 	{
+		foreach (Card card in m_CardHand)
+		{
+			card.OnEndTurnDiscard();
+		}
+
+		CheckForExhaust();
+
 		while (m_CardHand.Count > 0)
 		{
 			Discard(m_CardHand[0]);
@@ -677,12 +684,13 @@ public partial class BattleManager : Node2D
 					if (m_CardDeck.Count == 0)
 					{
 						// Deck and discard empty !!
-						return false;
+						return true;
 					}
 				}
 				Card card = m_CardDeck[0];
 				m_CardDeck.RemoveAt(0);
 				m_CardHand.Add(card);
+				card.OnDraw();
 				m_CardAnimTimer = 0.0f;
 				break;
 			}

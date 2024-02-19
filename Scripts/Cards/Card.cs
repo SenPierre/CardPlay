@@ -8,6 +8,7 @@ public partial class Card : Node2D
     [Export] public Label m_DescLabel;
     [Export] public Sprite2D m_CardImage;
 
+    public CardData m_Data;
     public int m_ManaCost;
     public bool m_MarkedForExhaust = false;
     BaseCardSelection m_Selection;
@@ -22,6 +23,7 @@ public partial class Card : Node2D
     public static Card CreateCardFromCardData(CardData data)
     {
         Card newCard = ResourceLoader.Load<PackedScene>("res://Scenes/Prefabs/Cards/Card.tscn").Instantiate<Card>();
+        newCard.m_Data = data;
         newCard.m_ManaCost = data.m_ManaCost;
         newCard.m_Selection = data.m_Selection;
         newCard.m_Effects =  data.m_Effects;
@@ -143,6 +145,28 @@ public partial class Card : Node2D
     public void GetSelectionAdditionnalData<T>(ref T data)
     {
         m_Selection.GetAdditionnalData(ref data);
+    }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    public void OnDraw()
+    {
+        foreach(BaseCardEffect effect in m_Effects)
+        {
+            effect.OnDraw(this);
+        }
+    }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+    public void OnEndTurnDiscard()
+    {
+        foreach(BaseCardEffect effect in m_Effects)
+        {
+            effect.OnEndTurn(this);
+        }
     }
 
 	// -----------------------------------------------------------------
