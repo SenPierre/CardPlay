@@ -24,15 +24,44 @@ public partial class ElementShaderVariablesHandler : Sprite2D
 		get { return _alphaModulate;}
 		set { _alphaModulate = value; GetShaderMaterial().SetShaderParameter("alphaModulate", _alphaModulate); }
 	}
+	private float _shiningLerp;
+	[Export] public float shiningLerp {
+		get { return _shiningLerp;}
+		set { _shiningLerp = value; GetShaderMaterial().SetShaderParameter("shiningLerp", _shiningLerp); }
+	}
+
+	public bool m_CanShine = false;
+	private bool m_IsLerpingShine = false;
 
 	ElementShaderVariablesHandler()
 	{
 		whiteness = 0;
 		alphaModulate = 0;
+		shiningLerp = 0.0f;
+		m_IsLerpingShine = false;
 	}
 
 	ShaderMaterial GetShaderMaterial()
 	{
 		return Material as ShaderMaterial;
 	}
+
+    public override void _Process(double delta)
+    {
+        base._Process(delta);
+		if (m_CanShine && RandomManager.GetIntRange(0, 20000) == 0)
+		{
+			m_IsLerpingShine = true;
+		}
+
+		if (m_IsLerpingShine)
+		{
+			shiningLerp += TimeManager.GetDeltaTime() * 2.0f;
+			if (shiningLerp >= 1.0)
+			{
+				shiningLerp = 0.0f;
+				m_IsLerpingShine = false;
+			} 
+		}
+    }
 }

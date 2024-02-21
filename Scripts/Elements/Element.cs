@@ -51,7 +51,7 @@ public partial class Element : Node2D
 	static public float ElementHalfSize = 40.0f;
 	static public Element s_LastDestroyedElement = null;
 
-	[Export] Sprite2D m_Sprite;
+	[Export] ElementShaderVariablesHandler m_Sprite;
 	[Export] AnimationPlayer m_Anim;
 	public ElementType m_Type = ElementType.Void;
 	public bool m_ToDelete;
@@ -177,6 +177,7 @@ public partial class Element : Node2D
 		m_data = db.GetDataFromType(element);
 
 		m_Sprite.Texture = m_data.m_Sprite;
+		m_Sprite.m_CanShine = element >= ElementType.Element1 && element <= ElementType.Element4;
 
 		if (m_data.m_ElementBehaviorNode != null)
 		{

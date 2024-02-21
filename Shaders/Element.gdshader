@@ -3,6 +3,7 @@ shader_type canvas_item;
 uniform float blackness;
 uniform float whiteness;
 uniform float destroying;
+uniform float shiningLerp;
 uniform float alphaModulate;
 uniform sampler2D mask;
 
@@ -13,9 +14,17 @@ void fragment() {
 	
 	if (maskColor.r == 1.0f)
 	{
+		vec4 shinedColor = UVColor;
+		float diagonalShine = (UV.x + UV.y) * 0.4f + 0.1f;
+		if (diagonalShine > (shiningLerp - 0.1f) &&  
+		    diagonalShine < (shiningLerp + 0.1f))
+		{
+			shinedColor = vec4(1,1,1,UVColor.a);
+		}
+		
 		COLOR = mix(
 			mix(
-				UVColor, 
+				shinedColor, 
 				vec4(1,1,1,UVColor.a), 
 				whiteness), 
 			vec4(0,0,0,UVColor.a), 

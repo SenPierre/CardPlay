@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=8 format=3 uid="uid://bi7fnbee4wtpf"]
+
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectScore.cs" id="1_f65kl"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectAddMana.cs" id="2_3ec7b"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardSelection/CardSelectionNone.cs" id="3_6vmoc"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardData.cs" id="4_y5hvm"]
+
+[sub_resource type="Resource" id="Resource_cei3k"]
+script = ExtResource("1_f65kl")
+m_Score = -500
+
+[sub_resource type="Resource" id="Resource_utxrr"]
+script = ExtResource("2_3ec7b")
+m_Mana = 1
+
+[sub_resource type="Resource" id="Resource_unn4u"]
+script = ExtResource("3_6vmoc")
+m_SelectionKind = 4
+
+[resource]
+script = ExtResource("4_y5hvm")
+m_ManaCost = 0
+m_Selection = SubResource("Resource_unn4u")
+m_Effects = [SubResource("Resource_cei3k"), SubResource("Resource_utxrr")]
+m_Name = "Crack a bad joke"
+m_Description = "Gain 1 mana. Loose 500 points."
+m_Collectible = false
