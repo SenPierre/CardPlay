@@ -11,6 +11,7 @@ public partial class Card : Node2D
     public CardData m_Data;
     public int m_ManaCost;
     public bool m_MarkedForExhaust = false;
+    public bool m_AbortDiscard = false;
     BaseCardSelection m_Selection;
     BaseCardEffect[] m_Effects;
 
@@ -124,7 +125,7 @@ public partial class Card : Node2D
             gameBoard.m_Helper.ClearHint();
             if (m_MarkedForExhaust == false)
             {
-                BattleManager.GetManager().Discard(this);
+                Discard(false);
             }
             BattleManager.GetManager().CheckForExhaust();
         }
@@ -161,12 +162,28 @@ public partial class Card : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
+    public void Discard(bool onEndTurn)
+    {
+        m_AbortDiscard = false;
+        if (onEndTurn)
+        {    
+            foreach(BaseCardEffect effect in m_Effects)
+            {
+                effect.OnEndTurn(this);
+            }
+        }
+
+        if (m_AbortDiscard == false)
+        {
+            BattleManager.GetManager().Discard(this);
+        }
+    }
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
     public void OnEndTurnDiscard()
     {
-        foreach(BaseCardEffect effect in m_Effects)
-        {
-            effect.OnEndTurn(this);
-        }
     }
 
 	// -----------------------------------------------------------------

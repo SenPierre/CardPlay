@@ -460,17 +460,12 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	public void DiscardAll()
 	{
-		foreach (Card card in m_CardHand)
+		for (int i = m_CardHand.Count - 1; i >= 0; i--)
 		{
-			card.OnEndTurnDiscard();
+			Card card = m_CardHand[i];
+			card.Discard(true);
 		}
-
 		CheckForExhaust();
-
-		while (m_CardHand.Count > 0)
-		{
-			Discard(m_CardHand[0]);
-		}
 	}
 
 	// -----------------------------------------------------------------
@@ -498,7 +493,7 @@ public partial class BattleManager : Node2D
 			}
 		}
 	}
-	
+
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------

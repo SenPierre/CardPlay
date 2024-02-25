@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=8 format=3 uid="uid://b7dvky1g65ees"]
+
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectDestroy.cs" id="1_b1sio"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectRetain.cs" id="2_bvox4"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardSelection/CardSelectionMultiple.cs" id="3_nf03h"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardData.cs" id="3_ysdls"]
+
+[sub_resource type="Resource" id="Resource_y1wv0"]
+script = ExtResource("1_b1sio")
+
+[sub_resource type="Resource" id="Resource_ft2io"]
+script = ExtResource("2_bvox4")
+
+[sub_resource type="Resource" id="Resource_r5n2l"]
+script = ExtResource("3_nf03h")
+m_ElementFilter = 9
+m_SelectCount = 1
+m_SelectionKind = 2
+
+[resource]
+script = ExtResource("3_ysdls")
+m_ManaCost = 1
+m_Selection = SubResource("Resource_r5n2l")
+m_Effects = [SubResource("Resource_y1wv0"), SubResource("Resource_ft2io")]
+m_Name = "Controlled Skid"
+m_Description = "Destoy one element. Retain."
+m_Collectible = true
