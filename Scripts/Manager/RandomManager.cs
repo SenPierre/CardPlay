@@ -18,9 +18,17 @@ public partial class RandomManager : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
+    static public bool RandomChance(float odds)
+    {
+        return g_Manager.random.Randf() < odds;
+    }
+    
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
     static public bool CoinToss()
     {
-        return g_Manager.random.RandiRange(0, 1) == 1;
+        return RandomChance(0.5f);
     }
 
 	// -----------------------------------------------------------------

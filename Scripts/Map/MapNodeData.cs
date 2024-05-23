@@ -19,14 +19,14 @@ public enum MapNodeDataType
 public class MapNodeData
 {
     // May need  to switch randomization model, it may not work the best
-    static public Godot.Collections.Array g_NodeRandomWeight = new Godot.Collections.Array
+    static public Godot.Collections.Array g_NodeWeightDistribution = new Godot.Collections.Array
     {
-        100, // Fight
-        5,  // Treasure
-        10,  // Puzzle
-        10,  // Elite
-        5,  // Rest
-        100, // Card
+        10, // Fight
+        1,  // Treasure
+        3,  // Puzzle
+        0,  // Elite
+        1,  // Rest
+        10, // Card
         0,  // Event
         0,  // Start
         0,  // Grandma
@@ -41,28 +41,20 @@ public class MapNodeData
     // -----------------------------------------------------------------
     // 
     // -----------------------------------------------------------------
-    public static MapNodeDataType GetRandomType()
+    public static List<MapNodeDataType> GenerateRandomPool(int countMult)
     {
-        int randomMax = 0;
+        List<MapNodeDataType> pool = new List<MapNodeDataType>();
         foreach (MapNodeDataType type in Enum.GetValues(typeof(MapNodeDataType)))
         {
-            randomMax += (int)g_NodeRandomWeight[(int)type];
-        }
-
-        int randomGot = RandomManager.GetIntRange(1, randomMax);
-
-        MapNodeDataType newType = MapNodeDataType.Start;
-        foreach (MapNodeDataType type in Enum.GetValues(typeof(MapNodeDataType)))
-        {
-            newType = type;
-            randomGot -= (int)g_NodeRandomWeight[(int)type];
-            if (randomGot <= 0)
+            for (int i = 0; i < countMult * (int)g_NodeWeightDistribution[(int)type];i++)
             {
-                break;
+                pool.Add(type);
             }
         }
+        
+        RandomManager.RandomizeList(ref pool);
 
-        return newType;
+        return pool;
     }
 
     // -----------------------------------------------------------------

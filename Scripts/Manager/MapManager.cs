@@ -42,17 +42,20 @@ public partial class MapManager : Node2D
         }
 
         // Our level will be a certain amount of encounter.
-        for (int iDeep = 0; iDeep < deepness; iDeep++)
+            List<MapNodeDataType> nodePool = MapNodeData.GenerateRandomPool(1);
+        for (int iDeep = 0; iDeep < deepness && nodePool.Count > 0; iDeep++)
         {
             deepPosition += Vector2.Right * 100.0f;
             previousDeepnessNodes = currentDeepnessNodes;
             currentDeepnessNodes = new List<MapNodeData>();
             int numNodeInThisDeepness = RandomManager.GetIntRange(minWidth, maxWidth);
+
             // Create spot for 
-            for (int iNode = 0; iNode < numNodeInThisDeepness; iNode++)
+            for (int iNode = 0; iNode < numNodeInThisDeepness && nodePool.Count > 0; iNode++)
             {
                 Vector2 spotPosition = deepPosition + Vector2.Down * 100.0f * ((float)iNode - ((float)numNodeInThisDeepness - 1.0f) / 2.0f);
-                MapNodeData newNode = datas.AddNewNode(MapNodeData.GetRandomType(), spotPosition);
+                MapNodeData newNode = datas.AddNewNode(nodePool[0], spotPosition);
+                nodePool.RemoveAt(0);
                 currentDeepnessNodes.Add(newNode);
             }
             
@@ -68,14 +71,14 @@ public partial class MapManager : Node2D
                 {
                     iNodeNMinusOne--;
                 }
-                else if (iNodeNMinusOne == 0 || RandomManager.CoinToss())
+                else if (iNodeNMinusOne == 0 || RandomManager.RandomChance(0.2f))
                 {
                     iNodeN--;
                 }
                 else
                 {
                     iNodeNMinusOne--;
-                    if (RandomManager.CoinToss())
+                    if (RandomManager.RandomChance(0.8f))
                     {
                         iNodeN--;
                     }
