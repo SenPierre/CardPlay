@@ -18,4 +18,4 @@ m_Selection = SubResource("Resource_lkdq3")
 m_Effects = [SubResource("Resource_8l3im")]
 m_Name = "Jump"
 m_Description = "Reposition a column"
-m_Collectible = false
+m_Collectible = true

@@ -317,7 +317,7 @@ public partial class BattleManager : Node2D
 	{
 		if (IsAwaitingPlayerInput())
 		{
-			DiscardAll();
+			EndTurnDiscard();
 			EventManager.GetManager().EmitSignal(EventManager.SignalName.OnTurnEnd);
 			AddToStateQueue(Queue_TurnEnding, -10);
 			m_AwaitingPlayerInput = false;
@@ -458,7 +458,30 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-	public void DiscardAll()
+	public int GetHandCount()
+	{
+		return m_CardHand.Count;
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void DiscardAll(bool exceptSelected)
+	{
+		for (int i = m_CardHand.Count - 1; i >= 0; i--)
+		{
+			Card card = m_CardHand[i];
+			if (exceptSelected == false || card != m_CurrentHeldCard)
+			{
+				card.Discard(false);
+			}
+		}
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void EndTurnDiscard()
 	{
 		for (int i = m_CardHand.Count - 1; i >= 0; i--)
 		{
@@ -497,18 +520,27 @@ public partial class BattleManager : Node2D
 	// -----------------------------------------------------------------
 	// 
 	// -----------------------------------------------------------------
-	public void ClearGameDeck()
+	public void ClearCards()
 	{
-		Debug.Assert(m_CardHand.Count == 0, "Clear Game Deck with Hand not empty");
-		Debug.Assert(m_CardDiscard.Count == 0, "Clear Game Deck with Discard not empty");
-
 		// This is bad, because card generated will still be there, and card modified will stay modified.
 		foreach(Card card in m_CardDeck)
 		{
 			card.Position = m_DeckNode.Position;
 			card.QueueFree();
 		}
+		foreach(Card card in m_CardHand)
+		{
+			card.Position = m_DeckNode.Position;
+			card.QueueFree();
+		}
+		foreach(Card card in m_CardDiscard)
+		{
+			card.Position = m_DeckNode.Position;
+			card.QueueFree();
+		}
 		m_CardDeck.Clear();
+		m_CardHand.Clear();
+		m_CardDiscard.Clear();
 	}
 	
 	// -----------------------------------------------------------------
@@ -714,9 +746,7 @@ public partial class BattleManager : Node2D
 		}
 		else
 		{
-			DiscardAll();
-			ReshuffleDiscardInDeck(false);
-			ClearGameDeck();
+			ClearCards();
 			DamagePlayer();
 			ResetBattle();
 		}
@@ -766,9 +796,7 @@ public partial class BattleManager : Node2D
 				m_ActiveEnemy = null;
 				GD.Print("End of battle !");
 				m_TargetBattleScore = 0;
-				DiscardAll();
-				ReshuffleDiscardInDeck(false);
-				ClearGameDeck();
+				ClearCards();
 				RemoveAllModifiers();
 				GameManager.GetManager().EndBattle();
 				break;

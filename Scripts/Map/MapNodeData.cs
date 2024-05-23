@@ -9,9 +9,11 @@ public enum MapNodeDataType
     Puzzle,
     Elite,
     Rest,
+    Card,
     Event,
     Start,
     Grandma,
+    Boss,
 }
 
 public class MapNodeData
@@ -19,14 +21,16 @@ public class MapNodeData
     // May need  to switch randomization model, it may not work the best
     static public Godot.Collections.Array g_NodeRandomWeight = new Godot.Collections.Array
     {
-        150, // Fight
+        100, // Fight
         5,  // Treasure
         10,  // Puzzle
         10,  // Elite
         5,  // Rest
+        100, // Card
         0,  // Event
         0,  // Start
         0,  // Grandma
+        0,  // Boss
     };
 
     public MapNodeDataType m_Type;
@@ -73,9 +77,11 @@ public class MapNodeData
             case MapNodeDataType.Puzzle: return ResourceLoader.Load<Texture2D>("res://Textures/MapIcon/PuzzleIcon.png");
             case MapNodeDataType.Elite: return ResourceLoader.Load<Texture2D>("res://Textures/MapIcon/EliteIcon.png");
             case MapNodeDataType.Rest: return ResourceLoader.Load<Texture2D>("res://Textures/MapIcon/BarIcon.png");
+            case MapNodeDataType.Card: return ResourceLoader.Load<Texture2D>("res://Textures/MapIcon/CardIcon.png");
             case MapNodeDataType.Event: return ResourceLoader.Load<Texture2D>("res://Textures/MapIcon/EventIcon.png");
             case MapNodeDataType.Start: return ResourceLoader.Load<Texture2D>("res://Textures/MapIcon/StartIcon.png");
             case MapNodeDataType.Grandma: return ResourceLoader.Load<Texture2D>("res://Textures/MapIcon/GrandmaIcon.png");
+            case MapNodeDataType.Boss: return ResourceLoader.Load<Texture2D>("res://Textures/MapIcon/EliteIcon.png");
         }
         return null;
     }

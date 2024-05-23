@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="CardDeckData" load_steps=4 format=3 uid="uid://bm138nowc1u8u"]
 
-[ext_resource type="Resource" uid="uid://cisl4j87ymht5" path="res://Resources/Cards/Common/common_JabHealth.tres" id="1_aremb"]
-[ext_resource type="Resource" uid="uid://bi7fnbee4wtpf" path="res://Resources/Cards/Common/common_PayMana.tres" id="2_8qx8h"]
+[ext_resource type="Resource" uid="uid://byp4cc6grusjw" path="res://Resources/Cards/Common/common_Mulligan.tres" id="1_s088n"]
+[ext_resource type="Resource" uid="uid://co62h5g5oe4ax" path="res://Resources/Cards/Base/base_adjSwap.tres" id="3_rmosv"]
 [ext_resource type="Script" path="res://Scripts/Cards/CardDeckData.cs" id="5_6lvli"]
 
 [resource]
 script = ExtResource("5_6lvli")
-m_Cards = Array[Object]([ExtResource("1_aremb"), ExtResource("2_8qx8h")])
+m_Cards = Array[Object]([ExtResource("1_s088n"), ExtResource("3_rmosv"), ExtResource("3_rmosv"), ExtResource("3_rmosv"), ExtResource("3_rmosv"), ExtResource("3_rmosv")])

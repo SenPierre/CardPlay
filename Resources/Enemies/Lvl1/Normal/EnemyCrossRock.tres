@@ -1,22 +1,22 @@
 [gd_resource type="Resource" script_class="EnemyData" load_steps=6 format=3 uid="uid://ogijxmu6ckms"]
 
 [ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentNone.cs" id="1_nnnf7"]
-[ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentAddElementToBoard.cs" id="2_b85q1"]
+[ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentCreateRockFortress.cs" id="2_ul2nm"]
 [ext_resource type="Script" path="res://Scripts/Enemies/EnemyData.cs" id="3_rmr47"]
 
-[sub_resource type="Resource" id="Resource_ex5qi"]
+[sub_resource type="Resource" id="Resource_lpr0x"]
 script = ExtResource("1_nnnf7")
-m_LimitBase = 1200
+m_LimitBase = 0
 
-[sub_resource type="Resource" id="Resource_hjgsl"]
-script = ExtResource("2_b85q1")
-m_Count = 3
-m_Type = 4
-m_LimitBase = 500
+[sub_resource type="Resource" id="Resource_2r7ki"]
+script = ExtResource("2_ul2nm")
+m_MinChunkSize = 1
+m_MaxChunkSize = 4
+m_LimitBase = 0
 
 [resource]
 script = ExtResource("3_rmr47")
 m_BattleTarget = 6000
-m_LimitIncrement = 200
-m_EnemyIntents = Array[Object]([SubResource("Resource_ex5qi"), SubResource("Resource_hjgsl")])
+m_LimitIncrement = 400
+m_EnemyIntents = Array[Object]([SubResource("Resource_lpr0x"), SubResource("Resource_2r7ki")])
 m_BoardLayoutRes = "res://Resources/EnemyBoard/BoardCross.txt"

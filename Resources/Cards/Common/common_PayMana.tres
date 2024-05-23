@@ -24,4 +24,4 @@ m_Selection = SubResource("Resource_unn4u")
 m_Effects = [SubResource("Resource_cei3k"), SubResource("Resource_utxrr")]
 m_Name = "Crack a bad joke"
 m_Description = "Gain 1 mana. Loose 500 points."
-m_Collectible = false
+m_Collectible = true

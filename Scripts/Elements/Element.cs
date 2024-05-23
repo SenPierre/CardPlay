@@ -59,6 +59,7 @@ public partial class Element : Node2D
 	private ElementData m_data = null;
 
 	private BaseElementBehavior m_Behavior = null;
+	private BaseElementEffect m_Effect = null;
 
 	private bool m_IsMoving = false;
 	private bool m_IsTransforming = false;

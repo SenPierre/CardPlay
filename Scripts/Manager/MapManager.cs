@@ -84,6 +84,18 @@ public partial class MapManager : Node2D
             previousDeepnessNodes[0].AddNextNode(currentDeepnessNodes[0].m_Index);
         }
 
+        // Boss
+        {
+            deepPosition += Vector2.Right * 100.0f;
+
+            startNode.m_NextNodeIndexs.Add(1);
+            MapNodeData BossNode = datas.AddNewNode(MapNodeDataType.Boss, deepPosition);
+            for (int i = 0; i < currentDeepnessNodes.Count; i++)
+            {
+                currentDeepnessNodes[i].AddNextNode(BossNode.m_Index);
+            }
+        }
+
         return datas;
     }
     // STATIC PART ----------------------------

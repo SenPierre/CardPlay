@@ -19,4 +19,4 @@ m_Selection = SubResource("Resource_unn4u")
 m_Effects = [SubResource("Resource_u17oe")]
 m_Name = "ROTATE !!"
 m_Description = "Rotate the board"
-m_Collectible = false
+m_Collectible = true

@@ -28,6 +28,7 @@ public partial class GameManager : Node2D
 
 	private MapData m_CurrentMapData = null;
 	private int m_currentMapIndex = 0;
+	private int m_nextCardRewardCount = 2;
 
 	private List<int> m_AlreadyDidEnemy = new List<int>();
 	private List<int> m_AlreadyDidPuzzle = new List<int>();
@@ -73,6 +74,8 @@ public partial class GameManager : Node2D
 		{
 			case MapNodeDataType.Fight: StartNormalFight(); break;
 			case MapNodeDataType.Grandma: StartGrandmaFight(); break;
+			case MapNodeDataType.Puzzle: StartPuzzle(); break;
+			case MapNodeDataType.Card: StartCardReward(2); break;
 			
 		}
 		m_currentMapIndex = node.m_NodeDatas.m_Index;
@@ -131,6 +134,15 @@ public partial class GameManager : Node2D
 	// -----------------------------------------------------------------
 	public void EndBattle()
 	{
+		StartCardReward(4);
+	}
+
+	// -----------------------------------------------------------------
+	// 
+	// -----------------------------------------------------------------
+	public void StartCardReward(int cardCount)
+	{
+		m_nextCardRewardCount = cardCount;
 		m_StateMachine.SetCurrentStateFunction(State_AddCard);
 	}
 
@@ -244,7 +256,8 @@ public partial class GameManager : Node2D
 			case StateFunctionCall.Enter: 
 			{
 				CardRewardManager rewardManager = m_CardRewardScene.Instantiate<CardRewardManager>();
-				
+				rewardManager.m_displayedCardCount = m_nextCardRewardCount;
+
 				InitSubScene(rewardManager);
 				rewardManager.Init();
 				break;
@@ -278,7 +291,7 @@ public partial class GameManager : Node2D
 				
 				if (m_CurrentMapData == null)
 				{
-					m_CurrentMapData = MapManager.GenerateMap(true, 10, 2, 3);
+					m_CurrentMapData = MapManager.GenerateMap(false /* has grandma */, 10, 2, 3);
 				}
 
 				mapManager.Init(m_CurrentMapData);

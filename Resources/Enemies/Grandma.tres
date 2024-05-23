@@ -11,7 +11,7 @@ m_LimitBase = 0
 
 [resource]
 script = ExtResource("1_g6748")
-m_BattleTarget = 50000
+m_BattleTarget = 500000
 m_LimitIncrement = 0
 m_EnemyIntents = Array[Object]([SubResource("Resource_tbimy")])
 m_BoardLayoutRes = "res://Resources/EnemyBoard/BoardRotator.txt"

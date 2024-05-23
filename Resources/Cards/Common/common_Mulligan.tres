@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="CardData" load_steps=6 format=3 uid="uid://byp4cc6grusjw"]
+
+[ext_resource type="Script" path="res://Scripts/Cards/CardEffect/CardEffectMulliganAll.cs" id="1_5bor2"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardSelection/CardSelectionNone.cs" id="3_q0o7k"]
+[ext_resource type="Script" path="res://Scripts/Cards/CardData.cs" id="4_v0qg2"]
+
+[sub_resource type="Resource" id="Resource_b8f4h"]
+script = ExtResource("1_5bor2")
+
+[sub_resource type="Resource" id="Resource_unn4u"]
+script = ExtResource("3_q0o7k")
+m_SelectionKind = 4
+
+[resource]
+script = ExtResource("4_v0qg2")
+m_ManaCost = 0
+m_Selection = SubResource("Resource_unn4u")
+m_Effects = [SubResource("Resource_b8f4h")]
+m_Name = "Change Strategy"
+m_Description = "Discard your hand and draw as many card"
+m_Collectible = true

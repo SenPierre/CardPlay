@@ -1,0 +1,60 @@
+[gd_resource type="Resource" script_class="EnemyData" load_steps=16 format=3 uid="uid://ceoohql15hkcf"]
+
+[ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentMult.cs" id="1_i26p6"]
+[ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentRotateBoard.cs" id="1_sdt7u"]
+[ext_resource type="Script" path="res://Scripts/Enemies/EnemyData.cs" id="1_uuw83"]
+[ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentAddElementToBoard.cs" id="2_eiuey"]
+[ext_resource type="Resource" uid="uid://b6jsa4yvt56d" path="res://Resources/Cards/Garbage/garbage_Exhaust.tres" id="4_w6ry6"]
+[ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentAddCard.cs" id="5_xca8x"]
+[ext_resource type="Script" path="res://Scripts/Enemies/EnemyIntent/EnemyIntentMoveVoidAround.cs" id="6_88gu6"]
+
+[sub_resource type="Resource" id="Resource_kw4kr"]
+script = ExtResource("1_sdt7u")
+m_RandomDir = false
+m_Anticlockwise = false
+m_LimitBase = 1200
+
+[sub_resource type="Resource" id="Resource_f41gm"]
+script = ExtResource("1_sdt7u")
+m_RandomDir = false
+m_Anticlockwise = false
+m_LimitBase = 0
+
+[sub_resource type="Resource" id="Resource_12ifa"]
+script = ExtResource("2_eiuey")
+m_Count = 5
+m_Type = 4
+m_LimitBase = 0
+
+[sub_resource type="Resource" id="Resource_q2hag"]
+script = ExtResource("1_i26p6")
+m_SubIntent = Array[Object]([SubResource("Resource_f41gm"), SubResource("Resource_12ifa")])
+m_LimitBase = 1000
+
+[sub_resource type="Resource" id="Resource_soqnv"]
+script = ExtResource("1_sdt7u")
+m_RandomDir = false
+m_Anticlockwise = false
+m_LimitBase = 0
+
+[sub_resource type="Resource" id="Resource_ypqpv"]
+script = ExtResource("5_xca8x")
+m_TargetZone = 0
+m_CardToAdd = Array[Object]([ExtResource("4_w6ry6"), ExtResource("4_w6ry6"), ExtResource("4_w6ry6")])
+m_LimitBase = 0
+
+[sub_resource type="Resource" id="Resource_antmp"]
+script = ExtResource("1_i26p6")
+m_SubIntent = Array[Object]([SubResource("Resource_soqnv"), SubResource("Resource_ypqpv")])
+m_LimitBase = 1200
+
+[sub_resource type="Resource" id="Resource_d6smp"]
+script = ExtResource("6_88gu6")
+m_LimitBase = 1500
+
+[resource]
+script = ExtResource("1_uuw83")
+m_BattleTarget = 6000
+m_LimitIncrement = 100
+m_EnemyIntents = Array[Object]([SubResource("Resource_kw4kr"), SubResource("Resource_q2hag"), SubResource("Resource_antmp"), SubResource("Resource_d6smp")])
+m_BoardLayoutRes = "res://Resources/EnemyBoard/BoardDownArrow.txt"

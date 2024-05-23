@@ -27,4 +27,4 @@ m_Selection = SubResource("Resource_unn4u")
 m_Effects = [SubResource("Resource_cei3k"), SubResource("Resource_2dotm"), SubResource("Resource_bcwbk")]
 m_Name = "Tackle"
 m_Description = "Gain 1000 points. Lose an heart. Exhaust."
-m_Collectible = false
+m_Collectible = true
